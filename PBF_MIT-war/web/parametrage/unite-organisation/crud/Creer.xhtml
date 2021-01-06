@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition>
+        <p:dialog id="ServiceCreerDlg" 
+                  widgetVar="ServiceCreerDialog" 
+                  modal="true" resizable="false" 
+                  appendTo="@(body)" 
+                  header="#{langue['Titre.Dlg.Creation']} : #{langue.unite_organisation}" 
+                  closeOnEscape="true">
+
+            <h:form id="ServiceCreerForm">
+                <h:panelGroup id="display">
+                    <h:panelGrid columns="3" columnClasses ="column">
+
+                        <p:outputLabel value="#{langue.unite_organisation_parent} : " for="u_or_parent"/>
+                        <p:selectOneMenu filter="true" id="u_or_parent" value="#{uniteOgranisationController.serviceParent.idservice}" >
+                            <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
+                            <f:selectItems value="#{uniteOgranisationController.serviceParents}" var="item" itemLabel="#{item.nom}" itemValue="#{item.idservice}"/>
+                        </p:selectOneMenu>
+                        <p:message for="u_or_parent"/>
+
+                        <p:outputLabel value="#{langue.code}" for="code" />
+                        <p:inputText id="code" value="#{uniteOgranisationController.service.code}" required="true" 
+                                     requiredMessage="#{langue.valeur_obligatoire}"/>
+                        <p:message for="code"/>
+
+                        <p:outputLabel value="#{langue.nom}" for="nom"/>
+                        <p:inputTextarea cols="200" rows="4" style="width: 350px" id="nom" value="#{uniteOgranisationController.service.nom}" required="true" 
+                                         requiredMessage="#{langue.valeur_obligatoire}"/>
+                        <p:message for="nom"/>
+
+                        <p:outputLabel value="#{langue.date_creation}" for="date_creation"/>
+                        <p:calendar  id="date_creation" value="#{uniteOgranisationController.service.datecreation}" required="true" 
+                                     requiredMessage="#{langue.valeur_obligatoire}"/>
+                        <p:message for="date_creation"/>
+
+                        <p:outputLabel value="#{langue.responsable}" for="responsable"/>
+                        <p:inputTextarea cols="200" rows="2" style="width: 350px" id="responsable" value="#{uniteOgranisationController.service.responsable}" required="true" 
+                                         requiredMessage="#{langue.valeur_obligatoire}"/>
+                        <p:message for="responsable"/>
+
+                        <p:outputLabel value="Structure centrale ?" for="central" />
+                        <h:selectBooleanCheckbox value="#{uniteOgranisationController.service.central}" id="central"/>
+                        <p:message for="central"/>
+
+                        <p:outputLabel value="Structure regionale ?" for="regional" />
+                        <h:selectBooleanCheckbox value="#{uniteOgranisationController.service.regional}" id="regional"/>
+                        <p:message for="regional"/>
+
+                        <p:outputLabel value="Visilité au suivi ?" for="suivi" />
+                        <h:selectBooleanCheckbox value="#{uniteOgranisationController.service.visibilitesuivi}" id="suivi"/>
+                        <p:message for="suivi"/>
+
+                        <p:outputLabel value="Contact 1" for="contact_1" />
+                        <p:inputText id="contact_1" value="#{uniteOgranisationController.addresse.telephone1}"/> 
+                        <p:message for="contact_1"/>
+
+                        <p:outputLabel value="Addresse" for="address" />
+                        <p:inputText id="address" value="#{uniteOgranisationController.addresse.adresse}"/>
+                        <p:message for="address"/>
+
+                        <p:outputLabel value="Email" for="email" />
+                        <p:inputText id="email" value="#{uniteOgranisationController.addresse.email}"/>
+                        <p:message for="email"/>
+
+                        <p:outputLabel value="B P" for="bp" />
+                        <p:inputText id="bp" value="#{uniteOgranisationController.addresse.bp}"/>
+                        <p:message for="bp"/>
+
+                    </h:panelGrid>
+
+                    <p:separator/>
+
+                    <p:commandButton style="float: right" actionListener="#{uniteOgranisationController.create()}" value="#{langue['Conv.Enregistrer']}" 
+                                     update="display,:ServiceListerForm:datalist,:actionsForm,:notify1"/>
+
+                    <p:commandButton style="float: left" value="#{langue.annuler}" onclick="PF('ServiceCreerDialog').hide()"/>
+                </h:panelGroup>  
+
+            </h:form>
+
+        </p:dialog>
+    </ui:composition>
+
+</html>

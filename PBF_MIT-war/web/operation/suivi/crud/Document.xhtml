@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="DocumentAddDlg" 
+                  widgetVar="DocumentAddDialog" 
+                  modal="true" resizable="false"
+                  height="580"
+                  width="1200"
+                  visible="false"
+                  style="overflow: auto"
+                  appendTo="@(body)" 
+                  header="#{langue['Titre.Dlg.Creation']} : #{langue.telecharger_document}" 
+                  closeOnEscape="true">
+
+            <h:form id="DocumentAddForm">
+
+                <h:panelGroup id="display">
+                    
+                    <br/>
+                    <h:outputText value="NB : LE FORMAT DOIT ETRE PDF DE PREFERENCE" style="font-size: 20px ; color: red" />
+                    <br/>
+                    <br/>
+
+                    <p:fileUpload id="add_photo" fileUploadListener="#{suiviController.handleFileUpload}" mode="advanced" dragDropSupport="false" accept=""  invalidSizeMessage="#{langue.taille_erreur}" cancelLabel="#{langue.fermer}" invalidFileMessage="#{langue.fichier_non_pris_en_charge}" uploadLabel="#{langue.charger}"   
+                                  update=":notify1,:ProjetListerForm" sizeLimit="10000000" fileLimit="3" allowTypes="/(\.|\/)(pdf|docx|xls)$/" />
+                    <p:separator/>
+
+                    <center>
+                        <p:commandButton icon="ui-icon-close" update=":ProjetListerForm" value="#{langue.fermer}" onclick="PF('DocumentAddDialog').hide()"/>
+                    </center>
+
+                </h:panelGroup>  
+
+            </h:form>
+
+        </p:dialog>
+
+    </ui:composition>
+
+</html>

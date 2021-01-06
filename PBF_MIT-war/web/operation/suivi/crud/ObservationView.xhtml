@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ObservationViewDlg" 
+                  widgetVar="ObservationViewDialog" 
+                  modal="true" resizable="false" 
+                  appendTo="@(body)" 
+                  header="Interface d'édition des observations" 
+                  closeOnEscape="true">
+
+            <h:form id="ObservationViewForm">
+                <h:panelGroup id="display">
+                    <h:panelGrid columns="3" columnClasses ="column">
+
+                        <p:outputLabel value="#{langue.etat}" for="etat" />
+                        <h:selectBooleanCheckbox disabled="true" id="etat" value="#{suiviController.programmation.valide}" />
+                        <p:message for="etat" id="msg_etat"/>
+
+                        <p:outputLabel value="#{langue.marque_observation} ?" for="marque_observation" />
+                        <h:selectBooleanCheckbox disabled="true" id="marque_observation" value="#{suiviController.programmation.observee}" />
+                        <p:message for="marque_observation" id="msg_marque_observation"/>
+
+                        <p:outputLabel value="#{langue.validation_observation} ?" for="validation_observation" />
+                        <h:selectBooleanCheckbox disabled="true" id="validation_observation" value="#{suiviController.programmation.observationvalidee}" />
+                        <p:message for="validation_observation" id="msg_validation_observation"/>
+
+                        <p:outputLabel value="#{langue.date_validation}" for="date_validation" />
+                        <p:calendar disabled="true" id="date_validation" navigator="true" value="#{suiviController.programmation.dateValidation}" />
+                        <p:message for="date_validation" id="msg_date_validation"/>
+                           
+                        <p:outputLabel value="#{langue.observation}" for="observation" />
+                        <p:inputTextarea disabled="true" id="observation" value="#{suiviController.programmation.observation}"
+                                         cols="450" rows="6" style="width: 500px"/>                                     
+                        <p:message for="observation" id="msg_observation"/>
+                        
+                        <p:outputLabel value="#{langue.observation_utilisateur}" for="observation_user" />
+                        <p:inputTextarea id="observation_user" value="#{suiviController.programmation.observationutilisateur}"
+                                         cols="450" rows="8" style="width: 500px">
+                            <p:ajax event="keyup" listener="#{suiviController.saisie()}" />
+                        </p:inputTextarea>    
+                        <p:message for="observation_user" id="msg_observation_user"/>
+
+                        <p:outputLabel value="#{langue.historique}" for="observation_archivee" />
+                        <p:inputTextarea disabled="true" id="observation_archivee" value="#{suiviController.programmation.observationarchivee}" 
+                                         cols="450" rows="6" style="width: 500px"/>                                     
+                        <p:message for="observation_archivee" id="msg_observation_archivee"/>
+
+                    </h:panelGrid>
+
+                    <p:separator/>
+
+                    <center>
+                        <p:commandButton value="#{langue.fermer}" oncomplete="PF('ObservationViewDialog').hide()" icon="ui-icon-close"/>
+                        <p:commandButton actionListener="#{suiviController.validateUser()}" 
+                                         value="#{langue['Conv.Enregistrer']}" 
+                                         update="display,:ProjetListerForm,:notify1" 
+                                         onclick="PF('AjaxNotifyDialog').show()" icon="ui-icon-check"/> 
+                    </center>
+                    
+                </h:panelGroup>  
+
+            </h:form>
+
+        </p:dialog>
+
+    </ui:composition>
+
+</html>

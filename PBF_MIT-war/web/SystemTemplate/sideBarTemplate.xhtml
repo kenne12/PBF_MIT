@@ -1,0 +1,92 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{loginBean.watcher()}" />
+    </f:metadata> 
+
+    <!-- BEGIN SIDEBAR -->
+    <div class="sidebar-scroll">
+        <div id="sidebar" class="nav-collapse collapse">
+
+            <div class="navbar-inverse">
+                <form class="navbar-search visible-phone">
+                    <input type="text" class="search-query" placeholder="Search" />
+                </form>
+            </div>
+            <!-- BEGIN SIDEBAR MENU -->
+            <ul class="sidebar-menu">
+
+                <!--Accueil-->
+                <li class="sub-menu" id="menuIndex">
+                    <a class="" href="#{request.contextPath}/index.html">
+                        <i class="icon-home"></i>
+                        <span>#{langue.accueil}</span>
+                    </a>
+                </li>
+
+                <!--Securité-->
+                <li class="sub-menu" id="securite">
+                    <a href="javascript:;" class="">
+                        <i class="icon-legal"></i>
+                        <span>#{langue.securite}</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub">
+                        <li><a class="" href="#{request.contextPath}/securite/utilisateur/utilisateur.html">#{langue.utilisateurs}</a></li>
+                        <li><a class="" href="#{request.contextPath}/securite/privilege/privilege.html">#{langue.privileges}</a></li>
+                        <li><a class="" href="#{request.contextPath}/securite/activercompte/activercompte.html">#{langue.activer_compte_utilisateur}</a></li>
+                        <li><a class="" href="#{request.contextPath}/securite/desactivercompte/desactivercompte.html">#{langue.desactiver_compte_utilisateur}</a></li>
+                        <li><a class="" href="#{request.contextPath}/securite/reset-compte/reset-compte.html">#{langue.reinitialiser_compte}</a></li>
+                        <li><a class="" href="#{request.contextPath}/securite/mouchard/mouchard.html">#{langue.mouchard}</a></li>
+                    </ul>
+                </li>
+
+                <!--parametrage-->
+                <li class="sub-menu" id="parametrage">
+                    <a href="javascript:;" class="">
+                        <i class="icon-cogs"></i>
+                        <span>#{langue.parametrage}</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub">
+                        <li><a class="" href="#{request.contextPath}/parametrage/unite-organisation/unite-organisation.html">#{langue.unite_organisation}</a></li>                        
+                        <li><a class="" href="#{request.contextPath}/parametrage/periode/periode.html">#{langue.periode}</a></li>                        
+                        <li><a class="" href="#{request.contextPath}/parametrage/document/document.html">#{langue.documents}</a></li>
+                        <li><a class="" href="#{request.contextPath}/parametrage/etape/etape.html">#{langue.etapes}</a></li>
+                        <li><a class="" href="#{request.contextPath}/parametrage/acteur/acteur.html">#{langue.acteurs}</a></li>
+                    </ul>
+                </li>                                
+
+                <!--Traitement-->
+                <li class="sub-menu" id="traitement">
+                    <a href="javascript:;" class="">
+                        <i class="icon-euro"></i>
+                        <span>#{langue.traitement}</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub">
+                        <li><a class="" href="#{request.contextPath}/operation/projet/projet.html">#{langue.projets}</a></li>
+                        <li><a class="" href="#{request.contextPath}/operation/duplication_projet/duplication_projet.html">#{langue.duplication_projet}</a></li>
+                        <li><a class="" href="#{request.contextPath}/operation/programmation/programmation.html">#{langue.programmation}</a></li>
+                        <li><a class="" href="#{request.contextPath}/operation/suivi/suivi.html">#{langue.suivi}</a></li>                        
+                    </ul>
+                </li>                
+
+                <!--Analyse-->
+                <li class="sub-menu" id="analyse">
+                    <a href="javascript:;" class="">
+                        <i class="icon-print"></i>
+                        <span>#{langue.analyse}</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub">
+
+                    </ul>
+                </li>
+            </ul>            
+        </div>
+    </div>
+
+</ui:composition>

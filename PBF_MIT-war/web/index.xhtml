@@ -1,0 +1,79 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    template="/SystemTemplate/principalTemplate.xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="contenu">
+
+        <br/>
+        <h:form>
+            <h:selectOneMenu value="#{localeManagedBean.language}" onchange="submit()"> 
+                <f:selectItems value="#{localeManagedBean.locales}" />
+            </h:selectOneMenu> 
+        </h:form>
+
+        <h:form id="data">
+
+
+        </h:form>
+
+        <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+        <p:dialog id="notify1" widgetVar="NotifyDialog1" height="220" width="600" resizable="true" modal="true" style="text-align: center; font-size: 14px; font-family: Cambria;">
+            <f:facet name="header">
+                <h:outputText style="font-family: Cambria; font-size: 14px;" value="#{loginBean.routine.titleNotify}" />
+            </f:facet>
+            <h:form id="NotifyForm1">
+                <h:graphicImage id="nt_img" url="#{loginBean.routine.iconMessage}" style="cursor:pointer" />
+
+                <hr size="3" style="background-color: cornflowerblue;"/>
+
+                <h:outputText id="nt_msg" value="#{loginBean.routine.message}"/>
+
+                <hr size="3" style="background-color: cornflowerblue; margin-top: 5%;"/>
+
+                <p:commandButton style="font-family: Cambria; font-size: 14px;" value="#{langue.fermer}" onclick="PF('NotifyDialog1').hide()" type="button" immediate="true"/>
+
+                <hr size="3" style="background-color: cornflowerblue;"/>
+            </h:form>
+        </p:dialog>
+
+        <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+        <!--<p:dialog id="SessionCreerDlg" 
+                  widgetVar="MenuCreerDialog" 
+                  modal="true" 
+                  resizable="false" 
+                  appendTo="@(body)"
+                  closable="false"
+                  visible="#{loginBean.showSessionPanel}"
+                  header="#{langue.donnee_session}">
+
+            <h:form id="SessionCreerForm">
+
+                <p:messages id="growl" closable="true">
+                    <p:effect type="pulsate" event="load" delay="50" />
+                </p:messages>
+
+                <h:panelGrid columns="2" columnClasses="column">
+
+                    
+
+                </h:panelGrid>
+
+                <p:separator/>
+
+                <center>
+                    <p:commandButton partialSubmit="true" actionListener="#{loginBean.initSession()}" value="#{langue.valider}" 
+                                     update="SessionCreerForm,:SessionCreerDlg,growl,:data" icon="ui-icon-check"/>
+                </center>
+
+            </h:form>
+
+        </p:dialog>-->
+
+    </ui:define>
+</ui:composition>

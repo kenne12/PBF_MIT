@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:form id="ProjetListerForm">
+
+        <p:messages id="growl" closable="true">
+            <p:effect type="pulsate" event="load" delay="50" />
+        </p:messages>
+
+        <center>
+            <h:panelGrid columns="2">
+                <p:selectOneMenu filter="true" value="#{suiviController.projet.idprojet}">
+                    <f:selectItem itemLabel="#{langue.choisir}" itemValue=""/>
+                    <f:selectItems value="#{suiviController.projets}" var="obj" itemLabel="#{obj.nom}" itemValue="#{obj.idprojet}"/>
+                </p:selectOneMenu>
+                <p:commandButton icon="ui-icon-search" update="datalist,:notify1,form_data" 
+                                 value="#{langue.chercher}" actionListener="#{suiviController.updateData()}" 
+                                 onclick="PF('AjaxNotifyDialog').show()"/>
+            </h:panelGrid>       
+        </center>
+
+        <p:separator/>
+
+        <p:panel id="form_data">
+            <ui:repeat id="datalist" value="#{suiviController.projetservices}" var="var" >
+                <h:outputText value="#{var.idservice.nom}" style="font-size: 18px;color: blue"/>            
+                <p:separator/>
+
+                <h:panelGrid columns="#{suiviController.findProgrammation(var).size()}">
+
+                    <ui:repeat value="#{suiviController.findProgrammation(var)}" var="var1">
+                        <div style="width: 260px;float: left;height: 230px;border: solid 1px blue;margin-left: 5px;" class="container">
+
+                            <div style="width: 100%;height: 10%;background-color: #dae0e5;">
+                                <center>
+                                    <h:outputText value="#{var1.idetapeprojet.idetape.nom}" style="font-size: 17px;text-align: center;color: black"/>
+                                </center>
+                            </div>
+
+                            <div style="width: 100%;height: 70%;background-color: #{suiviController.checkFooterColor(var1.valide, var1.observee, var1.observationvalidee)}">
+                                <p:commandButton icon="ui-icon-image" value="#{langue.charger_document}" disabled="#{suiviController.renderedDownload(var1.active,var1.valide , var1.idacteur)}" actionListener="#{suiviController.prepareAddDocument(var1)}" update=":DocumentAddForm,:notify1,ProjetListerForm" style="margin-left: 10px;margin-top: 5px" />                                
+                                <p:commandButton icon="ui-icon-search" value="#{langue.visualiser_document}" disabled="#{suiviController.renderedView(var1.active,var1.envoye)}"  actionListener="#{suiviController.viewDocument(var1)}" update=":ProjetImprimerForm,:notify1" onclick="PF('AjaxNotifyDialog').show()" style="margin-left: 10px;margin-top: 10px"/>                          
+
+                                <div style="width: 100%">
+                                    <p:commandButton icon="ui-icon-plus" value="#{langue.piece_jointes}" disabled="#{suiviController.renderedPiece(var1.active)}"  actionListener="#{suiviController.prepareAddPiece(var1)}" update=":PieceAddForm,:notify1" onclick="PF('AjaxNotifyDialog').show()" style="margin-left: 10px ;margin-top: 10px"/>                          
+                                </div>
+
+                                <p:commandButton icon="ui-icon-check" value="#{langue.valider}" disabled="#{suiviController.renderedActivate(var1.envoye , var1.valide)}"  actionListener="#{suiviController.activateStape(var1)}" update=":notify1,:ValidationCreerForm" style="margin-left: 10px ;margin-top: 10px"/>                                                     
+                                <p:commandButton icon="ui-icon-search" rendered="#{suiviController.renderedViewBtn(var1.valide , var1.observee)}" value="#{langue.observations}" disabled="#{suiviController.renderedViewObservation(var1.envoye , var1.valide , var1)}"  actionListener="#{suiviController.viewObservation(var1)}" update=":notify1,:ObservationViewForm" style="margin-left: 10px ;margin-top: 10px"/>                          
+                            </div>
+
+                            <div style="width: 100%;height: 10%;background-color: #dae0e5;">
+                                <center>
+                                    <h:outputText value="#{suiviController.returnRetard(var1.valide , var1.retard)}" style="color: black ; font-size: 18px;text-align: center;"/>
+                                </center>
+                            </div>
+
+                            <div style="width: 100%;height: 10%;background-color: #dae0e5;">
+                                <center>
+                                    <h:outputText value="#{var1.idetapeprojet.numero}" style="color: black ; font-size: 20px;text-align: center;"/>
+                                </center>
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </h:panelGrid>
+                <p:separator/>
+            </ui:repeat>
+        </p:panel>
+
+    </h:form>
+
+    <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+    <p:dialog id="notify1" widgetVar="NotifyDialog1" height="220" width="600" resizable="true" responsive="true" modal="true" style="text-align: center; font-size: 14px; font-family: Cambria;">
+        <f:facet name="header">
+            <h:outputText style="font-family: Cambria; font-size: 14px;" value="#{suiviController.routine.titleNotify}" />
+        </f:facet>
+        <h:form id="NotifyForm1">
+            <h:graphicImage id="nt_img" url="#{suiviController.routine.iconMessage}" style="cursor:pointer" />
+
+            <hr size="3" style="background-color: cornflowerblue;"/>
+
+            <h:outputText id="nt_msg" value="#{suiviController.routine.message}"/>
+
+            <hr size="3" style="background-color: cornflowerblue; margin-top: 5%;"/>
+
+            <p:commandButton style="font-family: Cambria; font-size: 14px;" value="#{langue.valider}" onclick="PF('NotifyDialog1').hide()" type="button" immediate="true"/>
+
+            <hr size="3" style="background-color: cornflowerblue;"/>
+        </h:form>
+    </p:dialog>
+
+    <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+</ui:composition>

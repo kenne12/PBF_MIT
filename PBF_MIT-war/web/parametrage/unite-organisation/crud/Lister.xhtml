@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:form id="ServiceListerForm">
+
+        <p:messages id="growl" closable="true">
+            <p:effect type="pulsate" event="load" delay="50" />
+        </p:messages>
+
+        <p:panel header="#{langue['Conv.ListeDes']} : #{langue.unite_organisation}">
+            <p:contextMenu id="ServiceDataTableContextMenu" for="datalist">  
+                <p:menuitem value="#{langue['Conv.Creer']}" onclick="document.getElementById('actionsForm:creer').click();" icon="ui-icon-plus"/>
+                <p:menuitem value="#{langue['Conv.Detail']}" onclick="document.getElementById('actionsForm:detail').click();" icon="ui-icon-search"/>
+                <p:menuitem value="#{langue['Conv.Modifier']}" onclick="document.getElementById('actionsForm:modifier').click();" icon="ui-icon-pencil"/>
+                <p:menuitem value="#{langue['Conv.Supprimer']}" onclick="document.getElementById('actionsForm:supprimer').click();" icon="ui-icon-trash"/>
+            </p:contextMenu>
+            <p:dataTable id="datalist"
+                         value="#{uniteOgranisationController.services}"
+                         var="item"
+                         rowKey="#{item.idservice}"
+                         paginator="true"
+                         rows="10"
+                         style="text-align: center;"
+                         rowsPerPageTemplate="10,20,30,40,50"
+                         selectionMode="single"
+                         selection="#{uniteOgranisationController.service}">
+
+                <p:ajax event="rowSelect"   update=":ServiceListerForm:ServiceDataTableContextMenu, :actionsForm"/>
+                <p:ajax event="rowUnselect" update=":ServiceListerForm:ServiceDataTableContextMenu, :actionsForm"/>
+                <p:ajax event="rowDblselect" onsuccess="document.getElementById('ServiceListerForm:viewButton').click();"/>
+                
+                <p:column style="text-align: left ; width: 25%">
+                    <f:facet name="header">
+                        <h:outputText value="#{langue.parent}"/>
+                    </f:facet>
+                    <h:outputText value="#{uniteOgranisationController.findByIdparent(item.idparent).nom}"/>
+                </p:column>        
+
+                <p:column filterBy="#{item.nom}" style="text-align: left ; width: 25%">
+                    <f:facet name="header">
+                        <h:outputText value="#{langue.nom}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.nom}"/>
+                </p:column>
+                
+                <p:column filterBy="#{item.code}" style="text-align: left; width: 12%">
+                    <f:facet name="header">
+                        <h:outputText value="#{langue.code}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.code}"/>
+                </p:column>
+                
+                
+                
+                <p:column filterBy="#{item.nom}" style="text-align: left ; width: 15%">
+                    <f:facet name="header">
+                        <h:outputText value="#{langue.responsable}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.responsable}"/>
+                </p:column>
+                
+                <p:column style="text-align: center ; width: 7%">
+                    <f:facet name="header">
+                        <h:outputText value="Central ?"/>
+                    </f:facet>
+                    <h:selectBooleanCheckbox disabled="true" value="#{item.central}"/>
+                </p:column>
+                
+                <p:column style="text-align: center ; width: 7%">
+                    <f:facet name="header">
+                        <h:outputText value="Regional ?"/>
+                    </f:facet>
+                    <h:selectBooleanCheckbox disabled="true" value="#{item.regional}"/>
+                </p:column>
+                
+                <p:column style="text-align: center; width: 9%">
+                    <f:facet name="header">
+                        <h:outputText value="Visibilité suivi"/>
+                    </f:facet>
+                    <h:selectBooleanCheckbox disabled="true" value="#{item.visibilitesuivi}"/>
+                </p:column>
+                
+            </p:dataTable>
+
+        </p:panel>
+    </h:form>
+
+    <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+    <p:dialog id="notify1" widgetVar="NotifyDialog1" height="220" width="600" resizable="true" responsive="true" modal="true" style="text-align: center; font-size: 14px; font-family: Cambria;">
+        <f:facet name="header">
+            <h:outputText style="font-family: Cambria; font-size: 14px;" value="#{uniteOgranisationController.routine.titleNotify}" />
+        </f:facet>
+        <h:form id="NotifyForm1">
+            <h:graphicImage id="nt_img" url="#{uniteOgranisationController.routine.iconMessage}" style="cursor:pointer" />
+
+            <hr size="3" style="background-color: cornflowerblue;"/>
+
+            <h:outputText id="nt_msg" value="#{uniteOgranisationController.routine.message}"/>
+
+            <hr size="3" style="background-color: cornflowerblue; margin-top: 5%;"/>
+
+            <p:commandButton style="font-family: Cambria; font-size: 14px;" value="#{langue.fermer}" onclick="PF('NotifyDialog1').hide()" type="button" immediate="true"/>
+
+            <hr size="3" style="background-color: cornflowerblue;"/>
+        </h:form>
+    </p:dialog>
+
+    <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+</ui:composition>

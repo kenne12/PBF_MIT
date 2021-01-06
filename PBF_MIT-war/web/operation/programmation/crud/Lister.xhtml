@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:form id="ProjetListerForm">
+
+        <p:messages id="growl" closable="true">
+            <p:effect type="pulsate" event="load" delay="50" />
+        </p:messages>
+
+        <center>
+            <h:panelGrid columns="2">
+                <p:selectOneMenu filter="true" value="#{programmationController.projet.idprojet}">
+                    <f:selectItem itemLabel="#{langue.choisir}" itemValue=""/>
+                    <f:selectItems value="#{programmationController.projets}" var="obj" itemLabel="#{obj.nom}" itemValue="#{obj.idprojet}"/>
+                </p:selectOneMenu>
+                <p:commandButton icon="ui-icon-search" update="datalist,:notify1,form_data" value="#{langue.chercher}" actionListener="#{programmationController.filterData()}" onclick="PF('AjaxNotifyDialog').show()"/>
+            </h:panelGrid>       
+        </center>
+        <p:separator/>
+
+        <p:panel id="form_data">
+
+            <ui:repeat id="datalist" value="#{programmationController.projetservices}" var="var">
+
+                <p:panel header="#{var.idservice.nom}">
+
+                    <p:dataTable id="datalist1"
+                                 value="#{programmationController.findProgrammation(var)}"
+                                 var="item1"
+                                 rowKey="#{item1.idprogrammation}"
+                                 paginator="true"
+                                 rowIndexVar="index"
+                                 rows="10"
+                                 rowsPerPageTemplate="10,20,30,40,50"
+                                 editable="true"
+                                 editMode="cell">
+
+                        <p:column style="width: 30%">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.etape}"/>
+                            </f:facet>
+                            <h:outputText value="#{item1.idetapeprojet.idetape.nom}"/>
+                        </p:column>
+
+                        <p:column style="width: 7%;text-align: center">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.numero_ordre}"/>
+                            </f:facet>
+                            <h:outputText value="#{item1.idetapeprojet.numero}"/>
+                        </p:column>
+
+                        <p:column style="width: 20%;" >
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.acteur}"/>
+                            </f:facet>
+                            <h:outputText value="#{item1.idacteur.nom} #{item1.idacteur.prenom}"/>
+                        </p:column>
+
+                        <p:column style="width: 17%">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.document}"/>
+                            </f:facet>
+                            <h:outputText value="#{item1.iddocument.nom}"/>
+                        </p:column>
+
+                        <p:column style="width: 8%">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.delai}"/>
+                            </f:facet>
+                            <h:outputText value="#{item1.dateprevisionnel}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column style="width: 10%;text-align: center">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.date_realisation}"/>
+                            </f:facet>
+                            <h:outputText value="#{item1.daterealisation}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column style="width: 8%;text-align: center">
+                            <f:facet name="header">
+                                <h:outputText value="Nbre Jr rétard"/>
+                            </f:facet>
+                            <h:outputText value="#{item1.retard}"/>
+                        </p:column>
+                    </p:dataTable>
+
+                    <br/>
+                    <center>
+
+                        <p:commandButton icon="ui-icon-plus"   
+                                         value="#{langue['Conv.Creer']} / #{langue.modifier}" 
+                                         actionListener="#{programmationController.prepareCreate(var)}"
+                                         update=":ProjetCreerForm,:notify1"/>
+
+                        <p:commandButton 
+                            icon="ui-icon-trash"  
+                            value="#{langue.annuler}" 
+                            update=":ProjetListerForm:datalist,:notify1"
+                            disabled="false"
+                            actionListener="#{programmationController.delete(var)}">
+                            <p:confirm header="#{langue['Titre.Dlg.Confirm']}"
+                                       message="#{langue['Message.Confirm.Supprimer']}?"
+                                       icon="ui-icon-alert"/>
+                        </p:commandButton>
+
+                    </center>
+
+                    <p:separator/>
+
+                </p:panel>
+                <br/>
+
+            </ui:repeat>
+        </p:panel>
+    </h:form>
+
+    <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+    <p:dialog id="notify1" widgetVar="NotifyDialog1" height="220" width="600" resizable="true" responsive="true" modal="true" style="text-align: center; font-size: 14px; font-family: Cambria;">
+        <f:facet name="header">
+            <h:outputText style="font-family: Cambria; font-size: 14px;" value="#{programmationController.routine.titleNotify}" />
+        </f:facet>
+        <h:form id="NotifyForm1">
+            <h:graphicImage id="nt_img" url="#{programmationController.routine.iconMessage}" style="cursor:pointer" />
+
+            <hr size="3" style="background-color: cornflowerblue;"/>
+
+            <h:outputText id="nt_msg" value="#{programmationController.routine.message}"/>
+
+            <hr size="3" style="background-color: cornflowerblue; margin-top: 5%;"/>
+
+            <p:commandButton style="font-family: Cambria; font-size: 14px;" value="#{langue.valider}" onclick="PF('NotifyDialog1').hide()" type="button" immediate="true"/>
+
+            <hr size="3" style="background-color: cornflowerblue;"/>
+        </h:form>
+    </p:dialog>
+
+    <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+</ui:composition>

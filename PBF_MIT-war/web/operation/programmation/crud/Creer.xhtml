@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition>
+
+        <p:dialog id="ProjetCreerDlg" 
+                  widgetVar="ProjetCreerDialog" 
+                  modal="true" resizable="false"
+                  height="600px"
+                  width="90%"
+                  style="overflow: auto"
+                  appendTo="@(body)" 
+                  header="#{langue['Titre.Dlg.Creation']} : #{langue.programmation}" 
+                  closeOnEscape="true">
+
+            <h:form id="ProjetCreerForm">
+
+                <h:panelGroup id="display">
+
+                    <center>
+                        <h:panelGrid columns="3" columnClasses ="column">  
+
+                            <p:outputLabel value="#{langue.projets}" for="projet"/>
+                            <p:selectOneMenu filter="true" id="projet" value="#{programmationController.projet.idprojet}" required="true" requiredMessage="#{langue.valeur_obligatoire}">
+                                <f:selectItem itemLabel="#{langue.choisir}"/>
+                                <f:selectItems value="#{programmationController.projets}" var="prj" itemLabel="#{prj.nom}" itemValue="#{prj.idprojet}"/>
+                                <p:ajax update="unite_o,datalist1" listener="#{programmationController.updateServiceData()}"/>
+                            </p:selectOneMenu>
+                            <p:message for="projet"/>                            
+
+                            <p:outputLabel value="#{langue.unite_organisation}" for="unite_o"/>
+                            <p:selectOneMenu filter="true" id="unite_o" value="#{programmationController.projetservice.idprojetservice}" required="true" requiredMessage="#{langue.valeur_obligatoire}">
+                                <f:selectItem itemLabel="#{langue.choisir}"/>
+                                <f:selectItems value="#{programmationController.projetservices}" var="prjs" itemLabel="#{prjs.idservice.nom}" itemValue="#{prjs.idprojetservice}"/>
+                                <p:ajax update="datalist1" listener="#{programmationController.updateData()}"/>
+                            </p:selectOneMenu>
+                            <p:message for="unite_o"/> 
+
+                        </h:panelGrid>
+                    </center>
+
+                    <p:separator/>
+
+                    <p:dataTable id="datalist1"
+                                 value="#{programmationController.programmations}"
+                                 var="item1"
+                                 rowKey="#{item1.idprogrammation}"
+                                 paginator="true"
+                                 rowIndexVar="index"
+                                 rows="10"
+                                 rowsPerPageTemplate="10,20,30,40,50"
+                                 editable="true"
+                                 editMode="cell">
+
+                        <p:column style="width: 20%">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.etape}"/>
+                            </f:facet>
+                            <h:outputText value="#{item1.idetapeprojet.idetape.nom}"/>
+                        </p:column>
+
+                        <p:column style="width: 10%;text-align: center">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.numero_ordre}"/>
+                            </f:facet>
+                            <h:outputText value="#{item1.idetapeprojet.numero}"/>
+                        </p:column>
+
+                        <p:column style="width: 20%;" headerText="#{langue.document}">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{item1.iddocument.nom}">
+                                        <f:convertNumber/>
+                                    </h:outputText>
+                                </f:facet>
+                                <f:facet  name="input">
+                                    <p:selectOneMenu filter="true" required="true" value="#{item1.iddocument}" converter="documentConverter">                                             
+                                        <f:selectItem itemLabel="#{langue.choisir}"/>
+                                        <f:selectItems value="#{programmationController.documents}" var="doc" itemLabel="#{doc.nom}" itemValue="#{doc}"/>
+                                        <p:ajax event="keyup"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column style="width: 30%;" headerText="#{langue.acteur}">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{item1.idacteur.nom} #{item1.idacteur.prenom}"/>                                        
+                                </f:facet>
+                                <f:facet  name="input">
+                                    <p:selectOneMenu filter="true" required="true" value="#{item1.idacteur}" converter="acteurConverter">                                             
+                                        <f:selectItem itemLabel="#{langue.choisir}"/>
+                                        <f:selectItems value="#{programmationController.acteurs}" var="obj" itemLabel="#{obj.nom} #{obj.prenom}" itemValue="#{obj}"/>
+                                        <p:ajax event="keyup"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column style="width: 10%;text-align: center" headerText="#{langue.delai}">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{item1.dateprevisionnel}"> 
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>                                       
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:calendar required="true" disabled="#{index!=0}" value="#{item1.dateprevisionnel}" navigator="true" pattern="dd/MM/yyyy">                                             
+                                        <p:ajax event="dateSelect"/>
+                                    </p:calendar>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <p:separator/>
+
+                    <center>
+                        <p:commandButton icon="ui-icon-close" value="#{langue.fermer}" onclick="PF('ProjetCreerDialog').hide()"/>
+                        <p:commandButton disabled="#{programmationController.showValidateBtn}" actionListener="#{programmationController.create()}" value="#{langue['Conv.Enregistrer']}" 
+                                         update="display,:ProjetListerForm:datalist,:notify1" onclick="PF('AjaxNotifyDialog').show()"/>
+                    </center>
+
+                </h:panelGroup>  
+
+            </h:form>
+
+        </p:dialog>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:form id="ProjetListerForm">
+
+        <p:messages id="growl" closable="true">
+            <p:effect type="pulsate" event="load" delay="50" />
+        </p:messages>
+
+        <ui:repeat value="#{suiviController.projetservices}" var="var" >
+
+            <h:outputText value="#{var.idprojet.nom} / #{var.idservice.nom}" style="font-size: 18px;color: red"/>            
+            <p:separator/>
+
+            <h:panelGrid columns="#{suiviController.findProgrammation(var).size()}">
+
+                <ui:repeat value="#{suiviController.findProgrammation(var)}" var="var1">
+
+                    <div style="width: 400px;float: left;height: 300px;border: solid 1px blue" class="container">
+
+                        <center>
+                            <div>
+
+                                <div class="panel panel-primary">
+
+                                    <div class="panel-heading">
+                                        <h:outputText value="#{var1.idetapeprojet.idetape.nom}" style="font-size: 15px;text-align: center;margin-left: 30px"/>
+                                    </div>
+
+                                    <div class="panel-body">
+                                        <br/>
+
+                                        <center>
+                                            <p:commandButton value="#{langue.charger_document}" disabled="#{!var1.valide and !var1.active}" actionListener="#{suiviController.prepareAddDocument(var1)}" update=":DocumentAddForm,:notify1" />                                
+                                        </center>
+
+                                        <br/>
+
+                                        <center>
+                                            <p:commandButton value="#{langue.visualiser_document}" disabled="#{!var1.active and !var1.envoye}" />                          
+                                        </center>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </center>
+
+                    </div>
+
+                </ui:repeat>
+
+            </h:panelGrid>
+
+            <p:separator/>
+
+        </ui:repeat>
+
+    </h:form>
+
+    <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+    <p:dialog id="notify1" widgetVar="NotifyDialog1" height="220" width="600" resizable="true" responsive="true" modal="true" style="text-align: center; font-size: 14px; font-family: Cambria;">
+        <f:facet name="header">
+            <h:outputText style="font-family: Cambria; font-size: 14px;" value="#{suiviController.routine.titleNotify}" />
+        </f:facet>
+        <h:form id="NotifyForm1">
+            <h:graphicImage id="nt_img" url="#{suiviController.routine.iconMessage}" style="cursor:pointer" />
+
+            <hr size="3" style="background-color: cornflowerblue;"/>
+
+            <h:outputText id="nt_msg" value="#{suiviController.routine.message}"/>
+
+            <hr size="3" style="background-color: cornflowerblue; margin-top: 5%;"/>
+
+            <p:commandButton style="font-family: Cambria; font-size: 14px;" value="#{langue.valider}" onclick="PF('NotifyDialog1').hide()" type="button" immediate="true"/>
+
+            <hr size="3" style="background-color: cornflowerblue;"/>
+        </h:form>
+    </p:dialog>
+
+    <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+</ui:composition>

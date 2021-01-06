@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition>
+
+        <p:dialog id="PeriodeCreerDlg" 
+                  widgetVar="PeriodeCreerDialog" 
+                  modal="true" resizable="false" 
+                  appendTo="@(body)" 
+                  header="#{langue['Titre.Dlg.Creation']} : #{langue.periode}" 
+                  closeOnEscape="true">
+
+            <h:form id="PeriodeCreerForm">
+                <h:panelGroup id="display">
+                    <h:panelGrid columns="3" columnClasses ="column">
+
+                        <p:outputLabel value="#{langue.periode_parent} : " for="periode_parent"/>
+                        <p:selectOneMenu filter="true" id="periode_parent" value="#{periodeController.periodeParent.idperiode}" >
+                            <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
+                            <f:selectItems value="#{periodeController.periodes1}" var="item" itemLabel="#{item.nom}" itemValue="#{item.idperiode}"/>
+                        </p:selectOneMenu>
+                        <p:message for="periode_parent"/>
+                        
+                        <p:outputLabel value="#{langue.code}" for="code" />
+                        <p:inputText id="code" value="#{periodeController.periode.code}" required="true" 
+                                     requiredMessage="#{langue.valeur_obligatoire}"/>
+                        <p:message for="code"/>
+
+                        <p:outputLabel value="#{langue.libelle}" for="nom" />
+                        <p:inputText id="nom" value="#{periodeController.periode.nom}" required="true" 
+                                     requiredMessage="#{langue.valeur_obligatoire}"/>
+                        <p:message for="nom"/>                            
+                        
+                        <p:outputLabel value="#{langue.etat}" for="etat" />
+                        <h:selectBooleanCheckbox id="etat" value="#{periodeController.periode.etat}"/>
+                        <p:message for="etat"/>
+                                               
+                    </h:panelGrid>
+
+                    <p:separator/>
+
+                    <p:commandButton style="float: right" actionListener="#{periodeController.create()}" value="#{langue['Conv.Enregistrer']}" 
+                                     update="display,:PeriodeListerForm:datalist,:actionsForm, :notify1"/>
+
+                    <p:commandButton style="float: left" value="#{langue.annuler}" onclick="PF('PeriodeCreerDialog').hide()"/>
+                </h:panelGroup>  
+
+            </h:form>
+
+        </p:dialog>
+
+    </ui:composition>
+
+</html>

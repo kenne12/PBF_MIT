@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition>
+
+        <p:dialog id="AddserviceDlg" 
+                  widgetVar="AddserviceDialog" 
+                  modal="true" resizable="false"   
+                  style="overflow: auto"
+                  appendTo="@(body)"
+                  height="560"
+                  width="800"
+                  header="Ajout des services" 
+                  closeOnEscape="true">
+
+            <h:form id="AddserviceForm">
+                <h:panelGroup id="display">
+
+                    <p:outputLabel value="#{langue.unite_organisation_parent}" for="uo_parent"/>
+                    <p:selectOneMenu filter="true" id="uo_parent" value="#{dupliqerProjetController.service.idservice}">
+                        <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
+                        <f:selectItems value="#{dupliqerProjetController.service_parents}" var="item" itemLabel="#{item.nom}" itemValue="#{item.idservice}"/>
+                        <p:ajax update="grid2" listener="#{dupliqerProjetController.filterService()}"/>
+                    </p:selectOneMenu>
+                    
+                    <p:separator/>
+
+                    <p:selectManyCheckbox id="grid2" value="#{dupliqerProjetController.selectedServices}" layout="responsive" columns="3" converter="serviceConverter" required="true">
+                        <f:selectItems value="#{dupliqerProjetController.services}" var="srv" itemLabel="#{srv.nom}" itemValue="#{srv}"/>
+                    </p:selectManyCheckbox>
+
+                    <p:separator/>
+
+                    <p:commandButton style="float: right" actionListener="#{dupliqerProjetController.addServices()}" value="#{langue['Conv.Enregistrer']}" 
+                                     update="display,:ProjetCreerForm,:notify1"/>
+
+                    <p:commandButton style="float: left" value="#{langue.annuler}" onclick="PF('AddserviceDialog').hide()"/>
+                </h:panelGroup>  
+
+            </h:form>
+
+        </p:dialog>
+
+    </ui:composition>
+
+</html>

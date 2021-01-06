@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition>
+
+        <p:dialog id="PieceAddDlg" 
+                  widgetVar="PieceAddDialog" 
+                  modal="true" resizable="false"
+                  height="580"
+                  width="1200"
+                  visible="false"
+                  style="overflow: auto"
+                  appendTo="@(body)" 
+                  header="#{langue['Titre.Dlg.Creation']} : #{langue.piece_jointes}" 
+                  closeOnEscape="true">
+
+            <h:form id="PieceAddForm">
+
+                <h:panelGroup id="display">
+                    
+                    <br/>
+                    <h:outputText value="NB : LE FORMAT DOIT ETRE PDF DE PREFERENCE" style="font-size: 20px ; color: red" />
+                    <br/>
+                    <br/>
+                    
+                    <h:outputLabel value="#{langue.observation}"/>
+                    <p:inputTextarea id="obs" cols="200" rows="5" value="#{suiviController.piecejointe.observation}" required="true" style="width: 500px">
+                        <p:ajax event="keyup" />
+                    </p:inputTextarea>
+
+                    <h:outputLabel value="#{langue.photo}"/>
+                    <p:fileUpload disabled="#{suiviController.disabledDownPiece}" id="add_photo" fileUploadListener="#{suiviController.handleFileUpload1}" mode="advanced" dragDropSupport="false" accept=""  invalidSizeMessage="#{langue.taille_erreur}" cancelLabel="#{langue.fermer}" invalidFileMessage="#{langue.fichier_non_pris_en_charge}" uploadLabel="#{langue.charger}"   
+                                  update=":notify1,datalist_1,obs" sizeLimit="10000000" fileLimit="3" allowTypes="/(\.|\/)(pdf|docx|XLS)$/" />                   
+                    <p:separator/>
+                    
+                    <p:dataTable id="datalist_1"
+                                 value="#{suiviController.piecejointes}"
+                                 var="item"
+                                 rowKey="#{item.idpiecejointes}"
+                                 paginator="true"
+                                 rows="10"
+                                 style="text-align: center;"
+                                 rowsPerPageTemplate="10,20,30,40,50">
+
+                        <p:column style="text-align: left;width: 45%">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.observation}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.observation}"/>
+                        </p:column>
+
+                        <p:column style="text-align: left;width: 30%">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.nom_fichier}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.chemin}"/>
+                        </p:column>
+
+                        <p:column style="text-align: left;width: 13%">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.type_fichier}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.typefichier}"/>
+                        </p:column>
+                        
+                        <p:column style="width: 12%;">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.action}"/>
+                            </f:facet>
+                            <p:commandButton icon="ui-icon-search" onclick="PF('AjaxNotifyDialog').show()">
+                                <p:ajax event="click" listener="#{suiviController.viewPieces(item)}" update=":notify1,:ProjetImprimerForm"/>
+                            </p:commandButton>
+                            
+                            <p:commandButton disabled="#{suiviController.disabledDownPiece}" icon="ui-icon-trash">
+                                <p:ajax event="click" listener="#{suiviController.removePiece(index , item)}" update="datalist_1,:notify1"/>
+                            </p:commandButton>
+                            
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <p:separator/>
+
+                    <center>
+                        <p:commandButton update=":ProjetListerForm" value="#{langue.fermer}" onclick="PF('PieceAddDialog').hide()"/>
+                    </center>
+
+                </h:panelGroup>  
+
+            </h:form>
+
+        </p:dialog>
+
+    </ui:composition>
+
+</html>

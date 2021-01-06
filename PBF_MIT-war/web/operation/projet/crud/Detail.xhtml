@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition>
+
+        <p:dialog id="ProjetDetailDlg" 
+                  widgetVar="ProjetDetailDialog" 
+                  modal="true" resizable="false"  
+                  appendTo="@(body)"
+                  width="80%"
+                  height="550px"
+                  header="#{langue['Titre.Dlg.Detail']}: #{langue.projet}" closeOnEscape="true">
+
+            <h:form id="ProjetDetailForm">
+
+                <h:panelGroup id="display">
+
+                    <center>
+
+                        <h:panelGrid columns="" columnClasses ="column">
+
+                            <p:outputLabel value="#{langue.periode}" for="periode"/>
+                            <p:selectOneMenu disabled="true" filter="true" id="periode" value="#{projetController.periode.idperiode}" required="true" requiredMessage="#{langue.valeur_obligatoire}">
+                                <f:selectItem itemLabel="#{langue.choisir}"/>
+                                <f:selectItems value="#{projetController.periodes}" var="item" itemLabel="#{item.nom}" itemValue="#{item.idperiode}"/>
+                                <p:ajax/>
+                            </p:selectOneMenu>                     
+
+                            <p:outputLabel value="#{langue.libelle}" for="libelle" />
+                            <p:inputTextarea disabled="true" style="width: 600px" cols="130" rows="7" id="libelle" value="#{projetController.projet.nom}" required="true" 
+                                             requiredMessage="#{langue.valeur_obligatoire}">
+                                <p:ajax/>
+                            </p:inputTextarea>
+
+                            <p:outputLabel value="#{langue.etat}" for="etat" />
+                            <h:selectBooleanCheckbox disabled="true" id="etat" value="#{projetController.projet.etat}" />
+
+                        </h:panelGrid>
+
+                    </center>
+
+                    <p:separator/>
+
+                    <p:dataTable id="datalist"
+                                 value="#{projetController.projetservices}"
+                                 var="item"                                 
+                                 paginator="true"
+                                 rows="10"
+                                 rowIndexVar="index"
+                                 style="text-align: center;"
+                                 rowsPerPageTemplate="10,20,30,40,50">
+
+                        <p:column style="width: 32%" filterBy="#{item.idservice.nom} ">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.nom}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.idservice.nom}"/>
+                        </p:column>                        
+
+                        <p:column style="width: 8%">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.action}"/>
+                            </f:facet>
+                            <p:commandButton disabled="true" icon="ui-icon-trash">
+                                <p:ajax event="click" listener="#{projetController.removeService(index , item)}" update="datalist,:notify1,:ProjetCreerForm"/>
+                            </p:commandButton>
+                        </p:column>
+
+                    </p:dataTable>
+                   
+                    <p:separator/>
+
+                    <p:dataTable id="datalist1"
+                                 value="#{projetController.etapeprojets}"
+                                 var="item1"
+                                 rowKey="#{item1.idetapeprojet}"
+                                 paginator="true"
+                                 rowIndexVar="index"
+                                 rows="10"
+                                 style="text-align: center;"
+                                 rowsPerPageTemplate="10,20,30,40,50"
+                                 editable="true"
+                                 editMode="cell">
+
+                        <p:column style="width: 35%">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.etape}"/>
+                            </f:facet>
+                            <h:outputText value="#{item1.idetape.nom}"/>
+                        </p:column>
+
+                        <p:column style="width: 15%;text-align:center" headerText="#{langue.numero_ordre}">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{item1.numero}">
+                                        <f:convertNumber/>
+                                    </h:outputText>
+                                </f:facet>
+                                <f:facet  name="input">
+                                    <p:inputText required="true" value="#{item1.numero}">                                             
+                                        <p:ajax event="keyup"/>
+                                        <f:convertNumber/>
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column style="width: 15%;text-align: center" headerText="#{langue.delai}">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{item1.delai}">
+                                        <f:convertNumber/>
+                                    </h:outputText>
+                                </f:facet>
+                                <f:facet  name="input">
+                                    <p:inputText required="true" value="#{item1.delai}">                                             
+                                        <p:ajax event="keyup"/>
+                                        <f:convertNumber/>
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column style="width: 15%;text-align: center" headerText="#{langue.date_initiale}">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{item1.dateetatinitial}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </f:facet>
+                                <f:facet  name="input">
+                                    <p:calendar required="true" value="#{item1.dateetatinitial}" navigator="true">                                             
+                                        <p:ajax event="keyup"/>
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:calendar>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column style="width: 8%">
+                            <f:facet name="header">
+                                <h:outputText value="#{langue.action}"/>
+                            </f:facet>
+                            <p:commandButton disabled="true" icon="ui-icon-trash">
+                                <p:ajax event="click" listener="#{projetController.removeEtape(index , item)}" update="datalist1,:notify1,:ProjetCreerForm"/>
+                            </p:commandButton>
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <p:commandButton value="#{langue['Conv.Fermer']}" onclick="PF('ProjetDetailDialog').hide()"/>
+                </h:panelGroup>
+
+            </h:form>
+
+        </p:dialog>
+
+    </ui:composition>
+
+</html>
