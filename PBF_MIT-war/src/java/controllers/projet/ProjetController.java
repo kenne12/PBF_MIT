@@ -265,6 +265,8 @@ public class ProjetController extends AbstractProjetController implements Serial
                     chaine = chaine.replaceAll(" ", "_");
                     chaine = chaine.replaceAll("é", "e");
                     chaine = chaine.replaceAll("__", "_");
+                    chaine = chaine.replaceAll("/", "_");
+                    chaine = chaine.replaceAll("'\'", "_");
                     et.setRepertoire(chaine);
                     et.setIdetape(e);
                     et.setDelai(e.getDelaiDefault());
@@ -338,12 +340,12 @@ public class ProjetController extends AbstractProjetController implements Serial
                 projet.setDatecreation(new Date());
 
                 if (!projet.getRepertoire().isEmpty()) {
-                    if (projet.getRepertoire().contains(" ")) {
-                        String resultat = projet.getRepertoire().replaceAll(" ", "_");
-                        resultat = resultat.replaceAll("-", "_");
-                        resultat = resultat.toLowerCase();
-                        projet.setRepertoire(resultat);
-                    }
+                    String resultat = projet.getRepertoire().replaceAll(" ", "_");
+                    resultat = resultat.replaceAll("-", "_");
+                    resultat = resultat.replaceAll("/", "_");
+                    resultat = resultat.replaceAll("'\'", "_");
+                    resultat = resultat.toLowerCase();
+                    projet.setRepertoire(resultat);
                 }
 
                 File file = new File(SessionMBean.getParametrage().getRepertoire());

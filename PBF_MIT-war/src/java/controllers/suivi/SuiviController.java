@@ -71,9 +71,9 @@ public class SuiviController extends AbstractSuiviController implements Serializ
             projetservices.clear();
             if (projet.getIdprojet() != null) {
                 if (SessionMBean.getUserAccount().getIdacteur().getIdservice().getCentral()) {
-                    projetservices = projetserviceFacadeLocal.findByIdprojetRegional(projet.getIdprojet(), false, false,true,false);
+                    projetservices = projetserviceFacadeLocal.findByIdprojetRegional(projet.getIdprojet(), false, false, true, false);
                 } else if (SessionMBean.getUserAccount().getIdacteur().getIdservice().getRegional()) {
-                    projetservices = projetserviceFacadeLocal.findByIdserviceparentVs(SessionMBean.getUserAccount().getIdacteur().getIdservice().getIdservice(), projet.getIdprojet(),true,false);
+                    projetservices = projetserviceFacadeLocal.findByIdserviceparentVs(SessionMBean.getUserAccount().getIdacteur().getIdservice().getIdservice(), projet.getIdprojet(), true, false);
                 } else {
                     projetservices = projetserviceFacadeLocal.findByIdservice(SessionMBean.getUserAccount().getIdacteur().getIdservice().getIdservice(), projet.getIdprojet());
                 }
@@ -190,10 +190,16 @@ public class SuiviController extends AbstractSuiviController implements Serializ
         return false;
     }
 
-    public boolean renderedActivate(boolean envoye, boolean valide) {
-        if (envoye) {
+    public boolean renderedActivate(Programmation programmation, boolean envoye, boolean active) {
+        if (active) {
             if (Utilitaires.isAccess(1L)) {
-                return false;
+                if (envoye) {
+                    return false;
+                }
+                if (programmation.getIdetapeprojet().getNumero() == 1) {
+                    return false;
+                }
+                return true;
             }
             return true;
         }
@@ -332,6 +338,10 @@ public class SuiviController extends AbstractSuiviController implements Serializ
         try {
             programmation = p;
             programmation.setValide(true);
+            if (!p.getEnvoye()) {
+                programmation.setDateTransfert(new Date());
+                programmation.setDaterealisation(new Date());
+            }
             programmation.setDateValidation(p.getDaterealisation());
             RequestContext.getCurrentInstance().execute("PF('ValidationCreerDialog').show()");
         } catch (Exception e) {
@@ -351,32 +361,35 @@ public class SuiviController extends AbstractSuiviController implements Serializ
     public void validate() {
         try {
             if (programmation.getDateprevisionnel() == null) {
+                RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
                 signalError("notification.valider_etape_precedente");
                 return;
             }
 
-            if (programmation.getConteur() == 1) {
+            if (programmation.getDaterealisation().after(programmation.getDateFinPrevisionnel())) {
+                programmation.setRetard(Utilitaires.duration(programmation.getDateFinPrevisionnel(), programmation.getDaterealisation()));
+            } else if (programmation.getDaterealisation().before(programmation.getDaterealisation())) {
+                programmation.setRetard(Utilitaires.duration(programmation.getDateprevisionnel(), programmation.getDaterealisation()));
+            } else {
+                programmation.setRetard(0);
+            }
+            programmation.setConteur(programmation.getConteur() + 1);
+            Programmation p1 = programmationFacadeLocal.findByIdprojetIdservice(programmation.getIdprojetservice().getIdprojetservice(), (programmation.getIdetapeprojet().getNumero() + 1));
 
-                if (programmation.getDaterealisation().after(programmation.getDateFinPrevisionnel())) {
-                    programmation.setRetard(Utilitaires.duration(programmation.getDateFinPrevisionnel(), programmation.getDaterealisation()));
-                } else if (programmation.getDaterealisation().before(programmation.getDaterealisation())) {
-                    programmation.setRetard(Utilitaires.duration(programmation.getDateprevisionnel(), programmation.getDaterealisation()));
-                } else {
-                    programmation.setRetard(0);
-                }
-
-                Programmation p1 = programmationFacadeLocal.findByIdprojetIdservice(programmation.getIdprojetservice().getIdprojetservice(), (programmation.getIdetapeprojet().getNumero() + 1));
-                if (p1 != null) {
-                    p1.setActive(true);
-                    p1.setEnvoye(false);
-                    p1.setRetard(0);
-                    p1.setDateprevisionnel(programmation.getDaterealisation());
-                    p1.setDateFinPrevisionnel(Utilitaires.addDaysToDate(programmation.getDaterealisation(), p1.getIdetapeprojet().getDelai()));
-                    p1.setDaterealisation(null);
-                    p1.setDateValidation(null);
-                    p1.setValide(false);
-                    programmationFacadeLocal.edit(p1);
-                }
+            //System.err.println("Id service : " + programmation.getIdprojetservice().getIdprojetservice());
+            //System.err.println("N° étape : " + (programmation.getIdetapeprojet().getNumero() + 1));
+            //System.err.println("Id service prochain: " + p1.getIdprojetservice().getIdprojetservice());
+            //System.err.println("N° étape prochain : " + (p1.getIdetapeprojet().getNumero() + 1));
+            if (p1 != null) {
+                p1.setActive(true);
+                p1.setEnvoye(false);
+                p1.setRetard(0);
+                p1.setDateprevisionnel(programmation.getDaterealisation());
+                p1.setDateFinPrevisionnel(Utilitaires.addDaysToDate(programmation.getDaterealisation(), p1.getIdetapeprojet().getDelai()));
+                p1.setDaterealisation(null);
+                p1.setDateValidation(null);
+                p1.setValide(false);
+                programmationFacadeLocal.edit(p1);
             }
 
             programmationFacadeLocal.edit(programmation);

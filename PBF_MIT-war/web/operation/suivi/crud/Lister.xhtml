@@ -44,20 +44,20 @@
                             </div>
 
                             <div style="width: 100%;height: 70%;background-color: #{suiviController.checkFooterColor(var1.valide, var1.observee, var1.observationvalidee)}">
-                                <p:commandButton icon="ui-icon-image" value="#{langue.charger_document}" disabled="#{suiviController.renderedDownload(var1.active,var1.valide , var1.idacteur)}" actionListener="#{suiviController.prepareAddDocument(var1)}" update=":DocumentAddForm,:notify1,ProjetListerForm" style="margin-left: 10px;margin-top: 5px" />                                
-                                <p:commandButton icon="ui-icon-search" value="#{langue.visualiser_document}" disabled="#{suiviController.renderedView(var1.active,var1.envoye)}"  actionListener="#{suiviController.viewDocument(var1)}" update=":ProjetImprimerForm,:notify1" onclick="PF('AjaxNotifyDialog').show()" style="margin-left: 10px;margin-top: 10px"/>                          
+                                <p:commandButton icon="ui-icon-image" value="#{langue.charger_document}" disabled="#{suiviController.renderedDownload(var1.active, var1.valide , var1.idacteur)}" actionListener="#{suiviController.prepareAddDocument(var1)}" update=":DocumentAddForm,:notify1,ProjetListerForm" style="margin-left: 10px;margin-top: 5px" />                                
+                                <p:commandButton icon="ui-icon-search" value="#{langue.visualiser_document}" disabled="#{suiviController.renderedView(var1.active, var1.envoye)}"  actionListener="#{suiviController.viewDocument(var1)}" update=":ProjetImprimerForm,:notify1" onclick="PF('AjaxNotifyDialog').show()" style="margin-left: 10px;margin-top: 10px"/>                          
 
                                 <div style="width: 100%">
                                     <p:commandButton icon="ui-icon-plus" value="#{langue.piece_jointes}" disabled="#{suiviController.renderedPiece(var1.active)}"  actionListener="#{suiviController.prepareAddPiece(var1)}" update=":PieceAddForm,:notify1" onclick="PF('AjaxNotifyDialog').show()" style="margin-left: 10px ;margin-top: 10px"/>                          
                                 </div>
 
-                                <p:commandButton icon="ui-icon-check" value="#{langue.valider}" disabled="#{suiviController.renderedActivate(var1.envoye , var1.valide)}"  actionListener="#{suiviController.activateStape(var1)}" update=":notify1,:ValidationCreerForm" style="margin-left: 10px ;margin-top: 10px"/>                                                     
-                                <p:commandButton icon="ui-icon-search" rendered="#{suiviController.renderedViewBtn(var1.valide , var1.observee)}" value="#{langue.observations}" disabled="#{suiviController.renderedViewObservation(var1.envoye , var1.valide , var1)}"  actionListener="#{suiviController.viewObservation(var1)}" update=":notify1,:ObservationViewForm" style="margin-left: 10px ;margin-top: 10px"/>                          
+                                <p:commandButton icon="ui-icon-check" value="#{langue.valider}" disabled="#{suiviController.renderedActivate(var1, var1.envoye, var1.active)}"  actionListener="#{suiviController.activateStape(var1)}" update=":notify1,:ValidationCreerForm" style="margin-left: 10px ;margin-top: 10px"/>                                                     
+                                <p:commandButton icon="ui-icon-search" rendered="#{suiviController.renderedViewBtn(var1.valide, var1.observee)}" value="#{langue.observations}" disabled="#{suiviController.renderedViewObservation(var1.envoye , var1.valide , var1)}"  actionListener="#{suiviController.viewObservation(var1)}" update=":notify1,:ObservationViewForm" style="margin-left: 10px ;margin-top: 10px"/>                          
                             </div>
 
                             <div style="width: 100%;height: 10%;background-color: #dae0e5;">
                                 <center>
-                                    <h:outputText value="#{suiviController.returnRetard(var1.valide , var1.retard)}" style="color: black ; font-size: 18px;text-align: center;"/>
+                                    <h:outputText value="#{suiviController.returnRetard(var1.valide, var1.retard)}" style="color: black ; font-size: 18px;text-align: center;"/>
                                 </center>
                             </div>
 
