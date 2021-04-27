@@ -60,7 +60,6 @@ public class LoginBean extends AbstractLoginBean implements Serializable {
 
                     HttpSession session = SessionMBean.getSession();
                     
-                    System.err.println("acteur : "+utilisateur.getIdacteur().getNom());
                     session.setAttribute("compte", utilisateur);
                     session.setAttribute("session", false);
 

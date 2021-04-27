@@ -240,9 +240,9 @@ public class SuiviController extends AbstractSuiviController implements Serializ
         return "green";
     }
 
-    public String returnRetard(boolean valide, int retard) {
+    public String returnRetard(boolean active, int retard) {
         String result = "";
-        if (valide) {
+        if (active) {
             result = "Nbre Jr rétard : [" + retard + "]";
             return result;
         }
