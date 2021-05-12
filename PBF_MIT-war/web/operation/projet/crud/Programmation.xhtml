@@ -51,7 +51,7 @@
                                 <h:outputText value="#{item1.idetapeprojet.idetape.nom}"/>
                             </p:column>
 
-                            <p:column style="width: 10%;text-align: center">
+                            <p:column style="width: 5%;text-align: center">
                                 <f:facet name="header">
                                     <h:outputText value="#{langue.numero_ordre}"/>
                                 </f:facet>
@@ -75,7 +75,7 @@
                                 </p:cellEditor>
                             </p:column>
 
-                            <p:column style="width: 30%;" headerText="#{langue.acteur}">
+                            <p:column style="width: 25%;" headerText="#{langue.acteur}">
                                 <p:cellEditor>
                                     <f:facet name="output">
                                         <h:outputText value="#{item1.idacteur.nom} #{item1.idacteur.prenom}"/>                                        
@@ -98,13 +98,28 @@
                                         </h:outputText>
                                     </f:facet>
                                     <f:facet name="input">
-                                        <p:calendar required="true" disabled="#{index!=0}" value="#{item1.dateprevisionnel}" navigator="true" pattern="dd/MM/yyyy">                                             
+                                        <p:calendar required="#{index==0}" disabled="#{index!=0}" value="#{item1.dateprevisionnel}" navigator="true" pattern="dd/MM/yyyy">                                             
                                             <p:ajax event="dateSelect"/>
                                         </p:calendar>
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-
+                            
+                            <p:column style="width: 10%;text-align: center" headerText="#{langue.delai}">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{item1.dateFinPrevisionnel}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:calendar required="#{index ==0 }" disabled="#{index!=0}" value="#{item1.dateFinPrevisionnel}" navigator="true" pattern="dd/MM/yyyy">                                             
+                                            <p:ajax event="dateSelect"/>
+                                        </p:calendar>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                        
                         </p:dataTable>
 
                     </ui:repeat>

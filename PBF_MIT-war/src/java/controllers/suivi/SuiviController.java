@@ -375,11 +375,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
             }
             programmation.setConteur(programmation.getConteur() + 1);
             Programmation p1 = programmationFacadeLocal.findByIdprojetIdservice(programmation.getIdprojetservice().getIdprojetservice(), (programmation.getIdetapeprojet().getNumero() + 1));
-
-            //System.err.println("Id service : " + programmation.getIdprojetservice().getIdprojetservice());
-            //System.err.println("N° étape : " + (programmation.getIdetapeprojet().getNumero() + 1));
-            //System.err.println("Id service prochain: " + p1.getIdprojetservice().getIdprojetservice());
-            //System.err.println("N° étape prochain : " + (p1.getIdetapeprojet().getNumero() + 1));
+           
             if (p1 != null) {
                 p1.setActive(true);
                 p1.setEnvoye(false);

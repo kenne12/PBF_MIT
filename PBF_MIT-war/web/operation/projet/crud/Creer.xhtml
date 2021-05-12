@@ -40,10 +40,10 @@
                                 <p:ajax/>
                             </p:inputTextarea>
                             <p:message for="libelle"/>
-                                                        
+
                             <p:outputLabel value="#{langue.repertoire_sauvegarde_projet}" for="repertoire" />
                             <p:inputText id="repertoire" value="#{projetController.projet.repertoire}" required="true" 
-                                             requiredMessage="#{langue.valeur_obligatoire}">
+                                         requiredMessage="#{langue.valeur_obligatoire}">
                                 <p:ajax/>
                             </p:inputText>
                             <p:message for="repertoire"/>
@@ -51,7 +51,7 @@
                             <p:outputLabel value="#{langue.etat}" for="etat" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
                             <h:selectBooleanCheckbox id="etat" value="#{projetController.projet.etat}" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
                             <p:message for="etat" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
-                            
+
                             <p:outputLabel value="#{langue.cloturee} ?" for="cloturee" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
                             <h:selectBooleanCheckbox id="cloturee" value="#{projetController.projet.cloture}" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
                             <p:message for="cloturee" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
@@ -156,14 +156,14 @@
                                     </h:outputText>
                                 </f:facet>
                                 <f:facet name="input">
-                                    <p:calendar required="true" value="#{item1.dateetatinitial}" navigator="true" pattern="dd/MM/yyyy">                                             
+                                    <p:calendar required="#{item1.idetape.idetape == 1}" value="#{item1.dateetatinitial}" navigator="true" pattern="dd/MM/yyyy">                                             
                                         <p:ajax event="dateSelect"/>
                                     </p:calendar>
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        
-                        
+
+
                         <p:column style="width: 24%;text-align: left" headerText="#{langue.repertoire}">
                             <p:cellEditor>
                                 <f:facet name="output">

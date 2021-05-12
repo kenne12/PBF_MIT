@@ -89,4 +89,13 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
         query.executeUpdate();
     }
 
+    @Override
+    public Object[] getRetardByIdService(long idProjetService) {
+        em.createQuery("SELECT p FROM Programmation p", Programmation[].class);
+
+        return em.createQuery("SELECT p.idprojetservice,SUM(p.retard) FROM Programmation p GROUP BY p.idprojetservice", Object[].class)
+                .setParameter("idProjetService", idProjetService)
+                .getSingleResult();
+    }
+
 }

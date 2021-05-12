@@ -83,7 +83,6 @@ public class Programmation implements Serializable {
     @Column(name = "date_transfert")
     @Temporal(TemporalType.DATE)
     private Date dateTransfert;
-
     @Column(name = "date_fin_previsionnel")
     @Temporal(TemporalType.DATE)
     private Date dateFinPrevisionnel;

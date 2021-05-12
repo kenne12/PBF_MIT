@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:form id="ProjetListerForm">
+
+        <p:messages id="growl" closable="true">
+            <p:effect type="pulsate" event="load" delay="50" />
+        </p:messages>
+
+        <center>
+            <h:panelGrid columns="2">
+                <p:selectOneMenu filter="true" value="#{analseRetardProjetController.projet.idprojet}">
+                    <f:selectItem itemLabel="#{langue.choisir}" itemValue=""/>
+                    <f:selectItems value="#{analseRetardProjetController.projets}" var="obj" itemLabel="#{obj.nom}" itemValue="#{obj.idprojet}"/>
+                </p:selectOneMenu>
+                <p:commandButton icon="ui-icon-search" update="ProjetListerForm,datalist,:notify1,growl" 
+                                 value="#{langue.chercher}" actionListener="#{analseRetardProjetController.searchData()}" 
+                                 onclick="PF('AjaxNotifyDialog').show()"/>
+            </h:panelGrid>       
+        </center>
+
+        <p:separator/>
+
+        <p:dataTable id="datalist" 
+                     value="#{analseRetardProjetController.projet.projetserviceList}" 
+                     var="item"                             
+                     paginator="true"
+                     rowKey="#{item.idprojetservice}"
+                     rows="15"
+                     rowsPerPageTemplate="10,20,30,40,50"
+                     style="width: 98%;margin-left: 1%"
+                     rowIndexVar="index"
+                     emptyMessage="#{langue.tableau_vide}"
+                     widgetVar="fonctionTable"
+                     draggableColumns="true"
+                     resizableColumns="true"
+                     selectionMode="single"
+                     selection="#{analseRetardProjetController.projetservice}">
+
+            <p:ajax event="rowSelect"/>
+            <p:ajax event="rowUnselect"/>
+
+            <f:facet name="header"> 
+                <h:outputText value="#{langue.budget}"/>
+            </f:facet>
+
+            <p:columnGroup type="header">
+                <p:row>
+                    <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.unite_organisation}"/>
+                    <p:column class="hardBreak" colspan="#{analseRetardProjetController.projet.etapeprojetList.size()}" headerText="#{langue.etape}"/> 
+                    <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
+                </p:row>
+                <p:row>
+                    <ui:repeat value="#{analseRetardProjetController.projet.etapeprojetList}" var="etp">
+                        <p:column class="hardBreak" headerText="#{etp.numero}"/>
+                    </ui:repeat>
+                </p:row>                
+            </p:columnGroup>
+
+            <p:column colspan="3" >
+                <h:outputText value="#{item.idservice.nom}"/>
+            </p:column>
+
+            <p:columns style="text-align: right" value="#{analseRetardProjetController.projet.etapeprojetList}" var="var">
+                <h:outputText value="#{analseRetardProjetController.loadValue(item.idprojetservice,var)}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </p:columns>
+
+            <p:column style="text-align: right;">
+                <h:outputText value="#{analseRetardProjetController.agregate(item)}"/>
+            </p:column>
+
+            <p:columnGroup type="footer">
+                <p:row>
+                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
+                    <p:columns style="text-align: right" value="#{analseRetardProjetController.projet.etapeprojetList}" var="s" footerText="#{analseRetardProjetController.sommeBudget(s)}">                        
+                    </p:columns> 
+                    <p:column style="text-align:right" footerText="#{analseRetardProjetController.totauxBuget()}" />
+                </p:row>
+            </p:columnGroup>
+
+        </p:dataTable>
+    </h:form>
+
+    <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+    <p:dialog id="notify1" widgetVar="NotifyDialog1" height="220" width="600" resizable="true" responsive="true" modal="true" style="text-align: center; font-size: 14px; font-family: Cambria;">
+        <f:facet name="header">
+            <h:outputText style="font-family: Cambria; font-size: 14px;" value="#{analseRetardProjetController.routine.titleNotify}" />
+        </f:facet>
+        <h:form id="NotifyForm1">
+            <h:graphicImage id="nt_img" url="#{analseRetardProjetController.routine.iconMessage}" style="cursor:pointer" />
+
+            <hr size="3" style="background-color: cornflowerblue;"/>
+
+            <h:outputText id="nt_msg" value="#{analseRetardProjetController.routine.message}"/>
+
+            <hr size="3" style="background-color: cornflowerblue; margin-top: 5%;"/>
+
+            <p:commandButton style="font-family: Cambria; font-size: 14px;" value="#{langue.valider}" onclick="PF('NotifyDialog1').hide()" type="button" immediate="true"/>
+
+            <hr size="3" style="background-color: cornflowerblue;"/>
+        </h:form>
+    </p:dialog>
+
+    <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+</ui:composition>

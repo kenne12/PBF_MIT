@@ -7,17 +7,15 @@
 
     <ui:composition>
         <p:dialog 
-                  id="ProjetImprimerDlg"
-                  widgetVar="ProjetImprimerDialog"
-                  modal="true" resizable="false"
-                  width="70%"
-                  height="600px"
-                  appendTo="@(body)" 
-                  header="#{langue['Titre.Dlg.Impression']}: #{langue['Conv.Batiment']}" closeOnEscape="true">
+            id="ProjetImprimerDlg"
+            widgetVar="ProjetImprimerDialog"
+            modal="true" resizable="false"  
+            appendTo="@(body)" 
+            header="#{langue['Titre.Dlg.Impression']}: #{langue.documents}" closeOnEscape="true">
 
             <h:form id="ProjetImprimerForm">
 
-                <!--<object data="#{request.contextPath}/pdf/pdf.pdf" type="application/pdf" title="cv" width="1200" height="600"></object>-->
+                <object data="#{request.contextPath}/#{suiviController.filename}" type="#{suiviController.type_fichier}" title="cv" width="1200" height="600"></object>
 
             </h:form>
 

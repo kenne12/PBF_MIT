@@ -1,5 +1,8 @@
 package controllers.projet;
 
+import com.google.common.base.Objects;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type;
 import entities.Acteur;
 import entities.Etape;
 import entities.Etapeprojet;
@@ -9,6 +12,7 @@ import entities.Projetservice;
 import entities.Service;
 import java.io.File;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +21,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+
 import org.primefaces.context.RequestContext;
 import utils.SessionMBean;
 import utils.Utilitaires;
@@ -332,12 +337,30 @@ public class ProjetController extends AbstractProjetController implements Serial
         try {
             if (mode.equals("Create")) {
 
+                if (projetservices.isEmpty()) {
+                    RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
+                    signalError("liste_service_vide");
+                    return;
+                }
+
+                if (etapeprojets.isEmpty()) {
+                    RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
+                    this.signalError("liste_etape_vide");
+                    return;
+                }
+
+                if (Objects.equal(etapeprojets.get(0).getDateetatinitial(), null)) {
+                    RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
+                    signalError("veuillez_definir_etape_initiale");
+                    return;
+                }
+
                 ut.begin();
 
                 projet.setIdprojet(projetFacadeLocal.nextVal());
                 projet.setIdperiode(periode);
                 projet.setEtat(true);
-                projet.setDatecreation(new Date());
+                projet.setDatecreation(Date.from(Instant.now()));
 
                 if (!projet.getRepertoire().isEmpty()) {
                     String resultat = projet.getRepertoire().replaceAll(" ", "_");
@@ -412,6 +435,7 @@ public class ProjetController extends AbstractProjetController implements Serial
 
                 for (Projetservice ps : projetservices) {
                     if (ps.getIdprojetservice() == 0L) {
+                        ps.setIdprojetservice(projetserviceFacadeLocal.nextVal());
                         ps.setIdprojet(projet);
                         projetserviceFacadeLocal.create(ps);
                     }
