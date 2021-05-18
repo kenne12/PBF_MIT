@@ -44,9 +44,8 @@ public class AnalseRetardProjetController extends AbstractAnalyseRetardProjetCon
             return;
         }
         projet = projetFacadeLocal.find(projet.getIdprojet());
-        projet.setProjetserviceList(projetserviceFacadeLocal.findByIdprojet(projet.getIdprojet()));
+        projet.setProjetserviceList(projetserviceFacadeLocal.findByIdprojetRegional(projet.getIdprojet(), false, false));
         projet.setEtapeprojetList(etapeprojetFacadeLocal.findByIdprojet(projet.getIdprojet()));
-        System.err.println("Taille : " + projet.getProjetserviceList().size());
         RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
     }
 
@@ -64,16 +63,15 @@ public class AnalseRetardProjetController extends AbstractAnalyseRetardProjetCon
     }
 
     public double agregate(Projetservice projetservice) {
-        
-        return 0;
+        return programmationFacadeLocal.getRetardByIdService(projetservice.getIdprojetservice());
     }
 
-    public double totauxBuget() {
-        return 0;
+    public double agregateRetardByEtape(Etapeprojet etapeprojet) {
+        return programmationFacadeLocal.getRetardByIdEtapeProjet(etapeprojet.getIdetapeprojet());
     }
 
-    public double sommeBudget(Etapeprojet etapeprojet) {
-        return 0;
+    public double agregateRetardByProjet() {
+        return projet.getIdprojet() == null ? 0 : programmationFacadeLocal.getRetardByIdprojet(projet.getIdprojet());
     }
 
 }

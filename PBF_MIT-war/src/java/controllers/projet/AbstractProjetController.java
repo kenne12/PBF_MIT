@@ -68,7 +68,7 @@ public class AbstractProjetController {
 
     @EJB
     protected ProgrammationFacadeLocal programmationFacadeLocal;
-    
+
     @EJB
     protected PiecejointesFacadeLocal piecejointesFacadeLocal;
 
@@ -78,6 +78,9 @@ public class AbstractProjetController {
     protected boolean showValidateBtn;
     protected boolean showAddServiceBtn;
     protected boolean showAddEtapeBtn;
+
+    protected boolean addFlag = false;
+    protected boolean addFlagP = false;
 
     protected Routine routine = new Routine();
 
@@ -170,7 +173,7 @@ public class AbstractProjetController {
 
     public List<Projet> getProjets() {
         try {
-            projets = projetFacadeLocal.findAllRange();            
+            projets = projetFacadeLocal.findAllRange();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -319,7 +322,21 @@ public class AbstractProjetController {
     public void setProjetservices_1(List<Projetservice> projetservices_1) {
         this.projetservices_1 = projetservices_1;
     }
-    
-    
+
+    public boolean isAddFlag() {
+        return addFlag;
+    }
+
+    public void setAddFlag(boolean addFlag) {
+        this.addFlag = addFlag;
+    }
+
+    public boolean isAddFlagP() {
+        return addFlagP;
+    }
+
+    public void setAddFlagP(boolean addFlagP) {
+        this.addFlagP = addFlagP;
+    }
 
 }

@@ -67,22 +67,22 @@
                 <h:outputText value="#{item.idservice.nom}"/>
             </p:column>
 
-            <p:columns style="text-align: right" value="#{analseRetardProjetController.projet.etapeprojetList}" var="var">
+            <p:columns style="text-align: center" value="#{analseRetardProjetController.projet.etapeprojetList}" var="var">
                 <h:outputText value="#{analseRetardProjetController.loadValue(item.idprojetservice,var)}">
                     <f:convertNumber/>
                 </h:outputText>
             </p:columns>
 
-            <p:column style="text-align: right;">
+            <p:column style="text-align: center;">
                 <h:outputText value="#{analseRetardProjetController.agregate(item)}"/>
             </p:column>
 
             <p:columnGroup type="footer">
                 <p:row>
                     <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
-                    <p:columns style="text-align: right" value="#{analseRetardProjetController.projet.etapeprojetList}" var="s" footerText="#{analseRetardProjetController.sommeBudget(s)}">                        
+                    <p:columns style="text-align: center" value="#{analseRetardProjetController.projet.etapeprojetList}" var="s" footerText="#{analseRetardProjetController.agregateRetardByEtape(s)}">                        
                     </p:columns> 
-                    <p:column style="text-align:right" footerText="#{analseRetardProjetController.totauxBuget()}" />
+                    <p:column style="text-align:center" footerText="#{analseRetardProjetController.agregateRetardByProjet()}" />
                 </p:row>
             </p:columnGroup>
 

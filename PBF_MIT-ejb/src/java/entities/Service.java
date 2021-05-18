@@ -74,6 +74,11 @@ public class Service implements Serializable {
         this.idservice = idservice;
     }
 
+    public Service(Integer idservice, String nom) {
+        this.idservice = idservice;
+        this.nom = nom;
+    }
+
     public Integer getIdservice() {
         return idservice;
     }

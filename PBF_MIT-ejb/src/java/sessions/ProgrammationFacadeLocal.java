@@ -44,6 +44,10 @@ public interface ProgrammationFacadeLocal {
 
     void deleteByIdprojet(int idprojet) throws Exception;
 
-    Object[] getRetardByIdService(long idProjetService);
+    double getRetardByIdService(long idProjetService);
+
+    double getRetardByIdEtapeProjet(long idEtapeProjet);
+
+    double getRetardByIdprojet(int idProjet);
 
 }

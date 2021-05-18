@@ -4,7 +4,8 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf">
 
     <ui:composition>
 
@@ -21,13 +22,21 @@
             <h:form id="AddserviceForm">
                 <h:panelGroup id="display">
 
-                    <p:outputLabel value="#{langue.unite_organisation_parent}" for="uo_parent"/>
-                    <p:selectOneMenu filter="true" id="uo_parent" value="#{projetController.service.idservice}">
-                        <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
-                        <f:selectItems value="#{projetController.service_parents}" var="item" itemLabel="#{item.nom}" itemValue="#{item.idservice}"/>
-                        <p:ajax update="grid2" listener="#{projetController.filterService()}"/>
-                    </p:selectOneMenu>
-                    
+                    <div class="form-inline">
+
+                        <label for="uo_parent">#{langue.unite_organisation_parent}</label>
+                        <p:selectOneMenu filter="true" id="uo_parent" value="#{projetController.service.idservice}">
+                            <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
+                            <f:selectItems value="#{projetController.service_parents}" var="item" itemLabel="#{item.nom}" itemValue="#{item.idservice}"/>
+                            <p:ajax update="grid2,select_check" listener="#{projetController.filterService()}"/>
+                        </p:selectOneMenu>
+                        
+                        <label>Tout selectionner &nbsp;</label>
+                        <h:selectBooleanCheckbox id="select_check" value="#{projetController.addFlag}"  >
+                            <p:ajax update="grid2" listener="#{projetController.selectServices()}" />
+                        </h:selectBooleanCheckbox>
+                    </div>
+
                     <p:separator/>
 
                     <p:selectManyCheckbox id="grid2" value="#{projetController.selectedServices}" layout="responsive" columns="3" converter="serviceConverter" required="true">
@@ -36,11 +45,13 @@
 
                     <p:separator/>
 
-                    <p:commandButton style="float: right" actionListener="#{projetController.addServices()}" value="#{langue.ajouter}" 
-                                     icon="ui-icon-plus" update="display,:ProjetCreerForm,:ProjetCreerForm:datalist,:notify1"
-                                     onclick="PF('AjaxNotifyDialog').show()"/>
+                    <center>
+                        <p:commandButton  value="#{langue.annuler}" onclick="PF('AddserviceDialog').hide()"/>
+                        <p:commandButton actionListener="#{projetController.addServices()}" value="#{langue.ajouter}" 
+                                         icon="ui-icon-plus" update="display,:ProjetCreerForm,:ProjetCreerForm:datalist,:notify1"
+                                         onclick="PF('AjaxNotifyDialog').show()"/>
+                    </center>
 
-                    <p:commandButton style="float: left" value="#{langue.annuler}" onclick="PF('AddserviceDialog').hide()"/>
                 </h:panelGroup>  
 
             </h:form>

@@ -1,8 +1,6 @@
 package controllers.projet;
 
 import com.google.common.base.Objects;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type;
 import entities.Acteur;
 import entities.Etape;
 import entities.Etapeprojet;
@@ -18,7 +16,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
@@ -29,11 +26,6 @@ import utils.Utilitaires;
 @ManagedBean
 @ViewScoped
 public class ProjetController extends AbstractProjetController implements Serializable {
-
-    @PostConstruct
-    private void init() {
-
-    }
 
     public void prepareCreate() {
         try {
@@ -126,12 +118,46 @@ public class ProjetController extends AbstractProjetController implements Serial
         return services;
     }
 
+    public void selectServices() {
+        if (addFlag) {
+            if (services.size() != selectedServices.size()) {
+                services.forEach(s -> {
+                    if (!selectedServices.contains(s)) {
+                        selectedServices.add(s);
+                    }
+                });
+            }
+        } else {
+            selectedServices.clear();
+            if (mode.equals("Edit")) {
+                projetserviceFacadeLocal.findByIdprojet(projet.getIdprojet())
+                        .forEach(s -> {
+                            selectedServices.add(s.getIdservice());
+                        });
+            }
+        }
+    }
+
+    public void selectServices2() {
+        if (addFlagP) {
+            if (projetservices.size() != selectedProjetservices.size()) {
+                projetservices.forEach(s -> {
+                    if (!selectedProjetservices.contains(s)) {
+                        selectedProjetservices.add(s);
+                    }
+                });
+            }
+        } else {
+            selectedProjetservices.clear();
+        }
+    }
+
     public void filterService() {
         try {
             services.clear();
             selectedServices.clear();
             if (service.getIdservice() != null) {
-
+                addFlag = true;
                 if (mode.equals("Create")) {
                     if (service.getIdservice() == 0) {
                         services = serviceFacadeLocal.findAllRange();
@@ -185,7 +211,6 @@ public class ProjetController extends AbstractProjetController implements Serial
             if (projet != null) {
 
                 if (!Utilitaires.isAccess(29L)) {
-                    RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
                     signalError("acces_refuse");
                     return;
                 }
@@ -245,11 +270,9 @@ public class ProjetController extends AbstractProjetController implements Serial
                 RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
                 RequestContext.getCurrentInstance().execute("PF('ProgrammationAddDialog').show()");
             } else {
-                RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
                 signalError("not_row_selected");
             }
         } catch (Exception e) {
-            RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
             signalException(e);
         }
     }
@@ -338,20 +361,17 @@ public class ProjetController extends AbstractProjetController implements Serial
             if (mode.equals("Create")) {
 
                 if (projetservices.isEmpty()) {
-                    RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
-                    signalError("liste_service_vide");
+                    this.signalError("liste_service_vide");
                     return;
                 }
 
                 if (etapeprojets.isEmpty()) {
-                    RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
                     this.signalError("liste_etape_vide");
                     return;
                 }
 
                 if (Objects.equal(etapeprojets.get(0).getDateetatinitial(), null)) {
-                    RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
-                    signalError("veuillez_definir_etape_initiale");
+                    this.signalError("veuillez_definir_etape_initiale");
                     return;
                 }
 
@@ -473,7 +493,6 @@ public class ProjetController extends AbstractProjetController implements Serial
             if (projet != null) {
 
                 if (!Utilitaires.isAccess(27L)) {
-                    RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
                     signalError("acces_refuse");
                     return;
                 }
@@ -492,7 +511,6 @@ public class ProjetController extends AbstractProjetController implements Serial
                 Utilitaires.saveOperation(mouchardFacadeLocal, "Suppresion du projet " + projet.getNom(), SessionMBean.getUserAccount());
                 projet = new Projet();
                 detail = modifier = supprimer = true;
-                RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
                 signalSuccess();
 
                 try {
@@ -504,11 +522,9 @@ public class ProjetController extends AbstractProjetController implements Serial
                 }
                 projet = new Projet();
             } else {
-                RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
                 signalError("not_row_selected");
             }
         } catch (Exception e) {
-            RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
             signalException(e);
         }
     }
@@ -575,7 +591,6 @@ public class ProjetController extends AbstractProjetController implements Serial
                     }
                 }
             }
-            RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
             signalSuccess();
         } catch (Exception e) {
             signalException(e);
@@ -646,7 +661,6 @@ public class ProjetController extends AbstractProjetController implements Serial
                 RequestContext.getCurrentInstance().execute("PF('DuplicationCreerDialog').hide()");
             }
         } catch (Exception e) {
-            RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
             signalException(e);
         }
     }
@@ -681,22 +695,24 @@ public class ProjetController extends AbstractProjetController implements Serial
             RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
         } catch (Exception e) {
             signalException(e);
-            RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
         }
     }
 
     public void signalError(String chaine) {
         this.routine.feedBack("information", "/resources/tool_images/error.png", this.routine.localizeMessage(chaine));
+        RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
         RequestContext.getCurrentInstance().execute("PF('NotifyDialog1').show()");
     }
 
     public void signalSuccess() {
         this.routine.feedBack("information", "/resources/tool_images/success.png", this.routine.localizeMessage("operation_reussie"));
+        RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
         RequestContext.getCurrentInstance().execute("PF('NotifyDialog1').show()");
     }
 
     public void signalException(Exception e) {
         this.routine.catchException(e, this.routine.localizeMessage("erreur_execution"));
+        RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
         RequestContext.getCurrentInstance().execute("PF('NotifyDialog1').show()");
     }
 }

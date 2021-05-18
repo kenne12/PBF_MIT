@@ -22,7 +22,7 @@
 
                 <h:panelGroup id="display">
 
-                    <h:panelGrid columns="3" columnClasses ="column">
+                    <div class="form-inline">
 
                         <p:outputLabel value="#{langue.unite_organisation}" for="uo"/>
                         <p:selectOneMenu filter="true" id="uo" value="#{projetController.projetservice.idprojetservice}" required="true" requiredMessage="#{langue.valeur_obligatoire}">
@@ -30,9 +30,14 @@
                             <f:selectItems value="#{projetController.projetservices_1}" var="item" itemLabel="#{item.idservice.nom}" itemValue="#{item.idprojetservice}"/>
                             <p:ajax/>
                         </p:selectOneMenu>
-                        <p:message for="uo"/>                       
+                        <p:message for="uo"/>
 
-                    </h:panelGrid>
+                        <label>Tout sélectionner &nbsp;</label>
+                        <h:selectBooleanCheckbox value="#{projetController.addFlagP}"  >
+                            <p:ajax update="grid2" listener="#{projetController.selectServices2()}" />
+                        </h:selectBooleanCheckbox>
+
+                    </div>
 
                     <p:separator/>
 

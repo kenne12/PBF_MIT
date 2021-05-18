@@ -108,6 +108,10 @@ public class Programmation implements Serializable {
     public Programmation(Long idprogrammation) {
         this.idprogrammation = idprogrammation;
     }
+    
+    public Programmation(int retard) {
+        this.retard = retard;
+    }
 
     public Long getIdprogrammation() {
         return idprogrammation;

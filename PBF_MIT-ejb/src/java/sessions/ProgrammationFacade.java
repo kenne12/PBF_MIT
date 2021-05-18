@@ -90,12 +90,39 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
     }
 
     @Override
-    public Object[] getRetardByIdService(long idProjetService) {
-        em.createQuery("SELECT p FROM Programmation p", Programmation[].class);
+    public double getRetardByIdService(long idProjetService) {
+        return em.createQuery("SELECT p.retard , p.idacteur.idacteur FROM Programmation p WHERE p.idprojetservice.idprojetservice=:idProjetservice", Object[].class)
+                .setParameter("idProjetservice", idProjetService)
+                .getResultList()
+                .stream()
+                .map(o -> new Programmation((int) o[0]))
+                .mapToInt(p -> p.getRetard())
+                .average()
+                .getAsDouble();
+    }
 
-        return em.createQuery("SELECT p.idprojetservice,SUM(p.retard) FROM Programmation p GROUP BY p.idprojetservice", Object[].class)
-                .setParameter("idProjetService", idProjetService)
-                .getSingleResult();
+    @Override
+    public double getRetardByIdEtapeProjet(long idProjetEtape) {
+        return em.createQuery("SELECT p.retard , p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetapeprojet=:idEtapeProjet", Object[].class)
+                .setParameter("idEtapeProjet", idProjetEtape)
+                .getResultList()
+                .stream()
+                .map(o -> new Programmation((int) o[0]))
+                .mapToInt(p -> p.getRetard())
+                .average()
+                .getAsDouble();
+    }
+
+    @Override
+    public double getRetardByIdprojet(int idProjet) {
+        return em.createQuery("SELECT p.retard , p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idprojet =:idProjet", Object[].class)
+                .setParameter("idProjet", idProjet)
+                .getResultList()
+                .stream()
+                .map(o -> new Programmation((int) o[0]))
+                .mapToInt(p -> p.getRetard())
+                .average()
+                .getAsDouble();
     }
 
 }
