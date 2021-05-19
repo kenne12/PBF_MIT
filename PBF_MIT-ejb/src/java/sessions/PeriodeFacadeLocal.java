@@ -36,4 +36,6 @@ public interface PeriodeFacadeLocal {
 
     List<Periode> findAllRange() throws Exception;
 
+    List<Periode> findByIdParent(int idParent);
+
 }

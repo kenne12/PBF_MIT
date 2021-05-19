@@ -45,34 +45,41 @@ public class ServiceFacade extends AbstractFacade<Service> implements ServiceFac
 
     @Override
     public List<Service> findParentService() throws Exception {
-        Query query = this.em.createQuery("SELECT s FROM Service s WHERE s.idparent=0");
-        return query.getResultList();
+        return this.em.createQuery("SELECT s FROM Service s WHERE s.idparent=0")
+                .getResultList();
     }
 
     @Override
     public List<Service> findAllRange() throws Exception {
-        Query query = this.em.createQuery("SELECT s FROM Service s ORDER BY s.idparent, s.nom");
-        return query.getResultList();
+        return this.em.createQuery("SELECT s FROM Service s ORDER BY s.idparent, s.nom")
+                .getResultList();
     }
 
     @Override
     public List<Service> findAllRange(boolean central) throws Exception {
-        Query query = this.em.createQuery("SELECT s FROM Service s WHERE s.central=:central ORDER BY s.nom");
-        query.setParameter("central", central);
-        return query.getResultList();
+        return this.em.createQuery("SELECT s FROM Service s WHERE s.central=:central ORDER BY s.nom")
+                .setParameter("central", central)
+                .getResultList();
     }
 
     @Override
     public List<Service> findAllRangeParent() throws Exception {
-        Query query = this.em.createQuery("SELECT s FROM Service s WHERE s.idparent=0 ORDER BY s.nom");
-        return query.getResultList();
+        return this.em.createQuery("SELECT s FROM Service s WHERE s.idparent=0 ORDER BY s.nom")
+                .getResultList();
     }
 
     @Override
     public List<Service> findByServiceParent(int idparent) throws Exception {
-        Query query = this.em.createQuery("SELECT s FROM Service s  WHERE s.idparent!=0 AND s.idparent=:idparent ORDER BY s.nom");
-        query.setParameter("idparent", idparent);
-        return query.getResultList();
+        return this.em.createQuery("SELECT s FROM Service s WHERE s.idparent!=0 AND s.idparent=:idparent ORDER BY s.nom")
+                .setParameter("idparent", idparent)
+                .getResultList();
+    }
+
+    @Override
+    public List<Service> findByServiceParent(int idparent, boolean central, boolean regional) {
+        return this.em.createQuery("SELECT s FROM Service s WHERE s.idparent!=0 AND s.idparent=:idparent AND s.central=:central AND s.regional=:regional ORDER BY s.nom")
+                .setParameter("idparent", idparent).setParameter("central", central).setParameter("regional", regional)
+                .getResultList();
     }
 
 }

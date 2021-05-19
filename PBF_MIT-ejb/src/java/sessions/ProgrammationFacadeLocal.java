@@ -7,6 +7,7 @@ package sessions;
 
 import entities.Programmation;
 import java.util.List;
+import java.util.Optional;
 import javax.ejb.Local;
 
 /**
@@ -49,5 +50,13 @@ public interface ProgrammationFacadeLocal {
     double getRetardByIdEtapeProjet(long idEtapeProjet);
 
     double getRetardByIdprojet(int idProjet);
+
+    Double getRetardByIdServiceIdPeriode(long idService, int idPeriode);
+
+    double getRetardByIdServiceIdPeriodeParent(long idService, int idPeriode);
+
+    double getRetardByIdServiceParentIdperiode(long idService, int idPeriode);
+
+    double getRetardByIdServiceParentIdperiodeParent(long idService, int idPeriode);
 
 }
