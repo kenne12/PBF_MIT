@@ -14,24 +14,17 @@
         </p:messages>
 
         <center>
-            <h:panelGrid columns="7">
-                
-                <h:outputLabel value="#{langue.unite_organisation}" />&nbsp;
-                <p:selectOneMenu filter="true" value="#{analyseRetardPpController.service.idservice}">
+            <h:panelGrid columns="5">
+                                
+                <h:outputLabel value="#{langue.periode_parent}" />
+                <p:selectOneMenu filter="true" value="#{analyseRetardAllPeriodePController.periode.idperiode}">
                     <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
-                    <f:selectItems value="#{analyseRetardPpController.services}" var="svc" itemLabel="#{svc.nom}" itemValue="#{svc.idservice}"/>
+                    <f:selectItems value="#{analyseRetardAllPeriodePController.periodes}" var="obj" itemLabel="#{obj.nom}" itemValue="#{obj.idperiode}"/>
                     <p:ajax />
-                </p:selectOneMenu>
-                
-                <h:outputLabel value="#{langue.periode_parent}" />&nbsp;
-                <p:selectOneMenu filter="true" value="#{analyseRetardPpController.periode.idperiode}">
-                    <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
-                    <f:selectItems value="#{analyseRetardPpController.periodes}" var="obj" itemLabel="#{obj.nom}" itemValue="#{obj.idperiode}"/>
-                    <p:ajax />
-                </p:selectOneMenu>
+                </p:selectOneMenu>&nbsp;
                 
                 <p:commandButton icon="ui-icon-search" update="ProjetListerForm,datalist,:notify1,growl" 
-                                 value="#{langue.chercher}" actionListener="#{analyseRetardPpController.searchData()}" 
+                                 value="#{langue.chercher}" actionListener="#{analyseRetardAllPeriodePController.searchData()}" 
                                  onclick="PF('AjaxNotifyDialog').show()" />
             </h:panelGrid>       
         </center>
@@ -39,7 +32,7 @@
         <p:separator/>
 
         <p:dataTable id="datalist" 
-                     value="#{analyseRetardPpController.sousServices}" 
+                     value="#{analyseRetardAllPeriodePController.services}" 
                      var="item"                             
                      paginator="true"
                      rowKey="#{item.idservice}"
@@ -52,7 +45,7 @@
                      draggableColumns="true"
                      resizableColumns="true"
                      selectionMode="single"
-                     selection="#{analyseRetardPpController.selectedService}">
+                     selection="#{analyseRetardAllPeriodePController.selectedService}">
 
             <p:ajax event="rowSelect"/>
             <p:ajax event="rowUnselect"/>
@@ -64,11 +57,11 @@
             <p:columnGroup type="header">
                 <p:row>
                     <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.unite_organisation}"/>
-                    <p:column class="hardBreak" colspan="#{analyseRetardPpController.sousPeriodes.size()}" headerText="#{langue.etape}"/> 
+                    <p:column class="hardBreak" colspan="#{analyseRetardAllPeriodePController.sousPeriodes.size()}" headerText="#{langue.etape}"/> 
                     <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
                 </p:row>
                 <p:row>
-                    <ui:repeat value="#{analyseRetardPpController.sousPeriodes}" var="sp">
+                    <ui:repeat value="#{analyseRetardAllPeriodePController.sousPeriodes}" var="sp">
                         <p:column class="hardBreak" headerText="#{sp.nom}"/>
                     </ui:repeat>
                 </p:row>                
@@ -78,22 +71,22 @@
                 <h:outputText value="#{item.nom}"/>
             </p:column>
 
-            <p:columns style="text-align: center" value="#{analyseRetardPpController.sousPeriodes}" var="var">
-                <h:outputText value="#{analyseRetardPpController.loadValue(item.idservice,var.idperiode)}">
+            <p:columns style="text-align: center" value="#{analyseRetardAllPeriodePController.sousPeriodes}" var="var">
+                <h:outputText value="#{analyseRetardAllPeriodePController.loadValue(item.idservice,var.idperiode)}">
                     <f:convertNumber />
                 </h:outputText>
             </p:columns>
 
             <p:column style="text-align: center;">
-                <h:outputText value="#{analyseRetardPpController.agregate(item)}"/>
+                <h:outputText value="#{analyseRetardAllPeriodePController.agregate(item)}"/>
             </p:column>
 
             <p:columnGroup type="footer">
                 <p:row>
                     <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
-                    <p:columns style="text-align: center" value="#{analyseRetardPpController.sousPeriodes}" var="s" footerText="#{analyseRetardPpController.agregateRetardByEtape(s)}">                        
+                    <p:columns style="text-align: center" value="#{analyseRetardAllPeriodePController.sousPeriodes}" var="s" footerText="#{analyseRetardAllPeriodePController.agregateRetardByEtape(s)}">                        
                     </p:columns> 
-                    <p:column style="text-align:center" footerText="#{analyseRetardPpController.agregateRetardByProjet()}" />
+                    <p:column style="text-align:center" footerText="#{analyseRetardAllPeriodePController.agregateRetardByProjet()}" />
                 </p:row>
             </p:columnGroup>
 
@@ -104,14 +97,14 @@
 
     <p:dialog id="notify1" widgetVar="NotifyDialog1" height="220" width="600" resizable="true" responsive="true" modal="true" style="text-align: center; font-size: 14px; font-family: Cambria;">
         <f:facet name="header">
-            <h:outputText style="font-family: Cambria; font-size: 14px;" value="#{analyseRetardPpController.routine.titleNotify}" />
+            <h:outputText style="font-family: Cambria; font-size: 14px;" value="#{analyseRetardAllPeriodePController.routine.titleNotify}" />
         </f:facet>
         <h:form id="NotifyForm1">
-            <h:graphicImage id="nt_img" url="#{analyseRetardPpController.routine.iconMessage}" style="cursor:pointer" />
+            <h:graphicImage id="nt_img" url="#{analyseRetardAllPeriodePController.routine.iconMessage}" style="cursor:pointer" />
 
             <hr size="3" style="background-color: cornflowerblue;"/>
 
-            <h:outputText id="nt_msg" value="#{analyseRetardPpController.routine.message}"/>
+            <h:outputText id="nt_msg" value="#{analyseRetardAllPeriodePController.routine.message}"/>
 
             <hr size="3" style="background-color: cornflowerblue; margin-top: 5%;"/>
 

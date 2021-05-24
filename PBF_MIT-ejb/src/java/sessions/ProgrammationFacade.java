@@ -199,4 +199,38 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .getAsDouble();
     }
 
+    @Override
+    public Double getRetardByIdServiceParentIdPeriode(long idService, int idPeriode) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idprojetservice.idservice.idparent=:idService AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode", Object[].class)
+                .setParameter("idService", idService).setParameter("idPeriode", idPeriode).getResultList();
+
+        if (list.isEmpty()) {
+            return 0d;
+        }
+
+        return list.stream()
+                .map(o -> new Programmation((int) o[0]))
+                .mapToInt(p -> p.getRetard())
+                .average()
+                .getAsDouble();
+
+    }
+    
+    @Override
+    public double getRetardByIdServiceParentIdPeriodeParent(long idService, int idPeriode) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idprojetservice.idservice.idparent=:idService AND p.idetapeprojet.idprojet.idperiode.idparent=:idPeriode", Object[].class)
+                .setParameter("idService", idService).setParameter("idPeriode", idPeriode)
+                .getResultList();
+
+        if (list.isEmpty()) {
+            return 0;
+        }
+        return list.stream()
+                .map(o -> new Programmation((int) o[0]))
+                .mapToInt(p -> p.getRetard())
+                .average()
+                .getAsDouble();
+    }
+
 }

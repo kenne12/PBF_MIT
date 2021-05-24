@@ -45,7 +45,7 @@ public class ServiceFacade extends AbstractFacade<Service> implements ServiceFac
 
     @Override
     public List<Service> findParentService() throws Exception {
-        return this.em.createQuery("SELECT s FROM Service s WHERE s.idparent=0")
+        return this.em.createQuery("SELECT s FROM Service s WHERE s.idparent=0 ORDER BY s.nom")
                 .getResultList();
     }
 
