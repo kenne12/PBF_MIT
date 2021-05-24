@@ -23,6 +23,7 @@
                         <p:selectOneMenu filter="true" id="periode_parent" value="#{periodeController.periodeParent.idperiode}" >
                             <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
                             <f:selectItems value="#{periodeController.periodes1}" var="item" itemLabel="#{item.nom}" itemValue="#{item.idperiode}"/>
+                            <p:ajax update="niveau" listener="#{periodeController.updateParent()}" />
                         </p:selectOneMenu>
                         <p:message for="periode_parent"/>
                         
@@ -34,7 +35,17 @@
                         <p:outputLabel value="#{langue.libelle}" for="nom" />
                         <p:inputText id="nom" value="#{periodeController.periode.nom}" required="true" 
                                      requiredMessage="#{langue.valeur_obligatoire}"/>
-                        <p:message for="nom"/>                            
+                        <p:message for="nom"/>
+                        
+                        <p:outputLabel value="#{langue.numero}" for="numero" />
+                        <p:inputText id="numero" value="#{periodeController.periode.numero}" required="true" 
+                                     requiredMessage="#{langue.valeur_obligatoire}"/>
+                        <p:message for="numero"/>
+                        
+                        <p:outputLabel value="#{langue.niveau}" for="niveau" />
+                        <p:inputText id="niveau" value="#{periodeController.periode.niveau}" required="true" 
+                                     requiredMessage="#{langue.valeur_obligatoire}"/>
+                        <p:message for="niveau"/>
                         
                         <p:outputLabel value="#{langue.etat}" for="etat" />
                         <h:selectBooleanCheckbox id="etat" value="#{periodeController.periode.etat}"/>

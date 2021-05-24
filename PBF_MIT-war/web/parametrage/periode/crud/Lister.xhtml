@@ -12,7 +12,7 @@
             <p:effect type="pulsate" event="load" delay="50" />
         </p:messages>
 
-        <p:panel header="#{langue['Conv.ListeDes']} : #{langue.periodes}">
+        <p:panel header="#{langue['Conv.ListeDes']} : #{langue.periodes}" style="width: 70%">
             <p:contextMenu id="PeriodeDataTableContextMenu" for="datalist">  
                 <p:menuitem value="#{langue['Conv.Creer']}" onclick="document.getElementById('actionsForm:creer').click();" icon="ui-icon-plus"/>
                 <p:menuitem value="#{langue['Conv.Detail']}" onclick="document.getElementById('actionsForm:detail').click();" icon="ui-icon-search"/>
@@ -34,28 +34,42 @@
                 <p:ajax event="rowUnselect" update=":PeriodeListerForm:PeriodeDataTableContextMenu, :actionsForm"/>
                 <p:ajax event="rowDblselect" onsuccess="document.getElementById('PeriodeListerForm:viewButton').click();"/>
                 
-                <p:column style="text-align: left">
+                <p:column style="text-align: left ; width: 15%">
                     <f:facet name="header">
                         <h:outputText value="#{langue.periode_parent}"/>
                     </f:facet>
                     <h:outputText value="#{periodeController.findByIdparent(item.idparent).nom}"/>
                 </p:column>
                 
-                <p:column filterBy="#{item.code}" style="text-align: left">
+                <p:column filterBy="#{item.code}" style="text-align: left ; width: 10%">
                     <f:facet name="header">
                         <h:outputText value="#{langue.code}"/>
                     </f:facet>
                     <h:outputText value="#{item.code}"/>
                 </p:column>
                                 
-                <p:column filterBy="#{item.nom}" style="text-align: left">
+                <p:column filterBy="#{item.nom}" style="text-align: left ; width: 20%">
                     <f:facet name="header">
                         <h:outputText value="#{langue.nom}"/>
                     </f:facet>
                     <h:outputText value="#{item.nom}"/>
-                </p:column>               
+                </p:column>
+                
+                <p:column filterBy="#{item.niveau}" style="text-align: center;width: 10%">
+                    <f:facet name="header">
+                        <h:outputText value="#{langue.niveau}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.niveau}"/>
+                </p:column>
+                
+                <p:column filterBy="#{item.numero}" style="text-align: center ; width: 10%">
+                    <f:facet name="header">
+                        <h:outputText value="#{langue.numero}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.numero}"/>
+                </p:column>
 
-                <p:column>
+                <p:column style="width: 5%">
                     <f:facet name="header">
                         <h:outputText value="#{langue.etat}"/>
                     </f:facet>

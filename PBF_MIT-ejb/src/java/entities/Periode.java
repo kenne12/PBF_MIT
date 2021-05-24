@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Periode.findByIdparent", query = "SELECT p FROM Periode p WHERE p.idparent = :idparent"),
     @NamedQuery(name = "Periode.findByCode", query = "SELECT p FROM Periode p WHERE p.code = :code")})
 public class Periode implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -44,6 +45,8 @@ public class Periode implements Serializable {
     private Integer idparent;
     @Size(max = 2147483647)
     private String code;
+    private int numero;
+    private int niveau;
     @OneToMany(mappedBy = "idperiode", fetch = FetchType.LAZY)
     private List<Projet> projetList;
 
@@ -94,6 +97,22 @@ public class Periode implements Serializable {
         this.code = code;
     }
 
+    public int getNumero() {
+        return numero;
+    }
+
+    public void setNumero(int numero) {
+        this.numero = numero;
+    }
+
+    public int getNiveau() {
+        return niveau;
+    }
+
+    public void setNiveau(int niveau) {
+        this.niveau = niveau;
+    }
+
     @XmlTransient
     public List<Projet> getProjetList() {
         return projetList;
@@ -127,5 +146,5 @@ public class Periode implements Serializable {
     public String toString() {
         return "entities.Periode[ idperiode=" + idperiode + " ]";
     }
-    
+
 }

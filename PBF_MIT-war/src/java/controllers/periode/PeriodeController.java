@@ -59,6 +59,15 @@ public class PeriodeController extends AbstractPeriodeController implements Seri
         }
     }
 
+    public void updateParent() {
+        if (periodeParent.getIdperiode() != 0) {
+            periodeParent = periodeFacadeLocal.find(periodeParent.getIdperiode());
+            periode.setNiveau(periodeParent.getNiveau() + 1);
+        } else {
+            periode.setNiveau(0);
+        }
+    }
+
     public Periode findByIdparent(Integer id) {
         Periode p = new Periode();
         try {
