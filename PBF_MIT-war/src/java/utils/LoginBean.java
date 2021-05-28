@@ -8,7 +8,6 @@ import entities.Menu;
 import entities.Mouchard;
 import entities.Privilege;
 import entities.Utilisateur;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class LoginBean extends AbstractLoginBean implements Serializable {
                 if (utilisateur.getEtat()) {
 
                     HttpSession session = SessionMBean.getSession();
-                    
+
                     session.setAttribute("compte", utilisateur);
                     session.setAttribute("session", false);
 
@@ -96,6 +95,13 @@ public class LoginBean extends AbstractLoginBean implements Serializable {
 
                     String sc = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
                     FacesContext.getCurrentInstance().getExternalContext().redirect(sc + "/index.html");
+
+                    //EmailRequest emailRequest = new EmailRequest();
+                    //emailRequest.getReceipients().add(new Receipient("kennegervais@beininfoplus.com", "ACV LITTORAL"));
+                    //emailRequest.setText("Bonjour monsieur gervais , Veuillez prendre note des differentes stratégie à appliquer");
+                    //emailRequest.setSubject("Réunion de coordination");
+
+                    //JavaMailUtils.sendMail(emailRequest);
                 } else {
                     JsfUtil.addWarningMessage("Compte bloqué ! contactez l'administrateur");
                 }

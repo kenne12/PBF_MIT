@@ -21,6 +21,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
+import utils.EmailRequest;
+import utils.MailThread;
+import utils.Receipient;
 import utils.SessionMBean;
 import utils.Utilitaires;
 
@@ -375,7 +378,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
             }
             programmation.setConteur(programmation.getConteur() + 1);
             Programmation p1 = programmationFacadeLocal.findByIdprojetIdservice(programmation.getIdprojetservice().getIdprojetservice(), (programmation.getIdetapeprojet().getNumero() + 1));
-           
+
             if (p1 != null) {
                 p1.setActive(true);
                 p1.setEnvoye(false);
@@ -385,6 +388,22 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                 p1.setDaterealisation(null);
                 p1.setDateValidation(null);
                 p1.setValide(false);
+
+                if (p1.getIdetapeprojet().getIdprojet().isNotifMail()) {
+                    if (!p1.isNotifEmailProgram()) {
+                        p1.setNotifEmailProgram(true);
+                        EmailRequest emailRequest = new EmailRequest();
+                        emailRequest.setSubject("Notification : " + p1.getIdetapeprojet().getIdprojet().getNom());
+                        emailRequest.setText("Bonjour M / Mme " + p1.getIdacteur().getNom() + " La CTN Vous informe de la date initiale de transfert des document pour le projet "
+                                + ": " + p1.getIdetapeprojet().getIdprojet().getNom() + "; Structure : " + p1.getIdprojetservice().getIdservice().getNom() + " Que la date de debut de transfert des documents c'est le "
+                                + p1.getDateprevisionnel() + " Et la date de fin c'est le : " + p1.getDateFinPrevisionnel()
+                                + "\n Veuillez vous connecter sur la plateforme pour télecharger les documents solliciter.");
+
+                        emailRequest.getReceipients().add(new Receipient(p1.getIdacteur().getIdaddresse().getEmail(), p1.getIdacteur().getTitre()));
+                        MailThread mailThread = new MailThread(emailRequest);
+                        mailThread.start();
+                    }
+                }
                 programmationFacadeLocal.edit(p1);
             }
 

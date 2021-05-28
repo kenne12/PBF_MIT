@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Acteur.findByLieunaissance", query = "SELECT a FROM Acteur a WHERE a.lieunaissance = :lieunaissance"),
     @NamedQuery(name = "Acteur.findByIddocument", query = "SELECT a FROM Acteur a WHERE a.iddocument = :iddocument")})
 public class Acteur implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -56,6 +57,7 @@ public class Acteur implements Serializable {
     @Size(max = 254)
     private String lieunaissance;
     private Integer iddocument;
+    private String titre;
     @OneToMany(mappedBy = "idacteur", fetch = FetchType.LAZY)
     private List<Traitement> traitementList;
     @OneToMany(mappedBy = "idacteur", fetch = FetchType.LAZY)
@@ -132,6 +134,14 @@ public class Acteur implements Serializable {
         this.iddocument = iddocument;
     }
 
+    public String getTitre() {
+        return titre;
+    }
+
+    public void setTitre(String titre) {
+        this.titre = titre;
+    }
+
     @XmlTransient
     public List<Traitement> getTraitementList() {
         return traitementList;
@@ -199,5 +209,5 @@ public class Acteur implements Serializable {
     public String toString() {
         return "entities.Acteur[ idacteur=" + idacteur + " ]";
     }
-    
+
 }

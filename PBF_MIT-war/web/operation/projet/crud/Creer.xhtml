@@ -51,6 +51,14 @@
                             <p:outputLabel value="#{langue.etat}" for="etat" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
                             <h:selectBooleanCheckbox id="etat" value="#{projetController.projet.etat}" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
                             <p:message for="etat" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
+                            
+                            <p:outputLabel value="#{langue.notif_email}" for="notif_email" />
+                            <h:selectBooleanCheckbox id="notif_email" value="#{projetController.projet.notifMail}" />
+                            <p:message for="notif_email" />
+                            
+                            <p:outputLabel value="#{langue.notif_sms}" for="notif_sms" />
+                            <h:selectBooleanCheckbox id="notif_sms" value="#{projetController.projet.notifSms}" />
+                            <p:message for="notif_sms" />
 
                             <p:outputLabel value="#{langue.cloturee} ?" for="cloturee" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
                             <h:selectBooleanCheckbox id="cloturee" value="#{projetController.projet.cloture}" rendered="#{projetController.mode.equals('Edit')?true:false}"/>

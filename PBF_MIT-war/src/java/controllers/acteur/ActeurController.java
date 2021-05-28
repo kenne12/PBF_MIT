@@ -31,6 +31,8 @@ public class ActeurController extends AbstractActeurController implements Serial
             
             mode = "Create";
             acteur = new Acteur();
+            acteur.setPrenom("-");
+            acteur.setTitre("-");
             addresse = new Addresse();
             addresse.setBp("-");
             addresse.setEmail("-");

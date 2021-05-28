@@ -59,6 +59,10 @@ public class Projet implements Serializable {
     @JoinColumn(name = "idperiode", referencedColumnName = "idperiode")
     @ManyToOne(fetch = FetchType.LAZY)
     private Periode idperiode;
+    @Column(name = "notif_sms")
+    private boolean notifSms;
+    @Column(name = "notif_mail")
+    private boolean notifMail;
 
     @Temporal(TemporalType.DATE)
     private Date datecreation;
@@ -124,6 +128,22 @@ public class Projet implements Serializable {
 
     public void setDatecreation(Date datecreation) {
         this.datecreation = datecreation;
+    }
+
+    public boolean isNotifSms() {
+        return notifSms;
+    }
+
+    public void setNotifSms(boolean notifSms) {
+        this.notifSms = notifSms;
+    }
+
+    public boolean isNotifMail() {
+        return notifMail;
+    }
+
+    public void setNotifMail(boolean notifMail) {
+        this.notifMail = notifMail;
     }
 
     @XmlTransient

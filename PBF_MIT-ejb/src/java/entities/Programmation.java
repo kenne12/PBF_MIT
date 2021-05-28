@@ -78,6 +78,10 @@ public class Programmation implements Serializable {
     private Boolean observee;
     private Boolean observationvalidee;
     private Integer conteur;
+    @Column(name = "notif_email_program")
+    private boolean notifEmailProgram;
+    @Column(name = "notif_email_validation")
+    private boolean notifEmailValidation;
     @Size(max = 2147483647)
     private String observationutilisateur;
     @Column(name = "date_transfert")
@@ -108,7 +112,7 @@ public class Programmation implements Serializable {
     public Programmation(Long idprogrammation) {
         this.idprogrammation = idprogrammation;
     }
-    
+
     public Programmation(int retard) {
         this.retard = retard;
     }
@@ -287,6 +291,22 @@ public class Programmation implements Serializable {
 
     public void setDateFinPrevisionnel(Date dateFinPrevisionnel) {
         this.dateFinPrevisionnel = dateFinPrevisionnel;
+    }
+
+    public boolean isNotifEmailProgram() {
+        return notifEmailProgram;
+    }
+
+    public void setNotifEmailProgram(boolean notifEmailProgram) {
+        this.notifEmailProgram = notifEmailProgram;
+    }
+
+    public boolean isNotifEmailValidation() {
+        return notifEmailValidation;
+    }
+
+    public void setNotifEmailValidation(boolean notifEmailValidation) {
+        this.notifEmailValidation = notifEmailValidation;
     }
 
     @XmlTransient
