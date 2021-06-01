@@ -31,7 +31,7 @@ public class JavaMailUtils {
             properties.put("mail.smtp.auth", "true");
             properties.put("mail.smtp.socketFactory.port", "465");
             properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-            Session session = Session.getInstance(properties, new AuthenticatorGmail());
+            Session session = Session.getInstance(properties, new AuthenticatorLws());
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress("contact@beininfoplus.com", "CTN PBF CAMEROON"));
 

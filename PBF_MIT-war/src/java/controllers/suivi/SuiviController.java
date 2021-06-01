@@ -377,6 +377,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                 programmation.setRetard(0);
             }
             programmation.setConteur(programmation.getConteur() + 1);
+            programmation.setNotifEmailValidation(true);
             Programmation p1 = programmationFacadeLocal.findByIdprojetIdservice(programmation.getIdprojetservice().getIdprojetservice(), (programmation.getIdetapeprojet().getNumero() + 1));
 
             if (p1 != null) {
@@ -394,10 +395,10 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                         p1.setNotifEmailProgram(true);
                         EmailRequest emailRequest = new EmailRequest();
                         emailRequest.setSubject("Notification : " + p1.getIdetapeprojet().getIdprojet().getNom());
-                        emailRequest.setText("Bonjour M / Mme " + p1.getIdacteur().getNom() + " La CTN Vous informe de la date initiale de transfert des document pour le projet "
-                                + ": " + p1.getIdetapeprojet().getIdprojet().getNom() + "; Structure : " + p1.getIdprojetservice().getIdservice().getNom() + " Que la date de debut de transfert des documents c'est le "
-                                + p1.getDateprevisionnel() + " Et la date de fin c'est le : " + p1.getDateFinPrevisionnel()
-                                + "\n Veuillez vous connecter sur la plateforme pour télecharger les documents solliciter.");
+                        emailRequest.setText("Bonjour M / Mme " + p1.getIdacteur().getNom() + ";\nLa CTN Vous informe de la date initiale de transfert des document pour le projet en objet"
+                                +"Structure -> " + p1.getIdprojetservice().getIdservice().getNom() + " Que la date de début de transfert des documents c'est le."
+                                + sdf.format(p1.getDateprevisionnel()) + " Et la date de fin c'est le : " + sdf.format(p1.getDateFinPrevisionnel())
+                                + "\nVeuillez vous connecter sur la plateforme pour télecharger les documents sollicités.");
 
                         emailRequest.getReceipients().add(new Receipient(p1.getIdacteur().getIdaddresse().getEmail(), p1.getIdacteur().getTitre()));
                         MailThread mailThread = new MailThread(emailRequest);

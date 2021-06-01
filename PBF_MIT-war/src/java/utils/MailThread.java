@@ -23,7 +23,7 @@ public class MailThread extends Thread {
 
     @Override
     public void run() {
-        JavaMailUtils.sendMail(null);
+        JavaMailUtils.sendMail(emailRequest);
     }
 
     public void setEmailRequest(EmailRequest emailRequest) {

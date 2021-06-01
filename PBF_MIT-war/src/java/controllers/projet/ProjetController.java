@@ -575,12 +575,14 @@ public class ProjetController extends AbstractProjetController implements Serial
                         pr.setActive(false);
                         if (pr.getIdetapeprojet().getDelai() == 0) {
                             pr.setActive(true);
-                        }
-                        
-                        if (pr.getIdetapeprojet().getNumero() == 1) {
+                            pr.setNotifEmailProgram(true);
+                            pr.setNotifEmailValidation(true);
                             if (!acteurMails.contains(pr.getIdacteur())) {
                                 acteurMails.add(pr.getIdacteur());
                             }
+                        }
+                        
+                        if (pr.getIdetapeprojet().getNumero() == 1) {
                             if (pr.getIdetapeprojet().getDelai() != 0) {
                                 pr.setDateFinPrevisionnel(Utilitaires.addDaysToDate(pr.getIdetapeprojet().getDateetatinitial(), pr.getIdetapeprojet().getDelai()));
                             }
@@ -596,7 +598,6 @@ public class ProjetController extends AbstractProjetController implements Serial
                         pr.setObservationarchivee("-");
                         pr.setObservee(false);
                         pr.setObservationvalidee(false);
-                        pr.setNotifEmailProgram(true);
                         programmationFacadeLocal.create(pr);
                     } else {
                         programmationFacadeLocal.edit(pr);
@@ -605,7 +606,7 @@ public class ProjetController extends AbstractProjetController implements Serial
             }
             signalSuccess();
             if (projet.isNotifMail()) {
-                this.sendMail(acteurs);
+                this.sendMail(acteurMails);
             }
         } catch (Exception e) {
             signalException(e);
@@ -613,11 +614,16 @@ public class ProjetController extends AbstractProjetController implements Serial
     }
     
     private void sendMail(List<Acteur> acteurs) {
+        if (acteurs.isEmpty()) {
+            System.err.println("Acteurs vides");
+            return;
+        }
+        
         EmailRequest emailRequest = new EmailRequest();
         emailRequest.setSubject("Information : " + projet.getNom());
         emailRequest.setText("Bonjour Mme / M. La CTN Vous informe que vous etes concernés par l'étape initiale du projet mensionnée en object; \n"
-                + "Veuillez vous connecter sur le portail du suivi des facture pour fournir les documents exigés;"
-                + "Cordiallement.");
+                + "Veuillez vous connecter sur le portail du suivi des facture pour fournir les documents exigés."
+                + "\nCordiallement.");
         List<Receipient> receipients = new ArrayList<>();
         for (Acteur a : acteurs) {
             receipients.add(new Receipient(a.getIdaddresse().getEmail(), a.getTitre()));

@@ -9,6 +9,7 @@ import entities.Programmation;
 import entities.Projet;
 import entities.Projetservice;
 import entities.Service;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
@@ -94,6 +95,8 @@ public class AbstractSuiviController {
     protected Boolean consulter = true;
     protected Boolean imprimer = true;
     protected Boolean supprimer = true;
+
+    protected final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     protected String mode = "";
 
