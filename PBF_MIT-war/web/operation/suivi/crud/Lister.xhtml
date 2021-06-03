@@ -48,7 +48,8 @@
                                 <p:commandButton icon="ui-icon-search" value="#{langue.visualiser_document}" disabled="#{suiviController.renderedView(var1.active, var1.envoye)}"  actionListener="#{suiviController.viewDocument(var1)}" update=":ProjetImprimerForm,:notify1" onclick="PF('AjaxNotifyDialog').show()" style="margin-left: 10px;margin-top: 10px"/>                          
 
                                 <div style="width: 100%">
-                                    <p:commandButton icon="ui-icon-plus" value="#{langue.piece_jointes}" disabled="#{suiviController.renderedPiece(var1.active)}"  actionListener="#{suiviController.prepareAddPiece(var1)}" update=":PieceAddForm,:notify1" onclick="PF('AjaxNotifyDialog').show()" style="margin-left: 10px ;margin-top: 10px"/>                          
+                                    <p:commandButton icon="ui-icon-plus" value="#{langue.piece_jointes}" disabled="#{suiviController.renderedPiece(var1.active)}"  actionListener="#{suiviController.prepareAddPiece(var1)}" update=":PieceAddForm,:notify1" onclick="PF('AjaxNotifyDialog').show()" style="margin-left: 10px ;margin-top: 10px"/> 
+                                    <p:commandButton icon="ui-icon-image" value="Simul" rendered="#{suiviController.renderedDownloadSimulationBtn(var1)}"  actionListener="#{suiviController.simulateFileUpload(var1)}" update=":ProjetListerForm,:notify1" onclick="PF('AjaxNotifyDialog').show()" oncomplete="PF('AjaxNotifyDialog').hide()" style="margin-left: 10px ;margin-top: 10px"/>     
                                 </div>
 
                                 <p:commandButton icon="ui-icon-check" value="#{langue.valider}" disabled="#{suiviController.renderedActivate(var1, var1.envoye, var1.active)}"  actionListener="#{suiviController.activateStape(var1)}" update=":notify1,:ValidationCreerForm" style="margin-left: 10px ;margin-top: 10px"/>                                                     

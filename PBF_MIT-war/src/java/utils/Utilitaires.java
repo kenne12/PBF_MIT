@@ -246,6 +246,18 @@ public class Utilitaires {
         }
     }
 
+    public static boolean isAccess2(Long menu) {
+        if (SessionMBean.getAccess().isEmpty()) {
+            return false;
+        } else {
+            if (SessionMBean.getAccess().contains(menu)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     public static Date addDaysToDate(Date date, Integer days) {
         try {
             Date df = date;

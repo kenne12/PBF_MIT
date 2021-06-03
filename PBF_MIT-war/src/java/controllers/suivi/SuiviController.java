@@ -186,6 +186,19 @@ public class SuiviController extends AbstractSuiviController implements Serializ
         return false;
     }
 
+    public boolean renderedDownloadSimulationBtn(Programmation p) {
+        if (p.getActive()) {
+            if (!p.getValide()) {
+                if (!p.getEnvoye()) {
+                    if (Utilitaires.isAccess(31L)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean renderedViewBtn(boolean valide, boolean observee) {
         if (valide && observee) {
             return true;
@@ -396,9 +409,9 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                         EmailRequest emailRequest = new EmailRequest();
                         emailRequest.setSubject("Notification : " + p1.getIdetapeprojet().getIdprojet().getNom());
                         emailRequest.setText("Bonjour M / Mme " + p1.getIdacteur().getNom() + ";\nLa CTN Vous informe de la date initiale de transfert des document pour le projet en objet"
-                                +"Structure -> " + p1.getIdprojetservice().getIdservice().getNom() + " Que la date de début de transfert des documents c'est le."
+                                + "Structure -> " + p1.getIdprojetservice().getIdservice().getNom() + " Que la date de début de transfert des documents c'est le."
                                 + sdf.format(p1.getDateprevisionnel()) + " Et la date de fin c'est le : " + sdf.format(p1.getDateFinPrevisionnel())
-                                + "\nVeuillez vous connecter sur la plateforme pour télecharger les documents sollicités.");
+                                + "\nVeuillez vous connecter sur la plateforme pour télécharger les documents sollicités.");
 
                         emailRequest.getReceipients().add(new Receipient(p1.getIdacteur().getIdaddresse().getEmail(), p1.getIdacteur().getTitre()));
                         MailThread mailThread = new MailThread(emailRequest);
@@ -453,6 +466,37 @@ public class SuiviController extends AbstractSuiviController implements Serializ
             }
         } catch (Exception e) {
             signalException(e);
+        }
+    }
+
+    public void simulateFileUpload(Programmation programmation) {
+        try {
+            try {
+                if (programmation.getIdacteur() == null) {
+                    signalError("aucun_acteur_associe");
+                    return;
+                }
+            } catch (Exception e) {
+                signalError("aucun_acteur_associe");
+                return;
+            }
+
+            programmation.setChemin("-");
+            programmation.setConteur(programmation.getConteur() + 1);
+            programmation.setTypefichier("-");
+            programmation.setEnvoye(true);
+            programmation.setDateTransfert(new Date(System.currentTimeMillis()));
+            programmation.setDaterealisation(null);
+            if (programmation.getIdetapeprojet().getNumero() == 0) {
+                programmation.setDaterealisation(new Date(System.currentTimeMillis()));
+            }
+            programmationFacadeLocal.edit(programmation);
+            routine.feedBack("information", "/resources/tool_images/success.png", routine.localizeMessage("operation_reussie"));
+            RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
+            RequestContext.getCurrentInstance().execute("PF('NotifyDialog1').show()");
+        } catch (Exception ex) {
+            routine.catchException(ex, routine.localizeMessage("echec_operation"));
+            RequestContext.getCurrentInstance().execute("PF('NotifyDialog1').show()");
         }
     }
 
