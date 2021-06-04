@@ -18,6 +18,7 @@ import javax.persistence.Query;
  */
 @Stateless
 public class EtapeFacade extends AbstractFacade<Etape> implements EtapeFacadeLocal {
+
     @PersistenceContext(unitName = "PBF_MIT-ejbPU")
     private EntityManager em;
 
@@ -29,7 +30,7 @@ public class EtapeFacade extends AbstractFacade<Etape> implements EtapeFacadeLoc
     public EtapeFacade() {
         super(Etape.class);
     }
-    
+
     @Override
     public Integer nextVal() {
         Query query = em.createQuery("SELECT MAX(e.idetape) FROM Etape e");
@@ -41,11 +42,11 @@ public class EtapeFacade extends AbstractFacade<Etape> implements EtapeFacadeLoc
         }
         return result;
     }
-    
+
     @Override
-    public List<Etape> findAllRange() throws Exception {
+    public List<Etape> findAllRange() {
         Query query = this.em.createQuery("SELECT e FROM Etape e ORDER BY e.code");
         return query.getResultList();
     }
-    
+
 }

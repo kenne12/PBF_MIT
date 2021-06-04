@@ -32,6 +32,6 @@ public interface EtapeFacadeLocal {
 
     Integer nextVal();
 
-    List<Etape> findAllRange() throws Exception;
+    List<Etape> findAllRange();
 
 }

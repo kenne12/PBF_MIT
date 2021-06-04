@@ -62,4 +62,18 @@ public interface ProgrammationFacadeLocal {
 
     double getRetardByIdServiceParentIdPeriodeParent(long idService, int idPeriode);
 
+    /*
+     *
+     @Comment Section Promptitude
+     @Param int idEtape
+     @Param int idPeriode
+     */
+    Double getRetardByIdEtapeIdPeriode(int idEtape, int idPeriode);
+
+    double getRetardByIdEtapeIdPeriodeParent(int idEtape, int idPeriode);
+
+    Double getRetardByIdPeriode(int idPeriode);
+
+    Double getRetardByIdPeriodeParent(int idPeriode);
+
 }
