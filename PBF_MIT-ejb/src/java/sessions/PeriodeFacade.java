@@ -44,15 +44,15 @@ public class PeriodeFacade extends AbstractFacade<Periode> implements PeriodeFac
     }
 
     @Override
-    public List<Periode> findParentPeriod() throws Exception {
-        Query query = this.em.createQuery("SELECT p FROM Periode p WHERE p.idparent=0");
-        return query.getResultList();
+    public List<Periode> findParentPeriod() {
+        return this.em.createQuery("SELECT p FROM Periode p WHERE p.idparent=0")
+                .getResultList();
     }
 
     @Override
-    public List<Periode> findAllRange() throws Exception {
-        Query query = this.em.createQuery("SELECT p FROM Periode p ORDER BY p.niveau DESC, p.numero ASC");
-        return query.getResultList();
+    public List<Periode> findAllRange() {
+        return this.em.createQuery("SELECT p FROM Periode p ORDER BY p.niveau DESC, p.numero ASC")
+                .getResultList();
     }
 
     @Override

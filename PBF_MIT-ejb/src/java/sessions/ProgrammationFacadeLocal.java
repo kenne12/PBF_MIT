@@ -76,4 +76,24 @@ public interface ProgrammationFacadeLocal {
 
     Double getRetardByIdPeriodeParent(int idPeriode);
 
+    /*
+     *Promptitude niveau region
+     *
+     */
+    Double getRetardByIdEtapeIdPeriodeIdserviceParent(int idEtape, int idPeriode, long idServiceParent);
+
+    Double getRetardByIdEtapeIdPeriodeParentIdserviceParent(int idEtape, int idPeriodeParent, long idServiceParent);
+
+    Double getRetardByIdPeriodeIdEtape(int idPeriode, int idEtape);
+
+    Double getRetardByIdPeriodeParentIdEtape(int idPeriodeParent, int idEtape);
+
+    /*
+     *Promptitude niveau acteur region
+     *
+     */
+    Double getRetardByIdEtapeIdPeriodeIdActeur(int idEtape, int idPeriode, int idActeur);
+
+    Double getRetardByIdEtapeIdPeriodeParentIdActeur(int idEtape, int idPeriodeParent, int idActeur);
+
 }

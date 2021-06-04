@@ -57,9 +57,15 @@ public class ActeurFacade extends AbstractFacade<Acteur> implements ActeurFacade
     }
 
     @Override
-    public List<Acteur> findByIdservice(int idservice) throws Exception {
+    public List<Acteur> findByIdservice(int idservice) {
         Query query = em.createQuery("SELECT a FROM Acteur a WHERE a.idservice.idservice=:idservice ORDER BY a.nom,a.prenom");
         query.setParameter("idservice", idservice);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Acteur> findAllOrder() {
+        Query query = em.createQuery("SELECT a FROM Acteur a ORDER BY a.nom,a.prenom");
         return query.getResultList();
     }
 

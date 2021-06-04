@@ -36,6 +36,8 @@ public interface ActeurFacadeLocal {
 
     List<Acteur> findAllRange(boolean struct_centrale);
 
-    List<Acteur> findByIdservice(int idservice) throws Exception;
+    List<Acteur> findByIdservice(int idservice);
+
+    List<Acteur> findAllOrder();
 
 }

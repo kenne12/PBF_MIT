@@ -36,12 +36,16 @@ public interface ServiceFacadeLocal {
 
     List<Service> findAllRange() throws Exception;
 
-    List<Service> findAllRange(boolean central) throws Exception;
+    List<Service> findAllRange(boolean central);
 
-    List<Service> findAllRangeParent() throws Exception;
+    List<Service> findAllRangeParent();
 
     List<Service> findByServiceParent(int idparent) throws Exception;
 
     List<Service> findByServiceParent(int idparent, boolean central, boolean regional);
+
+    List<Service> findAllCentralAndRegional();
+
+    List<Service> findAllRangeParentOrCtn();
 
 }

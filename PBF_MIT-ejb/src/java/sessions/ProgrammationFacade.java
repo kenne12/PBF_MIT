@@ -140,15 +140,6 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .mapToInt(p -> p.getRetard())
                 .average()
                 .getAsDouble();
-
-        /*return em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idprojetservice.idservice.idservice=:idService AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode", Object[].class)
-         .setParameter("idService", idService).setParameter("idPeriode", idPeriode)
-         .getResultList()
-         .stream()
-         .map(o -> new Programmation((int) o[0]))
-         .mapToInt(p -> p.getRetard())
-         .average()
-         .getAsDouble();*/
     }
 
     @Override
@@ -248,7 +239,6 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .mapToInt(p -> p.getRetard())
                 .average()
                 .getAsDouble();
-
     }
 
     @Override
@@ -282,9 +272,8 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .mapToInt(p -> p.getRetard())
                 .average()
                 .getAsDouble();
-
     }
-    
+
     @Override
     public Double getRetardByIdPeriodeParent(int idPeriode) {
 
@@ -300,7 +289,122 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .mapToInt(p -> p.getRetard())
                 .average()
                 .getAsDouble();
+    }
 
+    /*
+     *Promptitude niveau region
+     *
+     */
+    @Override
+    public Double getRetardByIdEtapeIdPeriodeIdserviceParent(int idEtape, int idPeriode, long idServiceParent) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idprojetservice.idservice.idparent=:idServiceParent", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).setParameter("idServiceParent", idServiceParent)
+                .getResultList();
+
+        if (list.isEmpty()) {
+            return 0d;
+        }
+
+        return list.stream()
+                .map(o -> new Programmation((int) o[0]))
+                .mapToInt(p -> p.getRetard())
+                .average()
+                .getAsDouble();
+    }
+
+    @Override
+    public Double getRetardByIdEtapeIdPeriodeParentIdserviceParent(int idEtape, int idPeriodeParent, long idServiceParent) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idparent=:idPeriodeParent AND p.idprojetservice.idservice.idparent=:idServiceParent", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriodeParent", idPeriodeParent).setParameter("idServiceParent", idServiceParent)
+                .getResultList();
+
+        if (list.isEmpty()) {
+            return 0d;
+        }
+
+        return list.stream()
+                .map(o -> new Programmation((int) o[0]))
+                .mapToInt(p -> p.getRetard())
+                .average()
+                .getAsDouble();
+    }
+
+    @Override
+    public Double getRetardByIdPeriodeIdEtape(int idPeriode, int idEtape) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idetapeprojet.idetape.idetape=:idEtape", Object[].class)
+                .setParameter("idPeriode", idPeriode).setParameter("idEtape", idEtape)
+                .getResultList();
+
+        if (list.isEmpty()) {
+            return 0d;
+        }
+
+        return list.stream()
+                .map(o -> new Programmation((int) o[0]))
+                .mapToInt(p -> p.getRetard())
+                .average()
+                .getAsDouble();
+    }
+
+    @Override
+    public Double getRetardByIdPeriodeParentIdEtape(int idPeriodeParent, int idEtape) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParentId AND p.idetapeprojet.idetape.idetape=:idEtape", Object[].class)
+                .setParameter("idParentId", idPeriodeParent).setParameter("idEtape", idEtape)
+                .getResultList();
+
+        if (list.isEmpty()) {
+            return 0d;
+        }
+
+        return list.stream()
+                .map(o -> new Programmation((int) o[0]))
+                .mapToInt(p -> p.getRetard())
+                .average()
+                .getAsDouble();
+    }
+
+    /*
+     promptitude region acteur
+     *
+     */
+    @Override
+    public Double getRetardByIdEtapeIdPeriodeIdActeur(int idEtape, int idPeriode, int idActeur) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idacteur.idacteur=:idActeur", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).setParameter("idActeur", idActeur)
+                .getResultList();
+
+        if (list.isEmpty()) {
+            return 0d;
+        }
+
+        return list.stream()
+                .map(o -> new Programmation((int) o[0]))
+                .mapToInt(p -> p.getRetard())
+                .average()
+                .getAsDouble();
+    }
+
+    @Override
+    public Double getRetardByIdEtapeIdPeriodeParentIdActeur(int idEtape, int idPeriodeParent, int idActeur) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idparent=:idPeriodeParent AND p.idacteur.idacteur=:idActeur", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriodeParent", idPeriodeParent).setParameter("idActeur", idActeur)
+                .getResultList();
+
+        if (list.isEmpty()) {
+            return 0d;
+        }
+
+        return list.stream()
+                .map(o -> new Programmation((int) o[0]))
+                .mapToInt(p -> p.getRetard())
+                .average()
+                .getAsDouble();
     }
 
 }

@@ -5,12 +5,14 @@
  */
 package controllers.analyse.promptitude;
 
+import entities.Acteur;
 import entities.Etape;
 import entities.Periode;
 import entities.Service;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
+import sessions.ActeurFacadeLocal;
 import sessions.EtapeFacadeLocal;
 import sessions.PeriodeFacadeLocal;
 import sessions.ProgrammationFacadeLocal;
@@ -38,10 +40,19 @@ public class AbstractPromptitudeController {
     protected List<Service> sousServices = new ArrayList<>();
 
     @EJB
+    protected ActeurFacadeLocal acteurFacadeLocal;
+    protected Acteur acteur = new Acteur();
+    protected Acteur selectedActeur = new Acteur();
+    protected List<Acteur> acteurs = new ArrayList<>();
+
+    @EJB
     protected EtapeFacadeLocal etapeFacadeLocal;
     protected Etape etape = new Etape();
     protected Etape selectedEtape = new Etape();
     protected List<Etape> etapes = new ArrayList<>();
+
+    protected boolean regionRegion = false;
+    protected boolean regionActeur = false;
 
     @EJB
     protected ProgrammationFacadeLocal programmationFacadeLocal;
@@ -57,10 +68,7 @@ public class AbstractPromptitudeController {
     }
 
     public List<Service> getServices() {
-        try {
-            services = serviceFacadeLocal.findAllRangeParent();
-        } catch (Exception e) {
-        }
+        services = serviceFacadeLocal.findAllRangeParentOrCtn();
         return services;
     }
 
@@ -73,10 +81,7 @@ public class AbstractPromptitudeController {
     }
 
     public List<Periode> getPeriodes() {
-        try {
-            periodes = periodeFacadeLocal.findParentPeriod();
-        } catch (Exception e) {
-        }
+        periodes = periodeFacadeLocal.findParentPeriod();
         return periodes;
     }
 
@@ -124,8 +129,33 @@ public class AbstractPromptitudeController {
         return etapes;
     }
 
-    public void setEtapes(List<Etape> etapes) {
-        this.etapes = etapes;
+    public boolean isRegionRegion() {
+        return regionRegion;
+    }
+
+    public boolean isRegionActeur() {
+        return regionActeur;
+    }
+
+    public Acteur getActeur() {
+        return acteur;
+    }
+
+    public void setActeur(Acteur acteur) {
+        this.acteur = acteur;
+    }
+
+    public Acteur getSelectedActeur() {
+        return selectedActeur;
+    }
+
+    public void setSelectedActeur(Acteur selectedActeur) {
+        this.selectedActeur = selectedActeur;
+    }
+
+    public List<Acteur> getActeurs() {
+        acteurs = acteurFacadeLocal.findAllRange();
+        return acteurs;
     }
 
 }

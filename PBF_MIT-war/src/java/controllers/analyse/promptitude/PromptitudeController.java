@@ -5,8 +5,10 @@
  */
 package controllers.analyse.promptitude;
 
+import entities.Acteur;
 import entities.Etape;
 import entities.Periode;
+import entities.Service;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -53,11 +55,55 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         return 0;
     }
 
+    public double loadValueNiveauRegion(long idServiceParent, int idPeriode) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
+                Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), idPeriode, idServiceParent);
+                return val == 0 ? 0 : val.intValue();
+            }
+        }
+        return 0;
+    }
+
+    public double loadValueNiveauRegionActeur(int idActeur, int idPeriode) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
+                Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdActeur(selectedEtape.getIdetape(), idPeriode, idActeur);
+                return val == 0 ? 0 : val.intValue();
+            }
+        }
+        return 0;
+    }
+
     public double agregateByEtape(Etape item) {
         if (!sousPeriodeFilters.isEmpty()) {
             Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParent(item.getIdetape(), periode.getIdperiode());
             if (value != 0) {
                 return value.intValue();
+            }
+        }
+        return 0;
+    }
+
+    public double agregateByEtapeNiveauRegion(Service item) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
+                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
+                if (value != 0) {
+                    return value.intValue();
+                }
+            }
+        }
+        return 0;
+    }
+
+    public double agregateByEtapeNiveauRegionActeur(Acteur item) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
+                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdActeur(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdacteur());
+                if (value != 0) {
+                    return value.intValue();
+                }
             }
         }
         return 0;
@@ -73,15 +119,72 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         return 0;
     }
 
+    public double agregateRetardByEtapeNiveauRegion(Periode periode) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
+                Double value = programmationFacadeLocal.getRetardByIdPeriodeIdEtape(periode.getIdperiode(), selectedEtape.getIdetape());
+                if (value != 0) {
+                    return value.intValue();
+                }
+            }
+        }
+        return 0;
+    }
+
+    public double agregateRetardByEtapeNiveauRegionActeur(Periode periode) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
+                Double value = programmationFacadeLocal.getRetardByIdPeriodeIdEtape(periode.getIdperiode(), selectedEtape.getIdetape());
+                if (value != 0) {
+                    return value.intValue();
+                }
+            }
+        }
+        return 0;
+    }
+
     public double agregatePeriodParent() {
         if (!sousPeriodeFilters.isEmpty()) {
-
             Double valeur = programmationFacadeLocal.getRetardByIdPeriodeParent(periode.getIdperiode());
             if (valeur != 0) {
                 return valeur.intValue();
             }
         }
         return 0;
+    }
+
+    public double agregatePeriodParentNiveauRegion() {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
+                Double valeur = programmationFacadeLocal.getRetardByIdPeriodeParentIdEtape(periode.getIdperiode(), selectedEtape.getIdetape());
+                if (valeur != 0) {
+                    return valeur.intValue();
+                }
+            }
+        }
+        return 0;
+    }
+
+    public double agregatePeriodParentNiveauRegionActeur() {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
+                Double valeur = programmationFacadeLocal.getRetardByIdPeriodeParentIdEtape(periode.getIdperiode(), selectedEtape.getIdetape());
+                if (valeur != 0) {
+                    return valeur.intValue();
+                }
+            }
+        }
+        return 0;
+    }
+
+    public void initRetardRegion(Etape e) {
+        selectedEtape = e;
+        regionRegion = true;
+    }
+
+    public void initRetardRegionActeur(Etape e) {
+        selectedEtape = e;
+        regionActeur = true;
     }
 
 }

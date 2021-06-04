@@ -32,9 +32,9 @@ public interface PeriodeFacadeLocal {
 
     Integer nextVal();
 
-    List<Periode> findParentPeriod() throws Exception;
+    List<Periode> findParentPeriod();
 
-    List<Periode> findAllRange() throws Exception;
+    List<Periode> findAllRange();
 
     List<Periode> findByIdParent(int idParent);
 
