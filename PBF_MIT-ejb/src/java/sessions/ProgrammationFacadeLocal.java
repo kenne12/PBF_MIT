@@ -96,4 +96,20 @@ public interface ProgrammationFacadeLocal {
 
     Double getRetardByIdEtapeIdPeriodeParentIdActeur(int idEtape, int idPeriodeParent, int idActeur);
 
+    /**
+     * @param idEtape
+     * @param idPeriodeParent
+     * @param idService
+     * @return Double
+     */
+    Double getRetardByIdEtapeIdPeriodeParentIdservice(int idEtape, int idPeriodeParent, long idService);
+
+    /**
+     * @param idEtape
+     * @param idPeriode
+     * @param idService
+     * @return Double
+     */
+    Double getRetardByIdEtapeIdPeriodeIdservice(int idEtape, int idPeriode, long idService);
+
 }

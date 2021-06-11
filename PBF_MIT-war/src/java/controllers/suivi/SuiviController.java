@@ -76,7 +76,13 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                 if (SessionMBean.getUserAccount().getIdacteur().getIdservice().getCentral()) {
                     projetservices = projetserviceFacadeLocal.findByIdprojetRegional(projet.getIdprojet(), false, false, true, false);
                 } else if (SessionMBean.getUserAccount().getIdacteur().getIdservice().getRegional()) {
-                    projetservices = projetserviceFacadeLocal.findByIdserviceparentVs(SessionMBean.getUserAccount().getIdacteur().getIdservice().getIdservice(), projet.getIdprojet(), true, false);
+                    int idService = 0;
+                    if (SessionMBean.getUserAccount().getIdacteur().getIdservice().getIdparent() != 0) {
+                        idService = SessionMBean.getUserAccount().getIdacteur().getIdservice().getIdparent();
+                    } else {
+                        idService = SessionMBean.getUserAccount().getIdacteur().getIdservice().getIdservice();
+                    }
+                    projetservices = projetserviceFacadeLocal.findByIdserviceparentVs(idService, projet.getIdprojet(), true, false);
                 } else {
                     projetservices = projetserviceFacadeLocal.findByIdservice(SessionMBean.getUserAccount().getIdacteur().getIdservice().getIdservice(), projet.getIdprojet());
                 }
@@ -500,6 +506,19 @@ public class SuiviController extends AbstractSuiviController implements Serializ
         }
     }
 
+    private String treatCharacter(String chaine, String[] regex) {
+        for (int i = 0; i < regex.length; i++) {
+            if (regex[i].equals("é")) {
+                chaine = chaine.replaceAll(regex[i], "e");
+            } else if (regex[i].equals("à")) {
+                chaine = chaine.replaceAll(regex[i], "a");
+            } else {
+                chaine = chaine.replaceAll(regex[i], "_");
+            }
+        }
+        return chaine;
+    }
+
     public void handleFileUpload(FileUploadEvent event) {
         try {
             if (event.getFile() == null || event.getFile().getFileName() == null || event.getFile().getFileName().equals("")) {
@@ -524,8 +543,17 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                 return;
             }
 
-            String nom = "Document_" + programmation.getIdacteur().getIdservice().getCode() + "_" + event.getFile().getFileName().replaceAll(Utilitaires.getExtension(event.getFile().getFileName()), "") + "_" + programmation.getIdprogrammation() + "_." + Utilitaires.getExtension(event.getFile().getFileName());
+            String[] regex = {"-", "\\+", "à", " ", "\\+", "__"};
 
+            String file_name = treatCharacter(event.getFile().getFileName(), regex);
+
+            String nom = "Document_";
+            nom += treatCharacter(programmation.getIdacteur().getIdservice().getCode(), regex);
+
+            file_name = file_name.replaceAll(Utilitaires.getExtension(file_name), "");
+            nom += "_" + file_name + "_" + programmation.getIdprogrammation() + "_." + Utilitaires.getExtension(event.getFile().getFileName());
+
+            nom = nom.toLowerCase();
             FileOutputStream out;
             out = new FileOutputStream(Utilitaires.path + "" + Utilitaires.repertoire_document + "" + nom, true);
 
@@ -543,7 +571,6 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                 programmation.setDaterealisation(new Date());
             }
             programmationFacadeLocal.edit(programmation);
-
             routine.feedBack("information", "/resources/tool_images/success.png", routine.localizeMessage("operation_reussie"));
             RequestContext.getCurrentInstance().execute("PF('NotifyDialog1').show()");
 

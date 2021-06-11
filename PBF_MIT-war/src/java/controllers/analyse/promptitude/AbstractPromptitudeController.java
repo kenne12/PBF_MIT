@@ -36,8 +36,10 @@ public class AbstractPromptitudeController {
     protected ServiceFacadeLocal serviceFacadeLocal;
     protected Service service = new Service();
     protected Service selectedService = new Service();
+    protected Service selectedServiceDistrict = new Service();
     protected List<Service> services = new ArrayList<>();
     protected List<Service> sousServices = new ArrayList<>();
+    protected List<Service> serviceDistricts = new ArrayList<>();
 
     @EJB
     protected ActeurFacadeLocal acteurFacadeLocal;
@@ -53,6 +55,7 @@ public class AbstractPromptitudeController {
 
     protected boolean regionRegion = false;
     protected boolean regionActeur = false;
+    protected boolean regionDistrict = false;
 
     @EJB
     protected ProgrammationFacadeLocal programmationFacadeLocal;
@@ -156,6 +159,26 @@ public class AbstractPromptitudeController {
     public List<Acteur> getActeurs() {
         acteurs = acteurFacadeLocal.findAllRange();
         return acteurs;
+    }
+
+    public List<Service> getServiceDistricts() {
+        return serviceDistricts;
+    }
+
+    public Service getSelectedServiceDistrict() {
+        return selectedServiceDistrict;
+    }
+
+    public void setSelectedServiceDistrict(Service selectedServiceDistrict) {
+        this.selectedServiceDistrict = selectedServiceDistrict;
+    }
+
+    public boolean isRegionDistrict() {
+        return regionDistrict;
+    }
+
+    public void setRegionDistrict(boolean regionDistrict) {
+        this.regionDistrict = regionDistrict;
     }
 
 }

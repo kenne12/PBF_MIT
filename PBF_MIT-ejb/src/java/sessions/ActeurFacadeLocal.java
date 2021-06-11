@@ -40,4 +40,6 @@ public interface ActeurFacadeLocal {
 
     List<Acteur> findAllOrder();
 
+    List<Acteur> findByIdserviceParent(int idParent);
+
 }

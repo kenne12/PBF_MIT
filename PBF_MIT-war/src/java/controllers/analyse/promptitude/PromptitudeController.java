@@ -187,4 +187,58 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         regionActeur = true;
     }
 
+    public void initRetardDistrict(Service s) {
+        selectedService = s;
+        regionDistrict = true;
+        serviceDistricts = serviceFacadeLocal.findByServiceParent(s.getIdservice());
+    }
+
+    /**
+     * *
+     * @param item
+     * @return
+     *
+     */
+    public double agregateByEtapeNiveauRegionD(Service item) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && selectedService != null && regionDistrict) {
+                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdservice(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
+                if (value != 0) {
+                    return value.intValue();
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * *
+     * @param periode
+     * @return
+     *
+     */
+    public double agregateRetardByEtapeNiveauRegionD(Periode periode) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedService != null) {
+                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdserviceParent(periode.getIdperiode(), selectedEtape.getIdetape(), selectedService.getIdservice());
+                if (value != 0) {
+                    return value.intValue();
+                }
+            }
+        }
+        return 0;
+    }
+
+    public double agregatePeriodParentNiveauRegionD() {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedService != null) {
+                Double valeur = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), selectedService.getIdservice());
+                if (valeur != 0) {
+                    return valeur.intValue();
+                }
+            }
+        }
+        return 0;
+    }
+
 }

@@ -25,7 +25,7 @@
                     <div class="form-inline">
 
                         <label for="uo_parent">#{langue.unite_organisation_parent}</label>
-                        <p:selectOneMenu filter="true" id="uo_parent" value="#{projetController.service.idservice}">
+                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="uo_parent" value="#{projetController.service.idservice}">
                             <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
                             <f:selectItems value="#{projetController.service_parents}" var="item" itemLabel="#{item.nom}" itemValue="#{item.idservice}"/>
                             <p:ajax update="grid2,select_check" listener="#{projetController.filterService()}"/>

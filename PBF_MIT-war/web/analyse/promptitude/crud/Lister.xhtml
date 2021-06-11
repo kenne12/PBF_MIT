@@ -163,15 +163,10 @@
 
             <p:column style="text-align: center;">
                 <p:commandButton 
-                    rendered="false"
+                    rendered="true"
                     value="D"
-                    actionListener="#{promptitudeController.initRetardRegion(item)}"
-                    update=":PromptitudeForm:datalist_2,:PromptitudeForm:datalist_3"/>
-                <p:commandButton 
-                    rendered="false"
-                    value="DA"
-                    actionListener="#{promptitudeController.initRetardRegionActeur(item)}"
-                    update=":PromptitudeForm:datalist_2,:PromptitudeForm:datalist_3" />
+                    actionListener="#{promptitudeController.initRetardDistrict(item)}"
+                    update=""/>                
             </p:column>
 
             <p:columnGroup type="footer">
@@ -185,7 +180,6 @@
             </p:columnGroup>
 
         </p:dataTable>
-
 
         <p:separator />
 
@@ -218,7 +212,6 @@
                     <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.acteurs}"/>
                     <p:column class="hardBreak" colspan="#{promptitudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
                     <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
-                    <p:column class="hardBreak" rowspan="2" headerText="#{langue.action}"/>
                 </p:row>
                 <p:row>
                     <ui:repeat value="#{promptitudeController.sousPeriodeFilters}" var="sp">
@@ -240,31 +233,82 @@
             <p:column style="text-align: center;">
                 <h:outputText value="#{promptitudeController.agregateByEtapeNiveauRegionActeur(itemActeur)}"/>
             </p:column>
-
-            <p:column style="text-align: center;">
-                <p:commandButton 
-                    rendered="false"
-                    value="D"
-                    actionListener="#{promptitudeController.initRetardRegion(item)}"
-                    update=":PromptitudeForm:datalist_2,:PromptitudeForm:datalist_3"/>
-                <p:commandButton 
-                    rendered="false"
-                    value="DA"
-                    actionListener="#{promptitudeController.initRetardRegionActeur(item)}"
-                    update=":PromptitudeForm:datalist_2,:PromptitudeForm:datalist_3" />
-            </p:column>
-
+            
             <p:columnGroup type="footer">
                 <p:row>
                     <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
                     <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="s" footerText="#{promptitudeController.agregateRetardByEtapeNiveauRegionActeur(s)}">                        
                     </p:columns> 
                     <p:column style="text-align:center" footerText="#{promptitudeController.agregatePeriodParentNiveauRegionActeur()}" />
-                    <p:column style="text-align:center" />
                 </p:row>
             </p:columnGroup>
 
         </p:dataTable>
+
+        <p:separator />
+
+        <p:dataTable id="datalist_4" 
+                     value="#{promptitudeController.serviceDistricts}" 
+                     var="itemServiceD"                             
+                     paginator="true"
+                     rowKey="#{itemServiceD.idservice}"
+                     rows="15"
+                     rowsPerPageTemplate="10,20,30,40,50"
+                     style="width: 98%;margin-left: 1%"
+                     rowIndexVar="index"
+                     emptyMessage="#{langue.tableau_vide}"
+                     widgetVar="fonctionTable"
+                     draggableColumns="true"
+                     resizableColumns="true"
+                     selectionMode="single"
+                     selection="#{promptitudeController.selectedServiceDistrict}"
+                     rendered="#{promptitudeController.selectedService!=null and promptitudeController.selectedService.idservice!=null and promptitudeController.regionDistrict==true}">
+
+            <p:ajax event="rowSelect"/>
+            <p:ajax event="rowUnselect"/>
+
+            <f:facet name="header"> 
+                <h:outputText value="#{langue.donnees}"/>
+            </f:facet>
+
+            <p:columnGroup type="header">
+                <p:row>
+                    <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.regions}"/>
+                    <p:column class="hardBreak" colspan="#{promptitudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
+                    <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
+                </p:row>
+                <p:row>
+                    <ui:repeat value="#{promptitudeController.sousPeriodeFilters}" var="sp">
+                        <p:column class="hardBreak" headerText="#{sp.nom}"/>
+                    </ui:repeat>
+                </p:row>                
+            </p:columnGroup>
+
+            <p:column colspan="3" >
+                <h:outputText value="#{itemServiceD.nom}"/>
+            </p:column>
+
+            <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="var">
+                <h:outputText value="#{promptitudeController.loadValueNiveauRegion(itemServiceD.idservice, var.idperiode)}">
+                    <f:convertNumber />
+                </h:outputText>
+            </p:columns>
+
+            <p:column style="text-align: center;">
+                <h:outputText value="#{promptitudeController.agregateByEtapeNiveauRegionD(itemServiceD)}"/>
+            </p:column>
+
+            <p:columnGroup type="footer">
+                <p:row>
+                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
+                    <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="s" footerText="#{promptitudeController.agregateRetardByEtapeNiveauRegionD(s)}">                        
+                    </p:columns> 
+                    <p:column style="text-align:center" footerText="#{promptitudeController.agregatePeriodParentNiveauRegionD()}" />
+                </p:row>
+            </p:columnGroup>
+
+        </p:dataTable>
+
 
 
     </h:form>

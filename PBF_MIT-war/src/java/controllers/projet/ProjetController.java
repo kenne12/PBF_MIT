@@ -221,23 +221,22 @@ public class ProjetController extends AbstractProjetController implements Serial
                 }
 
                 projetservices = projetserviceFacadeLocal.findByIdprojet(projet.getIdprojet(), false);
+                List<Acteur> listActeurCtn = acteurFacadeLocal.findAllRange(true);
 
                 int i = 0;
                 for (Projetservice p : projetservices) {
 
-                    List<Acteur> acteurs = new ArrayList<>();
-                    try {
-                        if (p.getIdservice().getIdparent() != null) {
-                            acteurs = acteurFacadeLocal.findByIdservice(p.getIdservice().getIdparent());
-                        }
-                    } catch (Exception e) {
+                    List<Acteur> listActeurDistrict = new ArrayList<>();
+
+                    if (p.getIdservice().getIdparent() != 0) {
+                        listActeurDistrict = acteurFacadeLocal.findByIdservice(p.getIdservice().getIdparent());
+                        listActeurDistrict.addAll(acteurFacadeLocal.findByIdservice(p.getIdservice().getIdservice()));
+                    } else {
+                        listActeurDistrict.addAll(acteurFacadeLocal.findByIdservice(p.getIdservice().getIdservice()));
                     }
 
-                    projetservices.get(i).getIdservice().getActeurList().addAll(acteurFacadeLocal.findAllRange(true));
-                    if (!acteurs.isEmpty()) {
-                        acteurs.removeAll(projetservices.get(i).getIdservice().getActeurList());
-                        projetservices.get(i).getIdservice().getActeurList().addAll(acteurs);
-                    }
+                    listActeurDistrict.addAll(listActeurCtn);
+                    projetservices.get(i).getIdservice().getActeurList().addAll(listActeurDistrict);
 
                     List<Programmation> programmations = new ArrayList<>();
 
@@ -567,6 +566,8 @@ public class ProjetController extends AbstractProjetController implements Serial
 
     public void programmer() {
         try {
+            boolean sendMail = projet.isNotifMail();
+            boolean sendSms = projet.isNotifSms();
             List<Acteur> acteurMails = new ArrayList<>();
             for (Projetservice p : projetservices) {
                 for (Programmation pr : p.getProgrammationList()) {
@@ -577,8 +578,12 @@ public class ProjetController extends AbstractProjetController implements Serial
                             pr.setActive(true);
                             pr.setNotifEmailProgram(true);
                             pr.setNotifEmailValidation(true);
-                            if (!acteurMails.contains(pr.getIdacteur())) {
-                                acteurMails.add(pr.getIdacteur());
+                            if (sendMail || sendSms) {
+                                if (pr.getIdacteur() != null) {
+                                    if (!acteurMails.contains(pr.getIdacteur())) {
+                                        acteurMails.add(pr.getIdacteur());
+                                    }
+                                }
                             }
                         }
 
@@ -605,8 +610,10 @@ public class ProjetController extends AbstractProjetController implements Serial
                 }
             }
             signalSuccess();
-            if (projet.isNotifMail()) {
-                this.sendMail(acteurMails);
+            if (sendMail) {
+                if (!acteurMails.isEmpty()) {
+                    this.sendMail(acteurMails);
+                }
             }
         } catch (Exception e) {
             signalException(e);
@@ -621,7 +628,10 @@ public class ProjetController extends AbstractProjetController implements Serial
                 + "\nCordialement.");
         List<Receipient> receipients = new ArrayList<>();
         for (Acteur a : acteurs) {
-            receipients.add(new Receipient(a.getIdaddresse().getEmail(), a.getTitre()));
+            try {
+                receipients.add(new Receipient(a.getIdaddresse().getEmail(), a.getTitre()));
+            } catch (Exception e) {
+            }
         }
         emailRequest.setReceipients(receipients);
 

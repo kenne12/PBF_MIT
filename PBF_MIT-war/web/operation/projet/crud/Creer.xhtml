@@ -27,7 +27,7 @@
                         <h:panelGrid columns="3" columnClasses ="column">
 
                             <p:outputLabel value="#{langue.periode}" for="periode"/>
-                            <p:selectOneMenu filter="true" id="periode" value="#{projetController.periode.idperiode}" required="true" requiredMessage="#{langue.valeur_obligatoire}">
+                            <p:selectOneMenu filter="true" filterMatchMode="contains" id="periode" value="#{projetController.periode.idperiode}" required="true" requiredMessage="#{langue.valeur_obligatoire}">
                                 <f:selectItem itemLabel="#{langue.choisir}"/>
                                 <f:selectItems value="#{projetController.periodes}" var="item" itemLabel="#{item.nom}" itemValue="#{item.idperiode}"/>
                                 <p:ajax/>

@@ -33,14 +33,14 @@
                 <p:ajax event="rowUnselect" update=":ProjetListerForm:ProjetDataTableContextMenu, :actionsForm"/>
                 <p:ajax event="rowDblselect" onsuccess="document.getElementById('ProjetListerForm:viewButton').click();"/>
 
-                <p:column filterBy="#{item.nom}" style="width: 50%">
+                <p:column filterBy="#{item.nom}" filterMatchMode="contains" style="width: 50%">
                     <f:facet name="header">
                         <h:outputText value="#{langue.libelle}"/>
                     </f:facet>
                     <h:outputText value="#{item.nom}"/>
                 </p:column>
 
-                <p:column style="width: 20%;text-align: left" filterBy="#{item.idperiode.nom}">
+                <p:column style="width: 20%;text-align: left" filterMatchMode="contains" filterBy="#{item.idperiode.nom}">
                     <f:facet name="header">
                         <h:outputText value="#{langue.periode}"/>
                     </f:facet>

@@ -407,4 +407,46 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .getAsDouble();
     }
 
+    /**
+     * @param idEtape
+     * @param idPeriodeParent
+     * @param idService
+     * @return Double
+     */
+    @Override
+    public Double getRetardByIdEtapeIdPeriodeParentIdservice(int idEtape, int idPeriodeParent, long idService) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idparent=:idPeriodeParent AND p.idprojetservice.idservice.idservice=:idService", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriodeParent", idPeriodeParent).setParameter("idService", idService)
+                .getResultList();
+
+        if (list.isEmpty()) {
+            return 0d;
+        }
+
+        return list.stream()
+                .map(o -> new Programmation((int) o[0]))
+                .mapToInt(p -> p.getRetard())
+                .average()
+                .getAsDouble();
+    }
+    
+    
+    @Override
+    public Double getRetardByIdEtapeIdPeriodeIdservice(int idEtape, int idPeriode, long idService) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idprojetservice.idservice.idservice=:idService", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).setParameter("idService", idService)
+                .getResultList();
+
+        if (list.isEmpty()) {
+            return 0d;
+        }
+
+        return list.stream()
+                .map(o -> new Programmation((int) o[0]))
+                .mapToInt(p -> p.getRetard())
+                .average()
+                .getAsDouble();
+    }
 }

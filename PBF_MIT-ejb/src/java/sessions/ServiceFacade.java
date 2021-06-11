@@ -69,7 +69,7 @@ public class ServiceFacade extends AbstractFacade<Service> implements ServiceFac
     }
 
     @Override
-    public List<Service> findByServiceParent(int idparent) throws Exception {
+    public List<Service> findByServiceParent(int idparent) {
         return this.em.createQuery("SELECT s FROM Service s WHERE s.idparent!=0 AND s.idparent=:idparent ORDER BY s.nom")
                 .setParameter("idparent", idparent)
                 .getResultList();

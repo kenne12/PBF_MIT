@@ -69,4 +69,11 @@ public class ActeurFacade extends AbstractFacade<Acteur> implements ActeurFacade
         return query.getResultList();
     }
 
+    @Override
+    public List<Acteur> findByIdserviceParent(int idParent) {
+        Query query = em.createQuery("SELECT a FROM Acteur a WHERE a.idservice.idparent=:idParent ORDER BY a.nom,a.prenom");
+        query.setParameter("idParent", idParent);
+        return query.getResultList();
+    }
+
 }

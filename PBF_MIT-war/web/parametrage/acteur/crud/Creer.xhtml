@@ -27,7 +27,7 @@
                     <h:panelGrid columns="3" columnClasses ="column">
 
                         <p:outputLabel value="#{langue.unite_organisation}" for="service"/>
-                        <p:selectOneMenu filter="true" id="service" value="#{acteurController.service.idservice}" required="true" requiredMessage="#{langue.valeur_obligatoire}">
+                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="service" value="#{acteurController.service.idservice}" required="true" requiredMessage="#{langue.valeur_obligatoire}">
                             <f:selectItem itemLabel="#{langue.choisir}"/>
                             <f:selectItems value="#{acteurController.services}" var="item" itemLabel="#{item.nom}" itemValue="#{item.idservice}"/>
                         </p:selectOneMenu>
