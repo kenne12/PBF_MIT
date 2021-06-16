@@ -112,4 +112,198 @@ public interface ProgrammationFacadeLocal {
      */
     Double getRetardByIdEtapeIdPeriodeIdservice(int idEtape, int idPeriode, long idService);
 
+    //section completude
+    /**
+     * @param idEtape
+     * @param idPeriode
+     * @return long
+     */
+    int getCompletudeByIdEtapeIdPeriode(int idEtape, int idPeriode);
+
+    int getCompletudeByIdEtapeIdPeriodeValidees(int idEtape, int idPeriode);
+
+    /**
+     * @param idEtape
+     * @param idPeriode
+     * @return long
+     */
+    public int getCompletudeByIdEtapeIdPeriodeParent(int idEtape, int idPeriode);
+
+    /**
+     * @param idEtape,
+     * @param idPeriode
+     * @return int
+     */
+    public int getCompletudeByIdEtapeIdPeriodeParentValidees(int idEtape, int idPeriode);
+
+    /**
+     * @param idPeriode
+     * @return int
+     */
+    public int getCompletudeByIdPeriode(int idPeriode);
+
+    /**
+     * @param idPeriode
+     * @return int
+     */
+    public int getCompletudeByIdPeriodeValidees(int idPeriode);
+
+    /**
+     * @param idPeriode
+     * @return int
+     */
+    public int getCompletudeByIdPeriodeParent(int idPeriode);
+
+    /**
+     * @param idPeriode
+     * @return int
+     */
+    public int getCompletudeByIdPeriodeParentValidees(int idPeriode);
+
+    /**
+     * Complétude niveau region
+     *
+     * @param idEtape
+     * @param idPeriode
+     * @param idServiceParent
+     * @return int
+     */
+    public int getCompletudeByIdEtapeIdPeriodeIdserviceParent(int idEtape, int idPeriode, long idServiceParent);
+
+    /**
+     * @param idEtape
+     * @param idPeriode
+     * @param idServiceParent
+     * @return int
+     */
+    public int getCompletudeByIdEtapeIdPeriodeIdserviceParentValidees(int idEtape, int idPeriode, long idServiceParent);
+
+    /**
+     * @param idEtape
+     * @param idPeriodeParent
+     * @param idService
+     * @return int
+     */
+    public int getCompletudeByIdEtapeIdPeriodeParentIdservice(int idEtape, int idPeriodeParent, long idService);
+
+    /**
+     * @param idEtape
+     * @param idPeriodeParent
+     * @param idService
+     * @return int
+     */
+    public int getCompletudeByIdEtapeIdPeriodeParentIdserviceValidees(int idEtape, int idPeriodeParent, long idService);
+
+    /**
+     * @param idEtape
+     * @param idPeriodeParent
+     * @param idServiceParent
+     * @return int
+     */
+    public int getCompletudeByIdEtapeIdPeriodeParentIdserviceParent(int idEtape, int idPeriodeParent, long idServiceParent);
+
+    /**
+     * @param idEtape
+     * @param idPeriodeParent
+     * @param idServiceParent
+     * @return int
+     */
+    public int getCompletudeByIdEtapeIdPeriodeParentIdserviceParentValidees(int idEtape, int idPeriodeParent, long idServiceParent);
+
+    /**
+     * @param idPeriode
+     * @param idEtape
+     * @return int
+     */
+    public int getCompletudeByIdPeriodeIdEtape(int idPeriode, int idEtape);
+
+    /**
+     * @param idPeriode
+     * @param idEtape
+     * @return int
+     */
+    public int getCompletudeByIdPeriodeIdEtapeValidees(int idPeriode, int idEtape);
+
+    /**
+     * @param idPeriodeParent
+     * @param idEtape
+     * @return int
+     */
+    public int getCompletudeByIdPeriodeParentIdEtape(int idPeriodeParent, int idEtape);
+
+    /**
+     * @param idPeriodeParent
+     * @param idEtape
+     * @return int
+     */
+    public int getCompletudeByIdPeriodeParentIdEtapeValidees(int idPeriodeParent, int idEtape);
+
+    /**
+     * Complétude par acteur
+     *
+     * @param idEtape,
+     * @param idPeriode,
+     * @param idActeur,
+     * @return int
+     */
+    public int getCompletudeByIdEtapeIdPeriodeIdActeur(int idEtape, int idPeriode, int idActeur);
+
+    /**
+     * @param idEtape,
+     * @param idPeriode,
+     * @param idActeur
+     * @return int
+     */
+    public int getCompletudeByIdEtapeIdPeriodeIdActeurValidees(int idEtape, int idPeriode, int idActeur);
+
+    /**
+     * Complétude par acteur
+     *
+     * @param idEtape,
+     * @param idPeriodeParent,
+     * @param idActeur
+     * @return int
+     */
+    public int getCompletudeByIdEtapeIdPeriodeParentIdActeur(int idEtape, int idPeriodeParent, int idActeur);
+
+    /**
+     * @param idEtape,
+     * @param idPeriodeParent,
+     * @param idActeur
+     * @return int
+     */
+    public int getCompletudeByIdEtapeIdPeriodeParentIdActeurValidees(int idEtape, int idPeriodeParent, int idActeur);
+
+    /**
+     * Complétude par acteur
+     *
+     * @param idPeriode
+     * @param idEtape
+     * @return int
+     */
+    public int getCompletudeByIdPeriodeIdEtapeSize(int idPeriode, int idEtape);
+
+    /**
+     * @param idPeriode
+     * @param idEtape
+     * @return int
+     */
+    public int getCompletudeByIdPeriodeIdEtapeSizeValidees(int idPeriode, int idEtape);
+
+    /**
+     * Complétude par acteur
+     *
+     * @param idPeriodeParent
+     * @param idEtape
+     * @return int
+     */
+    public int getCompletudeByIdPeriodeParentIdEtapeSize(int idPeriodeParent, int idEtape);
+
+    /**
+     * @param idPeriodeParent
+     * @param idEtape
+     * @return int
+     */
+    public int getCompletudeByIdPeriodeParentIdEtapeSizeValidees(int idPeriodeParent, int idEtape);
+
 }

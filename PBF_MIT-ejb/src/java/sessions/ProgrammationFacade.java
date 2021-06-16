@@ -293,7 +293,10 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
 
     /*
      *Promptitude niveau region
-     *
+     @param idEtape
+     @param idPeriode
+     @param idServiceParent
+     @return Long
      */
     @Override
     public Double getRetardByIdEtapeIdPeriodeIdserviceParent(int idEtape, int idPeriode, long idServiceParent) {
@@ -368,8 +371,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
     }
 
     /*
-     promptitude region acteur
-     *
+     promptitude region acteur    
      */
     @Override
     public Double getRetardByIdEtapeIdPeriodeIdActeur(int idEtape, int idPeriode, int idActeur) {
@@ -430,8 +432,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .average()
                 .getAsDouble();
     }
-    
-    
+
     @Override
     public Double getRetardByIdEtapeIdPeriodeIdservice(int idEtape, int idPeriode, long idService) {
 
@@ -449,4 +450,383 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .average()
                 .getAsDouble();
     }
+
+    //section completude
+    @Override
+    public int getCompletudeByIdEtapeIdPeriode(int idEtape, int idPeriode) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /*
+     @param idEtape,
+     @param idPeriode
+     @retur int   
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeValidees(int idEtape, int idPeriode) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.valide = true", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /*
+     @param idEtape,
+     @param idPeriode
+     @retur int   
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeParent(int idEtape, int idPeriode) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idparent=:idPeriode", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /*
+     *@param idEtape,
+     *@param idPeriode
+     *@retur int   
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeParentValidees(int idEtape, int idPeriode) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idparent=:idPeriode AND p.valide = true", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /*
+     @param idPeriode
+     @retur Long   
+     */
+    @Override
+    public int getCompletudeByIdPeriode(int idPeriode) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode", Object[].class)
+                .setParameter("idPeriode", idPeriode).getResultList();
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /*
+     * @param idPeriode
+     * @return Long   
+     */
+    @Override
+    public int getCompletudeByIdPeriodeValidees(int idPeriode) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.valide = true", Object[].class)
+                .setParameter("idPeriode", idPeriode).getResultList();
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /*
+     * @param idPeriode
+     * @return int   
+     */
+    @Override
+    public int getCompletudeByIdPeriodeParent(int idPeriode) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParentId", Object[].class)
+                .setParameter("idParentId", idPeriode).getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /*
+     * @param idPeriode
+     * @return int   
+     */
+    @Override
+    public int getCompletudeByIdPeriodeParentValidees(int idPeriode) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParentId AND p.valide = true", Object[].class)
+                .setParameter("idParentId", idPeriode).getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /*
+     Complétude niveau region
+     @param idEtape
+     @param idPeriode
+     @param idServiceParent
+     @return int
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeIdserviceParent(int idEtape, int idPeriode, long idServiceParent) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idprojetservice.idservice.idparent=:idServiceParent", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).setParameter("idServiceParent", idServiceParent)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * @param idEtape
+     * @param idPeriode
+     * @param idServiceParent
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeIdserviceParentValidees(int idEtape, int idPeriode, long idServiceParent) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idprojetservice.idservice.idparent=:idServiceParent AND p.valide = true", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).setParameter("idServiceParent", idServiceParent)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * @param idEtape
+     * @param idPeriodeParent
+     * @param idService
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeParentIdservice(int idEtape, int idPeriodeParent, long idService) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idparent=:idPeriodeParent AND p.idprojetservice.idservice.idservice=:idService", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriodeParent", idPeriodeParent).setParameter("idService", idService)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * @param idEtape
+     * @param idPeriodeParent
+     * @param idService
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeParentIdserviceValidees(int idEtape, int idPeriodeParent, long idService) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idparent=:idPeriodeParent AND p.idprojetservice.idservice.idservice=:idService AND p.valide = true", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriodeParent", idPeriodeParent).setParameter("idService", idService)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * @param idEtape
+     * @param idPeriodeParent
+     * @param idServiceParent
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeParentIdserviceParent(int idEtape, int idPeriodeParent, long idServiceParent) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idparent=:idPeriodeParent AND p.idprojetservice.idservice.idparent=:idServiceParent", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriodeParent", idPeriodeParent).setParameter("idServiceParent", idServiceParent)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * @param idEtape
+     * @param idPeriodeParent
+     * @param idServiceParent
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeParentIdserviceParentValidees(int idEtape, int idPeriodeParent, long idServiceParent) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idparent=:idPeriodeParent AND p.idprojetservice.idservice.idparent=:idServiceParent AND p.valide = true", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriodeParent", idPeriodeParent).setParameter("idServiceParent", idServiceParent)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * @param idPeriode
+     * @param idEtape
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdPeriodeIdEtape(int idPeriode, int idEtape) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idetapeprojet.idetape.idetape=:idEtape", Object[].class)
+                .setParameter("idPeriode", idPeriode).setParameter("idEtape", idEtape)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * @param idPeriode
+     * @param idEtape
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdPeriodeIdEtapeValidees(int idPeriode, int idEtape) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idetapeprojet.idetape.idetape=:idEtape AND p.valide = true", Object[].class)
+                .setParameter("idPeriode", idPeriode).setParameter("idEtape", idEtape)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * @param idPeriodeParent
+     * @param idEtape
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdPeriodeParentIdEtape(int idPeriodeParent, int idEtape) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParentId AND p.idetapeprojet.idetape.idetape=:idEtape", Object[].class)
+                .setParameter("idParentId", idPeriodeParent).setParameter("idEtape", idEtape)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * @param idPeriodeParent
+     * @param idEtape
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdPeriodeParentIdEtapeValidees(int idPeriodeParent, int idEtape) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParentId AND p.idetapeprojet.idetape.idetape=:idEtape AND p.valide = true", Object[].class)
+                .setParameter("idParentId", idPeriodeParent).setParameter("idEtape", idEtape)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * Complétude par acteur
+     *
+     * @param idEtape,
+     * @param idPeriode,
+     * @param idActeur
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeIdActeur(int idEtape, int idPeriode, int idActeur) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idacteur.idacteur=:idActeur", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).setParameter("idActeur", idActeur)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * @param idEtape
+     * @param idPeriode
+     * @param idActeur
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeIdActeurValidees(int idEtape, int idPeriode, int idActeur) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idacteur.idacteur=:idActeur AND p.valide = true", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).setParameter("idActeur", idActeur)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * Complétude par acteur
+     *
+     * @param idEtape,
+     * @param idPeriodeParent,
+     * @param idActeur
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeParentIdActeur(int idEtape, int idPeriodeParent, int idActeur) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idparent=:idPeriodeParent AND p.idacteur.idacteur=:idActeur", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriodeParent", idPeriodeParent).setParameter("idActeur", idActeur)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * Complétude par acteur
+     *
+     * @param idEtape,
+     * @param idPeriodeParent,
+     * @param idActeur
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeParentIdActeurValidees(int idEtape, int idPeriodeParent, int idActeur) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idparent=:idPeriodeParent AND p.idacteur.idacteur=:idActeur AND p.valide = true", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriodeParent", idPeriodeParent).setParameter("idActeur", idActeur)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * Complétude par acteur
+     *
+     * @param idPeriode
+     * @param idEtape
+     */
+    @Override
+    public int getCompletudeByIdPeriodeIdEtapeSize(int idPeriode, int idEtape) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idetapeprojet.idetape.idetape=:idEtape", Object[].class)
+                .setParameter("idPeriode", idPeriode).setParameter("idEtape", idEtape)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * Complétude par acteur
+     *
+     * @param idPeriode
+     * @param idEtape
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdPeriodeIdEtapeSizeValidees(int idPeriode, int idEtape) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idetapeprojet.idetape.idetape=:idEtape AND p.valide = true", Object[].class)
+                .setParameter("idPeriode", idPeriode).setParameter("idEtape", idEtape)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * Complétude par acteur
+     *
+     * @param idPeriodeParent
+     * @param idEtape
+     */
+    @Override
+    public int getCompletudeByIdPeriodeParentIdEtapeSize(int idPeriodeParent, int idEtape) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParentId AND p.idetapeprojet.idetape.idetape=:idEtape", Object[].class)
+                .setParameter("idParentId", idPeriodeParent).setParameter("idEtape", idEtape)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * Complétude par acteur
+     *
+     * @param idPeriodeParent
+     * @param idEtape
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdPeriodeParentIdEtapeSizeValidees(int idPeriodeParent, int idEtape) {
+
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParentId AND p.idetapeprojet.idetape.idetape=:idEtape", Object[].class)
+                .setParameter("idParentId", idPeriodeParent).setParameter("idEtape", idEtape)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
 }
