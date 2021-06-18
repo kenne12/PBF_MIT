@@ -88,9 +88,13 @@ public interface ProgrammationFacadeLocal {
 
     Double getRetardByIdPeriodeParentIdEtape(int idPeriodeParent, int idEtape);
 
-    /*
-     *Promptitude niveau acteur region
+    /**
+     * Promptitude niveau acteur region
      *
+     * @param idEtape,
+     * @param idPeriode,
+     * @param idActeur
+     * @return Double
      */
     Double getRetardByIdEtapeIdPeriodeIdActeur(int idEtape, int idPeriode, int idActeur);
 
@@ -305,5 +309,23 @@ public interface ProgrammationFacadeLocal {
      * @return int
      */
     public int getCompletudeByIdPeriodeParentIdEtapeSizeValidees(int idPeriodeParent, int idEtape);
+
+    /**
+     * Complétude niveau district
+     *
+     * @param idEtape
+     * @param idPeriode
+     * @param idService
+     * @return int
+     */
+    public int getCompletudeByIdEtapeIdPeriodeIdservice(int idEtape, int idPeriode, long idService);
+
+    /**
+     * @param idEtape
+     * @param idPeriode
+     * @param idService
+     * @return int
+     */
+    public int getCompletudeByIdEtapeIdPeriodeIdserviceValidees(int idEtape, int idPeriode, long idService);
 
 }

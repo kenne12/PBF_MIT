@@ -231,7 +231,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).getResultList();
 
         if (list.isEmpty()) {
-            return 0d;
+            return -1d;
         }
 
         return list.stream()
@@ -248,7 +248,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .getResultList();
 
         if (list.isEmpty()) {
-            return 0;
+            return -1;
         }
         return list.stream()
                 .map(o -> new Programmation((int) o[0]))
@@ -264,7 +264,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .setParameter("idPeriode", idPeriode).getResultList();
 
         if (list.isEmpty()) {
-            return 0d;
+            return -1d;
         }
 
         return list.stream()
@@ -281,7 +281,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .setParameter("idParentId", idPeriode).getResultList();
 
         if (list.isEmpty()) {
-            return 0d;
+            return -1d;
         }
 
         return list.stream()
@@ -306,7 +306,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .getResultList();
 
         if (list.isEmpty()) {
-            return 0d;
+            return -1d;
         }
 
         return list.stream()
@@ -324,7 +324,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .getResultList();
 
         if (list.isEmpty()) {
-            return 0d;
+            return -1d;
         }
 
         return list.stream()
@@ -342,7 +342,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .getResultList();
 
         if (list.isEmpty()) {
-            return 0d;
+            return -1d;
         }
 
         return list.stream()
@@ -360,7 +360,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .getResultList();
 
         if (list.isEmpty()) {
-            return 0d;
+            return -1d;
         }
 
         return list.stream()
@@ -381,7 +381,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .getResultList();
 
         if (list.isEmpty()) {
-            return 0d;
+            return -1d;
         }
 
         return list.stream()
@@ -399,7 +399,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .getResultList();
 
         if (list.isEmpty()) {
-            return 0d;
+            return -1d;
         }
 
         return list.stream()
@@ -423,7 +423,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .getResultList();
 
         if (list.isEmpty()) {
-            return 0d;
+            return -1d;
         }
 
         return list.stream()
@@ -441,7 +441,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .getResultList();
 
         if (list.isEmpty()) {
-            return 0d;
+            return -1d;
         }
 
         return list.stream()
@@ -457,7 +457,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
         List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode", Object[].class)
                 .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).getResultList();
 
-        return list.isEmpty() ? 0 : list.size();
+        return list.isEmpty() ? -1 : list.size();
     }
 
     /*
@@ -509,7 +509,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
     public int getCompletudeByIdPeriode(int idPeriode) {
         List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode", Object[].class)
                 .setParameter("idPeriode", idPeriode).getResultList();
-        return list.isEmpty() ? 0 : list.size();
+        return list.isEmpty() ? -1 : list.size();
     }
 
     /*
@@ -532,7 +532,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
         List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParentId", Object[].class)
                 .setParameter("idParentId", idPeriode).getResultList();
 
-        return list.isEmpty() ? 0 : list.size();
+        return list.isEmpty() ? -1 : list.size();
     }
 
     /*
@@ -560,7 +560,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).setParameter("idServiceParent", idServiceParent)
                 .getResultList();
 
-        return list.isEmpty() ? 0 : list.size();
+        return list.isEmpty() ? -1 : list.size();
     }
 
     /**
@@ -622,7 +622,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .setParameter("idEtape", idEtape).setParameter("idPeriodeParent", idPeriodeParent).setParameter("idServiceParent", idServiceParent)
                 .getResultList();
 
-        return list.isEmpty() ? 0 : list.size();
+        return list.isEmpty() ? -1 : list.size();
     }
 
     /**
@@ -651,7 +651,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .setParameter("idPeriode", idPeriode).setParameter("idEtape", idEtape)
                 .getResultList();
 
-        return list.isEmpty() ? 0 : list.size();
+        return list.isEmpty() ? -1 : list.size();
     }
 
     /**
@@ -679,7 +679,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .setParameter("idParentId", idPeriodeParent).setParameter("idEtape", idEtape)
                 .getResultList();
 
-        return list.isEmpty() ? 0 : list.size();
+        return list.isEmpty() ? -1 : list.size();
     }
 
     /**
@@ -710,7 +710,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).setParameter("idActeur", idActeur)
                 .getResultList();
 
-        return list.isEmpty() ? 0 : list.size();
+        return list.isEmpty() ? -1 : list.size();
     }
 
     /**
@@ -743,7 +743,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .setParameter("idEtape", idEtape).setParameter("idPeriodeParent", idPeriodeParent).setParameter("idActeur", idActeur)
                 .getResultList();
 
-        return list.isEmpty() ? 0 : list.size();
+        return list.isEmpty() ? -1 : list.size();
     }
 
     /**
@@ -765,8 +765,6 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
     }
 
     /**
-     * Complétude par acteur
-     *
      * @param idPeriode
      * @param idEtape
      */
@@ -777,12 +775,10 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .setParameter("idPeriode", idPeriode).setParameter("idEtape", idEtape)
                 .getResultList();
 
-        return list.isEmpty() ? 0 : list.size();
+        return list.isEmpty() ? -1 : list.size();
     }
 
     /**
-     * Complétude par acteur
-     *
      * @param idPeriode
      * @param idEtape
      * @return int
@@ -797,8 +793,6 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
     }
 
     /**
-     * Complétude par acteur
-     *
      * @param idPeriodeParent
      * @param idEtape
      */
@@ -809,12 +803,10 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .setParameter("idParentId", idPeriodeParent).setParameter("idEtape", idEtape)
                 .getResultList();
 
-        return list.isEmpty() ? 0 : list.size();
+        return list.isEmpty() ? -1 : list.size();
     }
 
     /**
-     * Complétude par acteur
-     *
      * @param idPeriodeParent
      * @param idEtape
      * @return int
@@ -824,6 +816,38 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
 
         List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParentId AND p.idetapeprojet.idetape.idetape=:idEtape", Object[].class)
                 .setParameter("idParentId", idPeriodeParent).setParameter("idEtape", idEtape)
+                .getResultList();
+
+        return list.isEmpty() ? 0 : list.size();
+    }
+
+    /**
+     * Complétude niveau district
+     *
+     * @param idEtape
+     * @param idPeriode
+     * @param idService
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeIdservice(int idEtape, int idPeriode, long idService) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idprojetservice.idservice.idservice=:idService", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).setParameter("idService", idService)
+                .getResultList();
+
+        return list.isEmpty() ? -1 : list.size();
+    }
+
+    /**
+     * @param idEtape
+     * @param idPeriode
+     * @param idService
+     * @return int
+     */
+    @Override
+    public int getCompletudeByIdEtapeIdPeriodeIdserviceValidees(int idEtape, int idPeriode, long idService) {
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idprojetservice.idservice.idservice=:idService AND p.valide = true", Object[].class)
+                .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).setParameter("idService", idService)
                 .getResultList();
 
         return list.isEmpty() ? 0 : list.size();

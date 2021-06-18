@@ -62,4 +62,14 @@ public class PeriodeFacade extends AbstractFacade<Periode> implements PeriodeFac
                 .getResultList();
     }
 
+    @Override
+    public Periode findParentPeriodDefault() {
+        Query query = em.createQuery("SELECT p FROM Periode p WHERE p.idparent=0 AND p.defaultPeriod = true");
+        List list = query.getResultList();
+        if (!list.isEmpty()) {
+            return (Periode) list.get(0);
+        }
+        return null;
+    }
+
 }

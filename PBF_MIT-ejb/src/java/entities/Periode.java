@@ -8,6 +8,7 @@ package entities;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -47,6 +48,8 @@ public class Periode implements Serializable {
     private String code;
     private int numero;
     private int niveau;
+    @Column(name = "default_period")
+    private boolean defaultPeriod;
     @OneToMany(mappedBy = "idperiode", fetch = FetchType.LAZY)
     private List<Projet> projetList;
 
@@ -111,6 +114,14 @@ public class Periode implements Serializable {
 
     public void setNiveau(int niveau) {
         this.niveau = niveau;
+    }
+
+    public boolean isDefaultPeriod() {
+        return defaultPeriod;
+    }
+
+    public void setDefaultPeriod(boolean defaultPeriod) {
+        this.defaultPeriod = defaultPeriod;
     }
 
     @XmlTransient

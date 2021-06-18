@@ -27,6 +27,14 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
     @PostConstruct
     private void init() {
         etapes = etapeFacadeLocal.findAllRange();
+        try {
+            Periode p = periodeFacadeLocal.findParentPeriodDefault();
+            if (p != null) {
+                periode = p;
+                sousPeriodeFilters = periodeFacadeLocal.findByIdParent(periode.getIdperiode());
+            }
+        } catch (Exception e) {
+        }
     }
 
     public void searchData() {
@@ -47,91 +55,171 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
     }
 
-    public double loadValue(int idEtape, int idPeriode) {
-        if (!sousPeriodeFilters.isEmpty()) {
-            Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriode(idEtape, idPeriode);
-            return val == 0 ? 0 : val.intValue();
+    private String color(double valeur) {
+        if (valeur == -1) {
+            return "";
         }
-        return 0;
+
+        if (valeur < 20) {
+            return "#b3e5ec";
+        } else if (valeur >= 20 && valeur < 50) {
+            return "yellow";
+        } else {
+            return "red";
+        }
     }
 
-    public double loadValueNiveauRegion(long idServiceParent, int idPeriode) {
+    public String loadValue(int idEtape, int idPeriode) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriode(idEtape, idPeriode);
+            return val == -1 ? "" : "" + val.intValue();
+        }
+        return "";
+    }
+
+    public String loadValueStyle(int idEtape, int idPeriode) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriode(idEtape, idPeriode);
+            return this.color(val);
+        }
+        return "";
+    }
+
+    public String loadValueNiveauRegion(long idServiceParent, int idPeriode) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), idPeriode, idServiceParent);
-                return val == 0 ? 0 : val.intValue();
+                return val == -1d ? "" : "" + val.intValue();
             }
         }
-        return 0;
+        return "";
     }
 
-    public double loadValueNiveauRegionActeur(int idActeur, int idPeriode) {
+    public String loadValueNiveauRegionStyle(long idServiceParent, int idPeriode) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
+                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), idPeriode, idServiceParent);
+                return color(value);
+            }
+        }
+        return "";
+    }
+
+    public String loadValueDistrict(long idService, int idPeriode) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
+                Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdservice(selectedEtape.getIdetape(), idPeriode, idService);
+                return val == -1d ? "" : "" + val.intValue();
+            }
+        }
+        return "";
+    }
+
+    public String loadValueDistrictStyle(long idService, int idPeriode) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
+                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdservice(selectedEtape.getIdetape(), idPeriode, idService);
+                return color(value);
+            }
+        }
+        return "";
+    }
+
+    public String loadValueActeur(int idActeur, int idPeriode) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
                 Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdActeur(selectedEtape.getIdetape(), idPeriode, idActeur);
-                return val == 0 ? 0 : val.intValue();
+                return val == -1 ? "" : "" + val.intValue();
             }
         }
-        return 0;
+        return "";
     }
 
-    public double agregateByEtape(Etape item) {
+    public String loadValueActeurStyle(int idActeur, int idPeriode) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
+                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdActeur(selectedEtape.getIdetape(), idPeriode, idActeur);
+                return color(value);
+            }
+        }
+        return "";
+    }
+
+    public String agregateByEtape(Etape item) {
         if (!sousPeriodeFilters.isEmpty()) {
             Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParent(item.getIdetape(), periode.getIdperiode());
-            if (value != 0) {
-                return value.intValue();
-            }
+            return value == -1 ? "" : "" + value.intValue();
         }
-        return 0;
+        return "";
     }
 
-    public double agregateByEtapeNiveauRegion(Service item) {
+    public String agregateByEtapeStyle(Etape item) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            Double valeur = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParent(item.getIdetape(), periode.getIdperiode());
+            return color(valeur);
+        }
+        return "";
+    }
+
+    public String agregateByEtapeNiveauRegion(Service item) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
-                if (value != 0) {
-                    return value.intValue();
-                }
+                return value == -1d ? "" : "" + value.intValue();
             }
         }
-        return 0;
+        return "";
     }
 
-    public double agregateByEtapeNiveauRegionActeur(Acteur item) {
+    public String agregateByEtapeNiveauRegionStyle(Service item) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
+                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
+                return color(value);
+            }
+        }
+        return "";
+    }
+
+    public String agregateByEtapeActeur(Acteur item) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
                 Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdActeur(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdacteur());
-                if (value != 0) {
-                    return value.intValue();
-                }
+                return value == -1 ? "" : "" + value.intValue();
             }
         }
-        return 0;
+        return "";
     }
 
-    public double agregateRetardByEtape(Periode periode) {
+    public String agregateByEtapeActeurStyle(Acteur item) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
+                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdActeur(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdacteur());
+                return color(value);
+            }
+        }
+        return "";
+    }
+
+    public String agregateRetardByEtape(Periode periode) {
         if (!sousPeriodeFilters.isEmpty()) {
             Double value = programmationFacadeLocal.getRetardByIdPeriode(periode.getIdperiode());
-            if (value != 0) {
-                return value.intValue();
-            }
+            return value == -1 ? "" : "" + value.intValue();
         }
-        return 0;
+        return "";
     }
 
-    public double agregateRetardByEtapeNiveauRegion(Periode periode) {
+    public String agregateRetardByEtapeNiveauRegion(Periode periode) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 Double value = programmationFacadeLocal.getRetardByIdPeriodeIdEtape(periode.getIdperiode(), selectedEtape.getIdetape());
-                if (value != 0) {
-                    return value.intValue();
-                }
+                return value == -1 ? "" : "" + value.intValue();
             }
         }
-        return 0;
+        return "";
     }
 
-    public double agregateRetardByEtapeNiveauRegionActeur(Periode periode) {
+    public int agregateRetardByEtapeNiveauRegionActeur(Periode periode) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
                 Double value = programmationFacadeLocal.getRetardByIdPeriodeIdEtape(periode.getIdperiode(), selectedEtape.getIdetape());
@@ -143,29 +231,25 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         return 0;
     }
 
-    public double agregatePeriodParent() {
+    public String agregatePeriodParent() {
         if (!sousPeriodeFilters.isEmpty()) {
             Double valeur = programmationFacadeLocal.getRetardByIdPeriodeParent(periode.getIdperiode());
-            if (valeur != 0) {
-                return valeur.intValue();
-            }
+            return valeur == -1 ? "" : "" + valeur.intValue();
         }
-        return 0;
+        return "";
     }
 
-    public double agregatePeriodParentNiveauRegion() {
+    public String agregatePeriodParentNiveauRegion() {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 Double valeur = programmationFacadeLocal.getRetardByIdPeriodeParentIdEtape(periode.getIdperiode(), selectedEtape.getIdetape());
-                if (valeur != 0) {
-                    return valeur.intValue();
-                }
+                return valeur == -1 ? "" : "" + valeur.intValue();
             }
         }
-        return 0;
+        return "";
     }
 
-    public double agregatePeriodParentNiveauRegionActeur() {
+    public int agregatePeriodParentNiveauRegionActeur() {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
                 Double valeur = programmationFacadeLocal.getRetardByIdPeriodeParentIdEtape(periode.getIdperiode(), selectedEtape.getIdetape());
@@ -193,52 +277,44 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         serviceDistricts = serviceFacadeLocal.findByServiceParent(s.getIdservice());
     }
 
-    /**
-     * *
-     * @param item
-     * @return
-     *
-     */
-    public double agregateByEtapeNiveauRegionD(Service item) {
+    public String agregateByEtapeDistrict(Service item) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && selectedService != null && regionDistrict) {
                 Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdservice(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
-                if (value != 0) {
-                    return value.intValue();
-                }
+                return value == -1d ? "" : "" + value.intValue();
             }
         }
-        return 0;
+        return "";
     }
 
-    /**
-     * *
-     * @param periode
-     * @return
-     *
-     */
-    public double agregateRetardByEtapeNiveauRegionD(Periode periode) {
+    public String agregateByEtapeDistrictStyle(Service item) {
+        if (!sousPeriodeFilters.isEmpty()) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && selectedService != null && regionDistrict) {
+                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdservice(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
+                return color(value);
+            }
+        }
+        return "";
+    }
+
+    public String agregateRetardByEtapeDistrict(Periode periode) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedService != null) {
                 Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdserviceParent(periode.getIdperiode(), selectedEtape.getIdetape(), selectedService.getIdservice());
-                if (value != 0) {
-                    return value.intValue();
-                }
+                return value == -1d ? "" : "" + value.intValue();
             }
         }
-        return 0;
+        return "";
     }
 
-    public double agregatePeriodParentNiveauRegionD() {
+    public String agregatePeriodParentDistrict() {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedService != null) {
                 Double valeur = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), selectedService.getIdservice());
-                if (valeur != 0) {
-                    return valeur.intValue();
-                }
+                return valeur == -1d ? "" : "" + valeur.intValue();
             }
         }
-        return 0;
+        return "";
     }
 
 }

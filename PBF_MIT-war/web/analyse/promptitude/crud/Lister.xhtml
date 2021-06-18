@@ -72,13 +72,13 @@
                 <h:outputText value="#{item.nom}"/>
             </p:column>
 
-            <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="var">
+            <p:columns style="text-align: center; background-color: #{promptitudeController.loadValueStyle(item.idetape,var.idperiode)}" value="#{promptitudeController.sousPeriodeFilters}" var="var">
                 <h:outputText value="#{promptitudeController.loadValue(item.idetape,var.idperiode)}">
                     <f:convertNumber />
                 </h:outputText>
             </p:columns>
 
-            <p:column style="text-align: center;">
+            <p:column style="text-align: center; background-color: #{promptitudeController.agregateByEtapeStyle(item)}">
                 <h:outputText value="#{promptitudeController.agregateByEtape(item)}"/>
             </p:column>
 
@@ -151,13 +151,13 @@
                 <h:outputText value="#{item.nom}"/>
             </p:column>
 
-            <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="var">
+            <p:columns style="text-align: center ; background-color: #{promptitudeController.loadValueNiveauRegionStyle(item.idservice, var.idperiode)}" value="#{promptitudeController.sousPeriodeFilters}" var="var">
                 <h:outputText value="#{promptitudeController.loadValueNiveauRegion(item.idservice, var.idperiode)}">
                     <f:convertNumber />
                 </h:outputText>
             </p:columns>
 
-            <p:column style="text-align: center;">
+            <p:column style="text-align: center; background-color: #{promptitudeController.agregateByEtapeNiveauRegionStyle(item)}">
                 <h:outputText value="#{promptitudeController.agregateByEtapeNiveauRegion(item)}"/>
             </p:column>
 
@@ -224,16 +224,16 @@
                 <h:outputText value="#{itemActeur.nom} #{itemActeur.titre}"/>
             </p:column>
 
-            <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="var">
-                <h:outputText value="#{promptitudeController.loadValueNiveauRegionActeur(itemActeur.idacteur, var.idperiode)}">
+            <p:columns style="text-align: center; background-color: #{promptitudeController.loadValueActeurStyle(itemActeur.idacteur, var.idperiode)}" value="#{promptitudeController.sousPeriodeFilters}" var="var">
+                <h:outputText value="#{promptitudeController.loadValueActeur(itemActeur.idacteur, var.idperiode)}">
                     <f:convertNumber />
                 </h:outputText>
             </p:columns>
 
-            <p:column style="text-align: center;">
-                <h:outputText value="#{promptitudeController.agregateByEtapeNiveauRegionActeur(itemActeur)}"/>
+            <p:column style="text-align: center; background-color: #{promptitudeController.agregateByEtapeActeurStyle(itemActeur)}">
+                <h:outputText value="#{promptitudeController.agregateByEtapeActeur(itemActeur)}"/>
             </p:column>
-            
+
             <p:columnGroup type="footer">
                 <p:row>
                     <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
@@ -288,28 +288,26 @@
                 <h:outputText value="#{itemServiceD.nom}"/>
             </p:column>
 
-            <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="var">
-                <h:outputText value="#{promptitudeController.loadValueNiveauRegion(itemServiceD.idservice, var.idperiode)}">
+            <p:columns style="text-align: center; background-color: #{promptitudeController.loadValueDistrictStyle(itemServiceD.idservice, var.idperiode)}" value="#{promptitudeController.sousPeriodeFilters}" var="var">
+                <h:outputText value="#{promptitudeController.loadValueDistrict(itemServiceD.idservice, var.idperiode)}">
                     <f:convertNumber />
                 </h:outputText>
             </p:columns>
 
-            <p:column style="text-align: center;">
-                <h:outputText value="#{promptitudeController.agregateByEtapeNiveauRegionD(itemServiceD)}"/>
+            <p:column style="text-align: center; background-color: #{promptitudeController.agregateByEtapeDistrictStyle(itemServiceD)}">
+                <h:outputText value="#{promptitudeController.agregateByEtapeDistrict(itemServiceD)}"/>
             </p:column>
 
             <p:columnGroup type="footer">
                 <p:row>
                     <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
-                    <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="s" footerText="#{promptitudeController.agregateRetardByEtapeNiveauRegionD(s)}">                        
+                    <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="s" footerText="#{promptitudeController.agregateRetardByEtapeDistrict(s)}">                        
                     </p:columns> 
-                    <p:column style="text-align:center" footerText="#{promptitudeController.agregatePeriodParentNiveauRegionD()}" />
+                    <p:column style="text-align:center" footerText="#{promptitudeController.agregatePeriodParentDistrict()}" />
                 </p:row>
             </p:columnGroup>
 
         </p:dataTable>
-
-
 
     </h:form>
 
