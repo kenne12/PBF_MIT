@@ -47,7 +47,7 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         //sousServices = serviceFacadeLocal.findByServiceParent(service.getIdservice(), false, false);
         sousPeriodes = periodeFacadeLocal.findByIdParent(periode.getIdperiode());
 
-        if (sousPeriodes.isEmpty() && services.isEmpty()) {
+        if (sousPeriodes.isEmpty() && regions.isEmpty()) {
             JsfUtil.addErrorMessage("Liste des services ou périodes vide");
         }
         sousPeriodeFilters.clear();
@@ -69,7 +69,7 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         }
     }
 
-    public String loadValue(int idEtape, int idPeriode) {
+    public String loadValueByEtape(int idEtape, int idPeriode) {
         if (!sousPeriodeFilters.isEmpty()) {
             Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriode(idEtape, idPeriode);
             return val == -1 ? "" : "" + val.intValue();
@@ -77,7 +77,7 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         return "";
     }
 
-    public String loadValueStyle(int idEtape, int idPeriode) {
+    public String loadValueByEtapeStyle(int idEtape, int idPeriode) {
         if (!sousPeriodeFilters.isEmpty()) {
             Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriode(idEtape, idPeriode);
             return this.color(val);
@@ -85,7 +85,7 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         return "";
     }
 
-    public String loadValueNiveauRegion(long idServiceParent, int idPeriode) {
+    public String loadValueByRegion(long idServiceParent, int idPeriode) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), idPeriode, idServiceParent);
@@ -95,7 +95,7 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         return "";
     }
 
-    public String loadValueNiveauRegionStyle(long idServiceParent, int idPeriode) {
+    public String loadValueByRegionStyle(long idServiceParent, int idPeriode) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), idPeriode, idServiceParent);
@@ -219,16 +219,14 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         return "";
     }
 
-    public int agregateRetardByEtapeNiveauRegionActeur(Periode periode) {
+    public String agregateRetardByEtapeNiveauRegionActeur(Periode periode) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
                 Double value = programmationFacadeLocal.getRetardByIdPeriodeIdEtape(periode.getIdperiode(), selectedEtape.getIdetape());
-                if (value != 0) {
-                    return value.intValue();
-                }
+                return value == -1 ? "" : "" + value.intValue();
             }
         }
-        return 0;
+        return "";
     }
 
     public String agregatePeriodParent() {
@@ -261,25 +259,25 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         return 0;
     }
 
-    public void initRetardRegion(Etape e) {
+    public void initRetardByRegion(Etape e) {
         selectedEtape = e;
         regionRegion = true;
     }
 
-    public void initRetardRegionActeur(Etape e) {
+    public void initRetardByActeur(Etape e) {
         selectedEtape = e;
         regionActeur = true;
     }
 
     public void initRetardDistrict(Service s) {
-        selectedService = s;
+        selectedRegion = s;
         regionDistrict = true;
-        serviceDistricts = serviceFacadeLocal.findByServiceParent(s.getIdservice());
+        districts = serviceFacadeLocal.findByServiceParent(s.getIdservice());
     }
 
     public String agregateByEtapeDistrict(Service item) {
         if (!sousPeriodeFilters.isEmpty()) {
-            if (selectedEtape != null && selectedEtape.getIdetape() != null && selectedService != null && regionDistrict) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && selectedRegion != null && regionDistrict) {
                 Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdservice(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
                 return value == -1d ? "" : "" + value.intValue();
             }
@@ -289,7 +287,7 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
 
     public String agregateByEtapeDistrictStyle(Service item) {
         if (!sousPeriodeFilters.isEmpty()) {
-            if (selectedEtape != null && selectedEtape.getIdetape() != null && selectedService != null && regionDistrict) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && selectedRegion != null && regionDistrict) {
                 Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdservice(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
                 return color(value);
             }
@@ -299,8 +297,8 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
 
     public String agregateRetardByEtapeDistrict(Periode periode) {
         if (!sousPeriodeFilters.isEmpty()) {
-            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedService != null) {
-                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdserviceParent(periode.getIdperiode(), selectedEtape.getIdetape(), selectedService.getIdservice());
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedRegion != null) {
+                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdserviceParent(periode.getIdperiode(), selectedEtape.getIdetape(), selectedRegion.getIdservice());
                 return value == -1d ? "" : "" + value.intValue();
             }
         }
@@ -309,8 +307,8 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
 
     public String agregatePeriodParentDistrict() {
         if (!sousPeriodeFilters.isEmpty()) {
-            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedService != null) {
-                Double valeur = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), selectedService.getIdservice());
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedRegion != null) {
+                Double valeur = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeParentIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice());
                 return valeur == -1d ? "" : "" + valeur.intValue();
             }
         }

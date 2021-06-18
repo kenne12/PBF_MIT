@@ -44,10 +44,9 @@ public class CompletudeController extends AbstractCompletudeController implement
             return;
         }
 
-        //sousServices = serviceFacadeLocal.findByServiceParent(service.getIdservice(), false, false);
         sousPeriodes = periodeFacadeLocal.findByIdParent(periode.getIdperiode());
 
-        if (sousPeriodes.isEmpty() && services.isEmpty()) {
+        if (sousPeriodes.isEmpty() && regions.isEmpty()) {
             JsfUtil.addErrorMessage("Liste des services ou périodes vide");
         }
         sousPeriodeFilters.clear();
@@ -55,7 +54,7 @@ public class CompletudeController extends AbstractCompletudeController implement
         RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
     }
 
-    public String loadValue(int idEtape, int idPeriode) {
+    public String loadValueByEtape(int idEtape, int idPeriode) {
         if (!sousPeriodeFilters.isEmpty()) {
             int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriode(idEtape, idPeriode);
             if (valeurProgrammee == -1) {
@@ -66,7 +65,7 @@ public class CompletudeController extends AbstractCompletudeController implement
         return "";
     }
 
-    public String loadValueStyle(int idEtape, int idPeriode) {
+    public String loadValueByEtapeStyle(int idEtape, int idPeriode) {
         if (!sousPeriodeFilters.isEmpty()) {
             int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriode(idEtape, idPeriode);
             if (valeurProgrammee == -1) {
@@ -93,7 +92,7 @@ public class CompletudeController extends AbstractCompletudeController implement
         }
     }
 
-    public String loadValueNiveauRegion(long idServiceParent, int idPeriode) {
+    public String loadValueByRegion(long idServiceParent, int idPeriode) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), idPeriode, idServiceParent);
@@ -105,7 +104,7 @@ public class CompletudeController extends AbstractCompletudeController implement
         return "";
     }
 
-    public String loadValueNiveauDistrict(long idService, int idPeriode) {
+    public String loadValueByDistrict(long idService, int idPeriode) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdservice(selectedEtape.getIdetape(), idPeriode, idService);
@@ -117,7 +116,7 @@ public class CompletudeController extends AbstractCompletudeController implement
         return "";
     }
 
-    public String loadValueNiveauDistrictStyle(long idService, int idPeriode) {
+    public String loadValueByDistrictStyle(long idService, int idPeriode) {
         if (!sousPeriodeFilters.isEmpty()) {
             int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdservice(selectedEtape.getIdetape(), idPeriode, idService);
             if (valeurProgrammee != -1) {
@@ -128,7 +127,7 @@ public class CompletudeController extends AbstractCompletudeController implement
         return "";
     }
 
-    public String loadValueNiveauRegionStyle(long idServiceParent, int idPeriode) {
+    public String loadValueByRegionStyle(long idServiceParent, int idPeriode) {
         if (!sousPeriodeFilters.isEmpty()) {
             int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), idPeriode, idServiceParent);
             if (valeurProgrammee != -1) {
@@ -162,7 +161,7 @@ public class CompletudeController extends AbstractCompletudeController implement
         return "";
     }
 
-    public String agregateByEtape(Etape item) {
+    public String agregateValueByEtape(Etape item) {
         if (!sousPeriodeFilters.isEmpty()) {
             return "" + programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentValidees(item.getIdetape(), periode.getIdperiode()) + " / " + programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParent(item.getIdetape(), periode.getIdperiode());
         }
@@ -181,7 +180,7 @@ public class CompletudeController extends AbstractCompletudeController implement
         return "";
     }
 
-    public String agregateByEtapeNiveauRegion(Service item) {
+    public String agregateByEtapeByRegion(Service item) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
@@ -193,7 +192,7 @@ public class CompletudeController extends AbstractCompletudeController implement
         return "";
     }
 
-    public String agregateByEtapeNiveauRegionStyle(Service item) {
+    public String agregateByEtapeByRegionStyle(Service item) {
         if (!sousPeriodeFilters.isEmpty()) {
             int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
             if (valeurProgrammee == -1) {
@@ -308,25 +307,25 @@ public class CompletudeController extends AbstractCompletudeController implement
         return "";
     }
 
-    public void initRetardRegion(Etape e) {
+    public void initRetardByRegion(Etape e) {
         selectedEtape = e;
         regionRegion = true;
     }
 
-    public void initRetardRegionActeur(Etape e) {
+    public void initRetardByActeur(Etape e) {
         selectedEtape = e;
         regionActeur = true;
     }
 
     public void initRetardDistrict(Service s) {
-        selectedService = s;
+        selectedRegion = s;
         regionDistrict = true;
-        serviceDistricts = serviceFacadeLocal.findByServiceParent(s.getIdservice());
+        districts = serviceFacadeLocal.findByServiceParent(s.getIdservice());
     }
 
     public String agregateByEtapeNiveauDistrict(Service item) {
         if (!sousPeriodeFilters.isEmpty()) {
-            if (selectedEtape != null && selectedEtape.getIdetape() != null && selectedService != null && regionDistrict) {
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && selectedRegion != null && regionDistrict) {
                 return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceValidees(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice()) + " / " + programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdservice(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
             }
         }
@@ -347,10 +346,10 @@ public class CompletudeController extends AbstractCompletudeController implement
 
     public String agregateRetardByEtapeNiveauDistrict(Periode periode) {
         if (!sousPeriodeFilters.isEmpty()) {
-            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedService != null) {
-                int valeurPgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParent(periode.getIdperiode(), selectedEtape.getIdetape(), selectedService.getIdservice());
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedRegion != null) {
+                int valeurPgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParent(periode.getIdperiode(), selectedEtape.getIdetape(), selectedRegion.getIdservice());
                 if (valeurPgrammee != -1) {
-                    return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParentValidees(periode.getIdperiode(), selectedEtape.getIdetape(), selectedService.getIdservice()) + " / " + valeurPgrammee;
+                    return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParentValidees(periode.getIdperiode(), selectedEtape.getIdetape(), selectedRegion.getIdservice()) + " / " + valeurPgrammee;
                 }
             }
         }
@@ -359,10 +358,10 @@ public class CompletudeController extends AbstractCompletudeController implement
 
     public String agregatePeriodParentNiveauDistrict() {
         if (!sousPeriodeFilters.isEmpty()) {
-            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedService != null) {
-                int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), selectedService.getIdservice());
+            if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedRegion != null) {
+                int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice());
                 if (valeurProgrammee != -1) {
-                    return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParentValidees(selectedEtape.getIdetape(), periode.getIdperiode(), selectedService.getIdservice()) + " / " + valeurProgrammee;
+                    return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParentValidees(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice()) + " / " + valeurProgrammee;
                 }
             }
         }

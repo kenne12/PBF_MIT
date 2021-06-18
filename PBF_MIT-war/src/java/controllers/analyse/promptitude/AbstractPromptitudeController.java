@@ -28,18 +28,18 @@ public class AbstractPromptitudeController {
     @EJB
     protected PeriodeFacadeLocal periodeFacadeLocal;
     protected Periode periode = new Periode();
-    protected List<Periode> periodes = new ArrayList<>();
+    protected List<Periode> periodeParents = new ArrayList<>();
     protected List<Periode> sousPeriodes = new ArrayList<>();
     protected List<Periode> sousPeriodeFilters = new ArrayList<>();
 
     @EJB
     protected ServiceFacadeLocal serviceFacadeLocal;
     protected Service service = new Service();
-    protected Service selectedService = new Service();
-    protected Service selectedServiceDistrict = new Service();
-    protected List<Service> services = new ArrayList<>();
+    protected List<Service> regions = new ArrayList<>();
+    protected Service selectedRegion = new Service();
     protected List<Service> sousServices = new ArrayList<>();
-    protected List<Service> serviceDistricts = new ArrayList<>();
+    protected List<Service> districts = new ArrayList<>();
+    protected Service selectedDistrict = new Service();
 
     @EJB
     protected ActeurFacadeLocal acteurFacadeLocal;
@@ -70,9 +70,9 @@ public class AbstractPromptitudeController {
         this.service = service;
     }
 
-    public List<Service> getServices() {
-        services = serviceFacadeLocal.findAllRangeParentOrCtn();
-        return services;
+    public List<Service> getRegions() {
+        regions = serviceFacadeLocal.findAllRangeParentOrCtn();
+        return regions;
     }
 
     public Periode getPeriode() {
@@ -83,9 +83,9 @@ public class AbstractPromptitudeController {
         this.periode = periode;
     }
 
-    public List<Periode> getPeriodes() {
-        periodes = periodeFacadeLocal.findParentPeriod();
-        return periodes;
+    public List<Periode> getPeriodeParents() {
+        periodeParents = periodeFacadeLocal.findParentPeriod();
+        return periodeParents;
     }
 
     public Routine getRoutine() {
@@ -100,12 +100,12 @@ public class AbstractPromptitudeController {
         return sousPeriodes;
     }
 
-    public Service getSelectedService() {
-        return selectedService;
+    public Service getSelectedRegion() {
+        return selectedRegion;
     }
 
-    public void setSelectedService(Service selectedService) {
-        this.selectedService = selectedService;
+    public void setSelectedRegion(Service selectedRegion) {
+        this.selectedRegion = selectedRegion;
     }
 
     public List<Periode> getSousPeriodeFilters() {
@@ -161,16 +161,16 @@ public class AbstractPromptitudeController {
         return acteurs;
     }
 
-    public List<Service> getServiceDistricts() {
-        return serviceDistricts;
+    public List<Service> getDistricts() {
+        return districts;
     }
 
-    public Service getSelectedServiceDistrict() {
-        return selectedServiceDistrict;
+    public Service getSelectedDistrict() {
+        return selectedDistrict;
     }
 
-    public void setSelectedServiceDistrict(Service selectedServiceDistrict) {
-        this.selectedServiceDistrict = selectedServiceDistrict;
+    public void setSelectedDistrict(Service selectedDistrict) {
+        this.selectedDistrict = selectedDistrict;
     }
 
     public boolean isRegionDistrict() {

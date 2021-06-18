@@ -389,32 +389,13 @@ public class ProjetController extends AbstractProjetController implements Serial
                 projet.setDatecreation(Date.from(Instant.now()));
 
                 if (!projet.getRepertoire().isEmpty()) {
-                    String resultat = projet.getRepertoire().replaceAll(" ", "_");
-                    resultat = resultat.replaceAll("-", "_");
-                    resultat = resultat.replaceAll("/", "_");
-                    resultat = resultat.replaceAll("'\'", "_");
-                    resultat = resultat.toLowerCase();
+                    String resultat = Utilitaires.cleanLinkProject(projet.getRepertoire());
                     projet.setRepertoire(resultat);
                 }
 
-                File file = new File(SessionMBean.getParametrage().getRepertoire());
-                String lienRepertoire = "";
-                int linux = 0;
-                if (file.exists()) {
-                    File fileRepertoireProjet = new File(SessionMBean.getParametrage().getRepertoire() + "" + projet.getRepertoire());
-                    if (!fileRepertoireProjet.exists()) {
-                        fileRepertoireProjet.mkdir();
-                    }
-                    lienRepertoire = SessionMBean.getParametrage().getRepertoire() + "" + projet.getRepertoire();
+                Map mapLinkProject = Utilitaires.completeLinkProject(projet.getRepertoire());
+                String lienRepertoire = (String) mapLinkProject.get("lien");
 
-                    if (SessionMBean.getParametrage().getRepertoire().contains("/")) {
-                        lienRepertoire += "/";
-                        linux = 1;
-                    } else {
-                        linux = 0;
-                        lienRepertoire += '\\';
-                    }
-                }
                 projet.setLienRepertoire(lienRepertoire);
                 projetFacadeLocal.create(projet);
 
@@ -433,7 +414,7 @@ public class ProjetController extends AbstractProjetController implements Serial
                     }
                     etp.setIdprojet(projet);
                     String s = lienRepertoire + "" + etp.getRepertoire();
-                    if (linux == 1) {
+                    if ((Integer) mapLinkProject.get("systeme") == 1) {
                         s += "/";
                     } else {
                         s += '\\';

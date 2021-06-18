@@ -7,7 +7,9 @@ import entities.Programmation;
 import entities.Projet;
 import entities.Projetservice;
 import entities.Service;
+import java.io.File;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -300,21 +302,25 @@ public class DupliqerProjetController extends AbstractDupliqerProjetController i
     public void duplicateProject() {
         try {
 
+            Projet oldProject = projetFacadeLocal.find(projet_d.getIdprojet());
+
             projet.setIdprojet(projetFacadeLocal.nextVal());
             projet.setIdperiode(periode);
             projet.setCloture(false);
             projet.setEtat(true);
-            projet.setDatecreation(new Date());
+            projet.setDatecreation(Date.from(Instant.now()));
 
             if (!projet.getRepertoire().isEmpty()) {
-                if (projet.getRepertoire().contains(" ")) {
-                    String resultat = projet.getRepertoire().replaceAll(" ", "_");
-                    resultat = resultat.replaceAll("-", "_");
-                    resultat = resultat.toLowerCase();
-                    projet.setRepertoire(resultat);
-                }
+                String resultat = Utilitaires.cleanLinkProject(projet.getRepertoire());
+                projet.setRepertoire(resultat);
             }
 
+            Map mapLinkProject = Utilitaires.completeLinkProject(projet.getRepertoire());
+            String lienRepertoire = (String) mapLinkProject.get("lien");
+
+            projet.setLienRepertoire(lienRepertoire);
+            projet.setNotifMail(oldProject.isNotifMail());
+            projet.setNotifSms(oldProject.isNotifSms());
             projetFacadeLocal.create(projet);
 
             List<Etapeprojet> etapeprojets = etapeprojetFacadeLocal.findByIdprojet(projet_d.getIdprojet());
@@ -339,6 +345,18 @@ public class DupliqerProjetController extends AbstractDupliqerProjetController i
                 obj.setIdetape(etp.getIdetape());
                 obj.setIdprojet(projet);
                 obj.setNumero(etp.getNumero());
+
+                String s = lienRepertoire + "" + etp.getRepertoire();
+                if ((Integer) mapLinkProject.get("systeme") == 1) {
+                    s += "/";
+                } else {
+                    s += '\\';
+                }
+                File f = new File(s);
+                f.mkdir();
+                s = s.toLowerCase();
+                etp.setLienRepertoire(s);
+
                 etapeprojetFacadeLocal.create(obj);
                 etapeprojets_1.add(obj);
                 i++;
@@ -358,13 +376,18 @@ public class DupliqerProjetController extends AbstractDupliqerProjetController i
                     obj_1.setIdprogrammation(programmationFacadeLocal.nextVal());
                     obj_1.setChemin("-");
                     obj_1.setConteur(0);
+                    obj_1.setActive(false);
+                    obj_1.setDateprevisionnel(null);
+                    obj_1.setDateprevisionnel(null);
 
                     if (pr.getIdetapeprojet().getNumero() == 1) {
-                        obj_1.setDateprevisionnel(pr.getDateprevisionnel());
+                        obj_1.setDateprevisionnel(dateDebut);
+                        if (pr.getIdetapeprojet().getDelai().equals(0)) {
+                            obj_1.setDateFinPrevisionnel(dateDebut);
+                        } else {
+                            obj_1.setDateFinPrevisionnel(Utilitaires.addDaysToDate(dateDebut, pr.getIdetapeprojet().getDelai()));
+                        }
                         obj_1.setActive(true);
-                    } else {
-                        obj_1.setActive(false);
-                        obj_1.setDateprevisionnel(null);
                     }
                     obj_1.setDateValidation(null);
                     obj_1.setDaterealisation(null);
@@ -385,6 +408,8 @@ public class DupliqerProjetController extends AbstractDupliqerProjetController i
                     obj_1.setObservationutilisateur("-");
                     obj_1.setObservationarchivee("-");
                     obj_1.setRetard(0);
+                    obj_1.setNotifEmailProgram(pr.isNotifEmailProgram());
+                    obj_1.setNotifEmailValidation(false);
                     programmationFacadeLocal.create(obj_1);
                 }
             }

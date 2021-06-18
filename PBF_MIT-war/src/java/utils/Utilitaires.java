@@ -1,5 +1,6 @@
 package utils;
 
+import com.sun.javafx.collections.MappingChange;
 import entities.Mouchard;
 import entities.Utilisateur;
 import java.io.File;
@@ -12,6 +13,8 @@ import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
@@ -269,6 +272,43 @@ public class Utilitaires {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static String cleanLinkProject(String lien) {
+        lien = lien.replaceAll(" ", "_");
+        lien = lien.replaceAll("-", "_");
+        lien = lien.replaceAll("/", "_");
+        lien = lien.replaceAll("'\'", "_");
+        lien = lien.replaceAll("\\+", "_");
+        lien = lien.toLowerCase();
+        return lien;
+    }
+
+    public static Map completeLinkProject(String repertoire) {
+        String lienRepertoire = "";
+
+        File file = new File(SessionMBean.getParametrage().getRepertoire());
+        int linux = 0;
+        if (file.exists()) {
+            File fileRepertoireProjet = new File(SessionMBean.getParametrage().getRepertoire() + "" + repertoire);
+            if (!fileRepertoireProjet.exists()) {
+                fileRepertoireProjet.mkdir();
+            }
+            lienRepertoire = SessionMBean.getParametrage().getRepertoire() + "" + repertoire;
+
+            if (SessionMBean.getParametrage().getRepertoire().contains("/")) {
+                lienRepertoire += "/";
+                linux = 1;
+            } else {
+                linux = 0;
+                lienRepertoire += '\\';
+            }
+        }
+
+        Map m = new HashMap();
+        m.put("systeme", linux);
+        m.put("lien", lienRepertoire);
+        return m;
     }
 
 }

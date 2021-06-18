@@ -291,7 +291,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .getAsDouble();
     }
 
-    /*
+    /**
      *Promptitude niveau region
      @param idEtape
      @param idPeriode
@@ -300,7 +300,6 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
      */
     @Override
     public Double getRetardByIdEtapeIdPeriodeIdserviceParent(int idEtape, int idPeriode, long idServiceParent) {
-
         List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idetape.idetape=:idEtape AND p.idetapeprojet.idprojet.idperiode.idperiode=:idPeriode AND p.idprojetservice.idservice.idparent=:idServiceParent", Object[].class)
                 .setParameter("idEtape", idEtape).setParameter("idPeriode", idPeriode).setParameter("idServiceParent", idServiceParent)
                 .getResultList();
