@@ -13,6 +13,7 @@ import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
 import utils.JsfUtil;
 
@@ -307,20 +308,32 @@ public class CompletudeController extends AbstractCompletudeController implement
         return "";
     }
 
-    public void initRetardByRegion(Etape e) {
+    public void initRetardByRegion(Etape e, String link) {
         selectedEtape = e;
         regionRegion = true;
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(this.sc + link);
+        } catch (Exception ex) {
+        }
     }
 
-    public void initRetardByActeur(Etape e) {
+    public void initRetardByActeur(Etape e, String link) {
         selectedEtape = e;
         regionActeur = true;
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(this.sc + link);
+        } catch (Exception ex) {
+        }
     }
 
-    public void initRetardDistrict(Service s) {
+    public void initRetardDistrict(Service s , String link) {
         selectedRegion = s;
         regionDistrict = true;
         districts = serviceFacadeLocal.findByServiceParent(s.getIdservice());
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(this.sc + link);
+        } catch (Exception ex) {
+        }
     }
 
     public String agregateByEtapeNiveauDistrict(Service item) {
@@ -347,9 +360,9 @@ public class CompletudeController extends AbstractCompletudeController implement
     public String agregateRetardByEtapeNiveauDistrict(Periode periode) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedRegion != null) {
-                int valeurPgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParent(periode.getIdperiode(), selectedEtape.getIdetape(), selectedRegion.getIdservice());
+                int valeurPgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice());
                 if (valeurPgrammee != -1) {
-                    return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParentValidees(periode.getIdperiode(), selectedEtape.getIdetape(), selectedRegion.getIdservice()) + " / " + valeurPgrammee;
+                    return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParentValidees(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice()) + " / " + valeurPgrammee;
                 }
             }
         }

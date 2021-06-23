@@ -28,7 +28,7 @@
                     <br/>
 
                     <p:fileUpload id="add_photo" fileUploadListener="#{suiviController.handleFileUpload}" mode="advanced" dragDropSupport="false" accept=""  invalidSizeMessage="#{langue.taille_erreur}" cancelLabel="#{langue.fermer}" invalidFileMessage="#{langue.fichier_non_pris_en_charge}" uploadLabel="#{langue.charger}"   
-                                  update=":notify1,:ProjetListerForm" sizeLimit="10000000" fileLimit="3" allowTypes="/(\.|\/)(pdf|docx|xls)$/" />
+                                  update=":notify1,:ProjetListerForm" sizeLimit="200000000" fileLimit="3" allowTypes="/(\.|\/)(pdf|docx|xls)$/" />
                     <p:separator/>
 
                     <center>

@@ -51,7 +51,7 @@
             <p:ajax event="rowUnselect"/>
 
             <f:facet name="header"> 
-                <h:outputText value="DETAILS PAR ACTEURS"/>
+                <h:outputText value="DETAILS PAR ETAPES"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -84,12 +84,12 @@
                 <p:commandButton 
                     rendered="#{completudeController.periode.idperiode!=null and completudeController.sousPeriodeFilters.size()!=0}"
                     value="R"
-                    actionListener="#{completudeController.initRetardByRegion(item)}"
+                    actionListener="#{completudeController.initRetardByRegion(item , '/analyse/completude/index.html')}"
                     update=":CompletudeForm:datalist_2,:CompletudeForm:datalist_3"/>
                 <p:commandButton 
                     rendered="#{completudeController.periode.idperiode!=null and completudeController.sousPeriodeFilters.size()!=0}"
                     value="A"
-                    actionListener="#{completudeController.initRetardByActeur(item)}"
+                    actionListener="#{completudeController.initRetardByActeur(item , '/analyse/completude/index.html')}"
                     update=":CompletudeForm:datalist_2,:CompletudeForm:datalist_3" />
             </p:column>
 
@@ -105,14 +105,15 @@
 
         </p:dataTable>
 
-        <p:separator style="width: 98%;margin-left: 1%"/>
+        <p:separator style="width: 98%;margin-left: 1%" 
+                     rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionRegion==true}"/>
 
         <p:dataTable id="datalist_2" 
                      value="#{completudeController.regions}" 
                      var="item"                             
                      paginator="true"
                      rowKey="#{item.idservice}"
-                     rows="15"
+                     rows="#{completudeController.regions.size()}"
                      rowsPerPageTemplate="10,20,30,40,50"
                      style="width: 98%;margin-left: 1%"
                      rowIndexVar="index"
@@ -161,7 +162,7 @@
                 <p:commandButton 
                     rendered="true"
                     value="D"
-                    actionListener="#{completudeController.initRetardDistrict(item)}"
+                    actionListener="#{completudeController.initRetardDistrict(item , '/analyse/completude/index.html')}"
                     update=""/>                
             </p:column>
 
@@ -177,14 +178,15 @@
 
         </p:dataTable>
 
-        <p:separator style="width: 98%;margin-left: 1%"/>
+        <p:separator style="width: 98%;margin-left: 1%" 
+                     rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionActeur ==true}"/>
 
         <p:dataTable id="datalist_3" 
                      value="#{completudeController.acteurs}" 
                      var="itemActeur"                             
                      paginator="true"
                      rowKey="#{itemActeur.idacteur}"
-                     rows="15"
+                     rows="#{completudeController.acteurs.size()}"
                      rowsPerPageTemplate="10,20,30,40,50"
                      style="width: 98%;margin-left: 1%"
                      rowIndexVar="index"
@@ -192,12 +194,7 @@
                      widgetVar="fonctionTable"
                      draggableColumns="true"
                      resizableColumns="true"
-                     selectionMode="single"
-                     selection="#{completudeController.selectedActeur}"
                      rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionActeur ==true}">
-
-            <p:ajax event="rowSelect" />
-            <p:ajax event="rowUnselect" />
 
             <f:facet name="header"> 
                 <h:outputText value="DONNEES PAR ACTEUR / #{completudeController.selectedEtape.nom}" />
@@ -241,27 +238,23 @@
 
         </p:dataTable>
 
-        <p:separator style="width: 98%;margin-left: 1%"/>
+        <p:separator style="width: 98%;margin-left: 1%" 
+                     rendered="#{completudeController.selectedRegion!=null and completudeController.selectedRegion.idservice!=null and completudeController.regionDistrict==true}"/>
 
         <p:dataTable id="datalist_4" 
                      value="#{completudeController.districts}" 
                      var="itemServiceD"                             
                      paginator="true"
                      rowKey="#{itemServiceD.idservice}"
-                     rows="15"
+                     rows="#{completudeController.districts.size()}"
                      rowsPerPageTemplate="10,20,30,40,50"
                      style="width: 98%;margin-left: 1%"
                      rowIndexVar="index"
                      emptyMessage="#{langue.tableau_vide}"
                      widgetVar="fonctionTable"
                      draggableColumns="true"
-                     resizableColumns="true"
-                     selectionMode="single"
-                     selection="#{completudeController.selectedDistrict}"
-                     rendered="#{completudeController.selectedRegion!=null and completudeController.selectedRegion.idservice!=null and completudeController.regionDistrict==true}">
-
-            <p:ajax event="rowSelect"/>
-            <p:ajax event="rowUnselect"/>
+                     resizableColumns="true"                     
+                     rendered="#{completudeController.selectedRegion!=null and completudeController.selectedRegion.idservice!=null and completudeController.regionDistrict==true}" >
 
             <f:facet name="header"> 
                 <h:outputText value="DONNEES PAR DISTRICT / REGION #{completudeController.selectedRegion.nom} / #{completudeController.selectedEtape.nom}"/>

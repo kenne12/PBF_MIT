@@ -35,7 +35,7 @@
 
                     <h:outputLabel value="#{langue.photo}"/>
                     <p:fileUpload disabled="#{suiviController.disabledDownPiece}" id="add_photo" fileUploadListener="#{suiviController.handleFileUpload1}" mode="advanced" dragDropSupport="false" accept=""  invalidSizeMessage="#{langue.taille_erreur}" cancelLabel="#{langue.fermer}" invalidFileMessage="#{langue.fichier_non_pris_en_charge}" uploadLabel="#{langue.charger}"   
-                                  update=":notify1,datalist_1,obs" sizeLimit="10000000" fileLimit="3" allowTypes="/(\.|\/)(pdf|docx|XLS)$/" />                   
+                                  update=":notify1,datalist_1,obs" sizeLimit="200000000" fileLimit="3" allowTypes="/(\.|\/)(pdf|docx|XLS)$/" />                   
                     <p:separator/>
                     
                     <p:dataTable id="datalist_1"

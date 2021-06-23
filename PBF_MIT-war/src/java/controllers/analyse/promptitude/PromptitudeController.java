@@ -13,6 +13,7 @@ import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
 import utils.JsfUtil;
 
@@ -44,7 +45,6 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
             return;
         }
 
-        //sousServices = serviceFacadeLocal.findByServiceParent(service.getIdservice(), false, false);
         sousPeriodes = periodeFacadeLocal.findByIdParent(periode.getIdperiode());
 
         if (sousPeriodes.isEmpty() && regions.isEmpty()) {
@@ -247,32 +247,44 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         return "";
     }
 
-    public int agregatePeriodParentNiveauRegionActeur() {
+    public String agregatePeriodParentNiveauRegionActeur() {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
                 Double valeur = programmationFacadeLocal.getRetardByIdPeriodeParentIdEtape(periode.getIdperiode(), selectedEtape.getIdetape());
-                if (valeur != 0) {
-                    return valeur.intValue();
+                if (valeur != -1) {
+                    return "" + valeur.intValue();
                 }
             }
         }
-        return 0;
+        return "";
     }
 
     public void initRetardByRegion(Etape e) {
         selectedEtape = e;
         regionRegion = true;
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(this.sc + "/analyse/promptitude/index.html");
+        } catch (Exception ex) {
+        }
     }
 
     public void initRetardByActeur(Etape e) {
         selectedEtape = e;
         regionActeur = true;
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(this.sc + "/analyse/promptitude/index.html");
+        } catch (Exception ex) {
+        }
     }
 
     public void initRetardDistrict(Service s) {
         selectedRegion = s;
         regionDistrict = true;
         districts = serviceFacadeLocal.findByServiceParent(s.getIdservice());
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(this.sc + "/analyse/promptitude/index.html");
+        } catch (Exception ex) {
+        }
     }
 
     public String agregateByEtapeDistrict(Service item) {
@@ -298,7 +310,7 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
     public String agregateRetardByEtapeDistrict(Periode periode) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedRegion != null) {
-                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdserviceParent(periode.getIdperiode(), selectedEtape.getIdetape(), selectedRegion.getIdservice());
+                Double value = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice());
                 return value == -1d ? "" : "" + value.intValue();
             }
         }

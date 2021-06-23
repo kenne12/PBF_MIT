@@ -12,6 +12,7 @@ import entities.Service;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
 import sessions.ActeurFacadeLocal;
 import sessions.EtapeFacadeLocal;
 import sessions.PeriodeFacadeLocal;
@@ -39,12 +40,10 @@ public class AbstractPromptitudeController {
     protected Service selectedRegion = new Service();
     protected List<Service> sousServices = new ArrayList<>();
     protected List<Service> districts = new ArrayList<>();
-    protected Service selectedDistrict = new Service();
 
     @EJB
     protected ActeurFacadeLocal acteurFacadeLocal;
     protected Acteur acteur = new Acteur();
-    protected Acteur selectedActeur = new Acteur();
     protected List<Acteur> acteurs = new ArrayList<>();
 
     @EJB
@@ -59,6 +58,8 @@ public class AbstractPromptitudeController {
 
     @EJB
     protected ProgrammationFacadeLocal programmationFacadeLocal;
+
+    protected String sc = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
 
     protected Routine routine = new Routine();
 
@@ -148,14 +149,6 @@ public class AbstractPromptitudeController {
         this.acteur = acteur;
     }
 
-    public Acteur getSelectedActeur() {
-        return selectedActeur;
-    }
-
-    public void setSelectedActeur(Acteur selectedActeur) {
-        this.selectedActeur = selectedActeur;
-    }
-
     public List<Acteur> getActeurs() {
         acteurs = acteurFacadeLocal.findAllRange();
         return acteurs;
@@ -163,14 +156,6 @@ public class AbstractPromptitudeController {
 
     public List<Service> getDistricts() {
         return districts;
-    }
-
-    public Service getSelectedDistrict() {
-        return selectedDistrict;
-    }
-
-    public void setSelectedDistrict(Service selectedDistrict) {
-        this.selectedDistrict = selectedDistrict;
     }
 
     public boolean isRegionDistrict() {

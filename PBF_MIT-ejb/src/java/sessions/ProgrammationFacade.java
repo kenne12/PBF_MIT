@@ -354,8 +354,8 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
     @Override
     public Double getRetardByIdPeriodeParentIdEtape(int idPeriodeParent, int idEtape) {
 
-        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParentId AND p.idetapeprojet.idetape.idetape=:idEtape", Object[].class)
-                .setParameter("idParentId", idPeriodeParent).setParameter("idEtape", idEtape)
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:parentId AND p.idetapeprojet.idetape.idetape=:idEtape", Object[].class)
+                .setParameter("parentId", idPeriodeParent).setParameter("idEtape", idEtape)
                 .getResultList();
 
         if (list.isEmpty()) {
@@ -798,8 +798,8 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
     @Override
     public int getCompletudeByIdPeriodeParentIdEtapeSize(int idPeriodeParent, int idEtape) {
 
-        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParentId AND p.idetapeprojet.idetape.idetape=:idEtape", Object[].class)
-                .setParameter("idParentId", idPeriodeParent).setParameter("idEtape", idEtape)
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:parentId AND p.idetapeprojet.idetape.idetape=:idEtape", Object[].class)
+                .setParameter("parentId", idPeriodeParent).setParameter("idEtape", idEtape)
                 .getResultList();
 
         return list.isEmpty() ? -1 : list.size();
@@ -813,7 +813,7 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
     @Override
     public int getCompletudeByIdPeriodeParentIdEtapeSizeValidees(int idPeriodeParent, int idEtape) {
 
-        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParentId AND p.idetapeprojet.idetape.idetape=:idEtape", Object[].class)
+        List<Object[]> list = em.createQuery("SELECT p.retard, p.idacteur.idacteur FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParentId AND p.idetapeprojet.idetape.idetape=:idEtape AND p.valide = true", Object[].class)
                 .setParameter("idParentId", idPeriodeParent).setParameter("idEtape", idEtape)
                 .getResultList();
 

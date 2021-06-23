@@ -51,7 +51,7 @@
             <p:ajax event="rowUnselect"/>
 
             <f:facet name="header"> 
-                <h:outputText value="#{langue.donnees}"/>
+                <h:outputText value="DETAILS PAR ETAPES"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -107,14 +107,15 @@
 
         </p:dataTable>
 
-        <p:separator style="width: 98%;margin-left: 1%"/>
+        <p:separator style="width: 98%;margin-left: 1%" 
+                     rendered="#{promptitudeController.selectedEtape!=null and promptitudeController.selectedEtape.idetape!=null and promptitudeController.regionRegion==true}"/>
 
         <p:dataTable id="datalist_2" 
                      value="#{promptitudeController.regions}" 
                      var="item"                             
                      paginator="true"
                      rowKey="#{item.idservice}"
-                     rows="15"
+                     rows="#{promptitudeController.regions.size()}"
                      rowsPerPageTemplate="10,20,30,40,50"
                      style="width: 98%;margin-left: 1%"
                      rowIndexVar="index"
@@ -124,13 +125,13 @@
                      resizableColumns="true"
                      selectionMode="single"
                      selection="#{promptitudeController.selectedRegion}"
-                     rendered="#{promptitudeController.selectedEtape!=null and promptitudeController.selectedEtape.idetape!=null and promptitudeController.regionRegion==true}">
+                     rendered="#{promptitudeController.selectedEtape!=null and promptitudeController.selectedEtape.idetape!=null and promptitudeController.regionRegion==true}" >
 
             <p:ajax event="rowSelect"/>
             <p:ajax event="rowUnselect"/>
 
             <f:facet name="header"> 
-                <h:outputText value="#{langue.donnees}"/>
+                <h:outputText value="DETAILS PAR REGION ETAPE / #{promptitudeController.selectedEtape.nom}"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -181,14 +182,15 @@
 
         </p:dataTable>
 
-        <p:separator style="width: 98%;margin-left: 1%"/>
+        <p:separator style="width: 98%;margin-left: 1%" 
+                     rendered="#{promptitudeController.selectedEtape!=null and promptitudeController.selectedEtape.idetape!=null and promptitudeController.regionActeur ==true}" />
 
         <p:dataTable id="datalist_3" 
                      value="#{promptitudeController.acteurs}" 
                      var="itemActeur"                             
                      paginator="true"
                      rowKey="#{itemActeur.idacteur}"
-                     rows="15"
+                     rows="#{promptitudeController.acteurs.size()}"
                      rowsPerPageTemplate="10,20,30,40,50"
                      style="width: 98%;margin-left: 1%"
                      rowIndexVar="index"
@@ -196,15 +198,11 @@
                      widgetVar="fonctionTable"
                      draggableColumns="true"
                      resizableColumns="true"
-                     selectionMode="single"
-                     selection="#{promptitudeController.selectedActeur}"
-                     rendered="#{promptitudeController.selectedEtape!=null and promptitudeController.selectedEtape.idetape!=null and promptitudeController.regionActeur ==true}">
+                     rendered="#{promptitudeController.selectedEtape!=null and promptitudeController.selectedEtape.idetape!=null and promptitudeController.regionActeur ==true}" >
 
-            <p:ajax event="rowSelect" />
-            <p:ajax event="rowUnselect" />
 
             <f:facet name="header"> 
-                <h:outputText value="#{langue.donnees}" />
+                <h:outputText value="DONNEES PAR ACTEUR / #{promptitudeController.selectedEtape.nom}" />
             </f:facet>
 
             <p:columnGroup type="header">
@@ -245,14 +243,15 @@
 
         </p:dataTable>
 
-        <p:separator style="width: 98%;margin-left: 1%"/>
+        <p:separator style="width: 98%;margin-left: 1%" 
+                     rendered="#{promptitudeController.selectedRegion!=null and promptitudeController.selectedRegion.idservice!=null and promptitudeController.regionDistrict==true}"/>
 
         <p:dataTable id="datalist_4" 
                      value="#{promptitudeController.districts}" 
                      var="itemServiceD"                             
                      paginator="true"
                      rowKey="#{itemServiceD.idservice}"
-                     rows="15"
+                     rows="#{promptitudeController.districts.size()}"
                      rowsPerPageTemplate="10,20,30,40,50"
                      style="width: 98%;margin-left: 1%"
                      rowIndexVar="index"
@@ -260,15 +259,10 @@
                      widgetVar="fonctionTable"
                      draggableColumns="true"
                      resizableColumns="true"
-                     selectionMode="single"
-                     selection="#{promptitudeController.selectedDistrict}"
-                     rendered="#{promptitudeController.selectedRegion!=null and promptitudeController.selectedRegion.idservice!=null and promptitudeController.regionDistrict==true}">
-
-            <p:ajax event="rowSelect"/>
-            <p:ajax event="rowUnselect"/>
+                     rendered="#{promptitudeController.selectedRegion!=null and promptitudeController.selectedRegion.idservice!=null and promptitudeController.regionDistrict==true}" >
 
             <f:facet name="header"> 
-                <h:outputText value="#{langue.donnees}"/>
+                <h:outputText value="DONNEES PAR DISTRICT / REGION #{promptitudeController.selectedRegion.nom} / #{promptitudeController.selectedEtape.nom}"/>
             </f:facet>
 
             <p:columnGroup type="header">
