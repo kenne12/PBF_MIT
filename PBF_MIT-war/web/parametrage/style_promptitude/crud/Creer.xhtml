@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="StylePromptitudeCreerDlg" 
+                  widgetVar="StylePromptitudeCreerDialog" 
+                  modal="true" resizable="false" 
+                  appendTo="@(body)" 
+                  header="#{langue['Titre.Dlg.Creation']} : Param Dashboard" 
+                  closeOnEscape="true">
+
+            <h:form id="StylePromptitudeCreerForm">
+                <h:panelGroup id="display">
+                    <h:panelGrid columns="3" columnClasses ="column">
+
+                        <p:outputLabel value="#{langue.valeur_inferieur}" for="val_inf" />
+                        <p:inputText id="val_inf" value="#{stylepromptitudeController.promptitudeDataStyle.borneInferieur}" required="true" 
+                                     requiredMessage="#{langue.valeur_obligatoire}" style="width: 150px"/>
+                        <p:message for="val_inf" id="msg_code"/>
+
+                        <p:outputLabel value="#{langue.nom}" for="val_sup" />
+                        <p:inputText id="val_sup" value="#{stylepromptitudeController.promptitudeDataStyle.borneSuperieur}" required="true" 
+                                     requiredMessage="#{langue.valeur_obligatoire}" style="width: 150px" />
+                        <p:message for="val_sup" id="msg_nom"/>
+
+                        <p:outputLabel value="#{langue.background_color}" for="bg_color" />
+                        <p:inputText id="bg_color" value="#{stylepromptitudeController.promptitudeDataStyle.backGroundColor}" required="true" 
+                                     requiredMessage="#{langue.valeur_obligatoire}" style="width: 150px" />
+                        <p:message for="bg_color" id="msg_delai"/>
+
+                        <p:outputLabel value="#{langue.text_color}" for="repertoire" />
+                        <p:inputText id="repertoire" value="#{stylepromptitudeController.promptitudeDataStyle.textColor}" required="true" 
+                                     requiredMessage="#{langue.valeur_obligatoire}" style="width: 150px" />
+                        <p:message for="repertoire" id="msg_repertoire"/>
+
+                    </h:panelGrid>
+
+                    <p:separator/>
+
+                    <p:commandButton style="float: right" actionListener="#{stylepromptitudeController.create()}" 
+                                     value="#{langue['Conv.Enregistrer']}" 
+                                     update="display,:StylePromptitudeListerForm:datalist,:notify1,:actionsForm" 
+                                     onclick="PF('AjaxNotifyDialog').show()" icon="ui-icon-check"/>
+
+                    <p:commandButton style="float: left" value="#{langue.annuler}" oncomplete="PF('StylePromptitudeCreerDialog').hide()" icon="ui-icon-close"/>
+                </h:panelGroup>  
+
+            </h:form>
+
+        </p:dialog>
+    </ui:composition>
+</html>

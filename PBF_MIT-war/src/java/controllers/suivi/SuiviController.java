@@ -19,6 +19,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.transaction.Transactional;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import utils.EmailRequest;
@@ -380,6 +381,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
         }
     }
 
+    @Transactional
     public void validate() {
         try {
             if (programmation.getDateprevisionnel() == null) {

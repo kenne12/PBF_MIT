@@ -25,7 +25,7 @@ import utils.JsfUtil;
 @ManagedBean
 @SessionScoped
 public class PromptitudeController extends AbstractPromptitudeController implements Serializable {
-
+    //#b3e5ec
     @PostConstruct
     private void init() {
         etapes = etapeFacadeLocal.findAllRange();
