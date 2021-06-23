@@ -6,6 +6,7 @@
 package controllers.analyse.completude;
 
 import entities.Acteur;
+import entities.CompletudeDataStyle;
 import entities.Etape;
 import entities.Periode;
 import entities.Service;
@@ -28,6 +29,7 @@ public class CompletudeController extends AbstractCompletudeController implement
     @PostConstruct
     private void init() {
         etapes = etapeFacadeLocal.findAllRange();
+        completudeDataStyles = completudeDataStyleFacadeLocal.findAllRange();
         try {
             Periode p = periodeFacadeLocal.findParentPeriodDefault();
             if (p != null) {
@@ -83,14 +85,15 @@ public class CompletudeController extends AbstractCompletudeController implement
             return "red";
         }
 
+        String color = "";
         double value = (Double.valueOf(valeurValidee) / Double.valueOf(valeurProgrammee)) * 100;
-        if (value < 50) {
-            return "red";
-        } else if (value == 50) {
-            return "yellow";
-        } else {
-            return "#b3e5ec";
+        for (CompletudeDataStyle c : completudeDataStyles) {
+            if (value >= c.getBorneInferieur() && value <= c.getBorneSuperieur()) {
+                color = c.getBackGroundColor();
+                break;
+            }
         }
+        return color;
     }
 
     public String loadValueByRegion(long idServiceParent, int idPeriode) {
@@ -326,7 +329,7 @@ public class CompletudeController extends AbstractCompletudeController implement
         }
     }
 
-    public void initRetardDistrict(Service s , String link) {
+    public void initRetardDistrict(Service s, String link) {
         selectedRegion = s;
         regionDistrict = true;
         districts = serviceFacadeLocal.findByServiceParent(s.getIdservice());

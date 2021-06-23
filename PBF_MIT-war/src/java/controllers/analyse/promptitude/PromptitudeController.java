@@ -8,6 +8,7 @@ package controllers.analyse.promptitude;
 import entities.Acteur;
 import entities.Etape;
 import entities.Periode;
+import entities.PromptitudeDataStyle;
 import entities.Service;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
@@ -28,6 +29,7 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
     @PostConstruct
     private void init() {
         etapes = etapeFacadeLocal.findAllRange();
+        promptitudeDataStyles = promptitudeDataStyleFacadeLocal.findAllRange();
         try {
             Periode p = periodeFacadeLocal.findParentPeriodDefault();
             if (p != null) {
@@ -60,13 +62,14 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
             return "";
         }
 
-        if (valeur < 20) {
-            return "#b3e5ec";
-        } else if (valeur >= 20 && valeur < 50) {
-            return "yellow";
-        } else {
-            return "red";
+        String color = "";
+        for (PromptitudeDataStyle c : promptitudeDataStyles) {
+            if (valeur >= c.getBorneInferieur() && valeur <= c.getBorneSuperieur()) {
+                color = c.getBackGroundColor();
+                break;
+            }
         }
+        return color;
     }
 
     public String loadValueByEtape(int idEtape, int idPeriode) {

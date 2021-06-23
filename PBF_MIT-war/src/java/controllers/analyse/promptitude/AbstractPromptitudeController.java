@@ -8,6 +8,7 @@ package controllers.analyse.promptitude;
 import entities.Acteur;
 import entities.Etape;
 import entities.Periode;
+import entities.PromptitudeDataStyle;
 import entities.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import sessions.ActeurFacadeLocal;
 import sessions.EtapeFacadeLocal;
 import sessions.PeriodeFacadeLocal;
 import sessions.ProgrammationFacadeLocal;
+import sessions.PromptitudeDataStyleFacadeLocal;
 import sessions.ServiceFacadeLocal;
 import utils.Routine;
 
@@ -51,6 +53,10 @@ public class AbstractPromptitudeController {
     protected Etape etape = new Etape();
     protected Etape selectedEtape = new Etape();
     protected List<Etape> etapes = new ArrayList<>();
+
+    @EJB
+    protected PromptitudeDataStyleFacadeLocal promptitudeDataStyleFacadeLocal;
+    protected List<PromptitudeDataStyle> promptitudeDataStyles = new ArrayList<>();
 
     protected boolean regionRegion = false;
     protected boolean regionActeur = false;

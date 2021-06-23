@@ -6,6 +6,7 @@
 package controllers.analyse.completude;
 
 import entities.Acteur;
+import entities.CompletudeDataStyle;
 import entities.Etape;
 import entities.Periode;
 import entities.Service;
@@ -14,6 +15,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import sessions.ActeurFacadeLocal;
+import sessions.CompletudeDataStyleFacadeLocal;
 import sessions.EtapeFacadeLocal;
 import sessions.PeriodeFacadeLocal;
 import sessions.ProgrammationFacadeLocal;
@@ -51,6 +53,10 @@ public class AbstractCompletudeController {
     protected Etape etape = new Etape();
     protected Etape selectedEtape = new Etape();
     protected List<Etape> etapes = new ArrayList<>();
+
+    @EJB
+    protected CompletudeDataStyleFacadeLocal completudeDataStyleFacadeLocal;
+    protected List<CompletudeDataStyle> completudeDataStyles = new ArrayList<>();
 
     protected boolean regionRegion = false;
     protected boolean regionActeur = false;
