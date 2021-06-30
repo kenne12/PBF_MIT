@@ -25,7 +25,7 @@ import utils.JsfUtil;
 @ManagedBean
 @SessionScoped
 public class PromptitudeController extends AbstractPromptitudeController implements Serializable {
-    //#b3e5ec
+
     @PostConstruct
     private void init() {
         etapes = etapeFacadeLocal.findAllRange();
@@ -328,6 +328,10 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
             }
         }
         return "";
+    }
+
+    public int toInt(double value) {
+        return value == 0 ? 0 : (int) value;
     }
 
 }

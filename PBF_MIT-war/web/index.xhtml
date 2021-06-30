@@ -1,10 +1,12 @@
-<ui:composition 
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    template="/SystemTemplate/principalTemplate.xhtml"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:p="http://primefaces.org/ui">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="/SystemTemplate/principalTemplate.xhtml">
 
     <ui:define name="contenu">
 
@@ -17,316 +19,322 @@
 
         <h:form id="data">
 
-
         </h:form>
-
-
-        <!--<div class="row">
-            <div class="col-md-3">
-                Pas de données
-            </div>
-            <div class="col-md-3" style="height: 20px; background-color: red">
-                kenne
-            </div>            
-            <div class="col-md-3" style="height: 20px; background-color: yellow">
-                3
-            </div>            
-            <div class="col-md-3" style="height: 20px; background-color: #b3e5ec">
-                1
-            </div>                                  
-        </div>-->
-
 
         <h:form id="CompletudeForm">
 
-        <p:messages id="growl" closable="true">
-            <p:effect type="pulsate" event="load" delay="50" />
-        </p:messages>
+            <p:messages id="growl" closable="true">
+                <p:effect type="pulsate" event="load" delay="50" />
+            </p:messages>
 
-        <center>
-            <h:panelGrid columns="5">
+            <center>
+                <h:panelGrid columns="5">
 
-                <h:outputLabel value="#{langue.periode_parent}" />
-                <p:selectOneMenu filter="true" value="#{completudeController.periode.idperiode}">
-                    <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
-                    <f:selectItems value="#{completudeController.periodeParents}" var="obj" itemLabel="#{obj.nom}" itemValue="#{obj.idperiode}"/>
-                    <p:ajax />
-                </p:selectOneMenu>
+                    <h:outputLabel value="#{langue.periode_parent}" />&nbsp;
+                    <p:selectOneMenu filter="true" value="#{completudeController.periode.idperiode}">
+                        <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
+                        <f:selectItems value="#{completudeController.periodeParents}" var="obj" itemLabel="#{obj.nom}" itemValue="#{obj.idperiode}"/>
+                        <p:ajax />
+                    </p:selectOneMenu>&nbsp;
 
-                <p:commandButton icon="ui-icon-search" update="CompletudeForm,datalist,:notify1,growl" 
-                                 value="#{langue.chercher}" actionListener="#{completudeController.searchData()}" 
-                                 onclick="PF('AjaxNotifyDialog').show()" />
-            </h:panelGrid>       
-        </center>
+                    <p:commandButton icon="ui-icon-search" update="CompletudeForm,datalist,:notify1,growl" 
+                                     value="#{langue.chercher}" actionListener="#{completudeController.searchData()}" 
+                                     onclick="PF('AjaxNotifyDialog').show()" />
+                </h:panelGrid>       
+            </center>
 
-        <p:separator style="width: 98%;margin-left: 1%"/>
+            <p:separator style="width: 98%;margin-left: 1%"/>
 
-        <p:dataTable id="datalist" 
-                     value="#{completudeController.etapes}" 
-                     var="item"                             
-                     paginator="true"
-                     rowKey="#{item.idetape}"
-                     rows="15"
-                     rowsPerPageTemplate="10,20,30,40,50"
-                     style="width: 98%;margin-left: 1%"
-                     rowIndexVar="index"
-                     emptyMessage="#{langue.tableau_vide}"
-                     widgetVar="fonctionTable"
-                     draggableColumns="true"
-                     resizableColumns="true"
-                     selectionMode="single"
-                     selection="#{completudeController.selectedEtape}">
+            <div style="margin-left: 1%">
+                <ui:repeat value="#{completudeController.completudeDataStyles}" var="var">
+                    <div style="width: 180px;float: left;height: 30px;border: solid 1px blue;margin-left: 5px;background-color: #{var.backGroundColor}" class="container">
+                        <div style="margin-top : 5px">
+                            <center>
+                                <h:outputText style="font-size: 18px" value="&ge; #{completudeController.toInt(var.borneInferieur)} &amp; &le; #{completudeController.toInt(var.borneSuperieur)} (%)" />
+                            </center>  
+                        </div>
+                    </div>
+                </ui:repeat>
 
-            <p:ajax event="rowSelect" update=":CompletudeForm:datalist_2"/>
-            <p:ajax event="rowUnselect"/>
+                <div style="width: 180px;float: left;height: 30px;border: solid 1px blue;margin-left: 5px;" class="container">
+                    <div style="margin-top : 5px">
+                        <center>
+                            <h:outputText style="font-size: 18px;" value="No Data" />
+                        </center>
+                    </div>
+                </div>
+            </div>
 
-            <f:facet name="header"> 
-                <h:outputText value="DETAILS PAR ETAPES"/>
-            </f:facet>
+            <br />
 
-            <p:columnGroup type="header">
-                <p:row>
-                    <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.etapes}"/>
-                    <p:column class="hardBreak" colspan="#{completudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
-                    <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
-                    <p:column class="hardBreak" rowspan="2" headerText="#{langue.action}"/>
-                </p:row>
-                <p:row>
-                    <ui:repeat value="#{completudeController.sousPeriodeFilters}" var="sp">
-                        <p:column class="hardBreak" headerText="#{sp.nom}"/>
-                    </ui:repeat>
-                </p:row>
-            </p:columnGroup>
+            <p:separator style="width: 98%;margin-left: 1%"/>
 
-            <p:column colspan="3" >
-                <h:outputText value="#{item.nom}"/>
-            </p:column>
+            <p:dataTable id="datalist" 
+                         value="#{completudeController.etapes}" 
+                         var="item"                             
+                         paginator="true"
+                         rowKey="#{item.idetape}"
+                         rows="15"
+                         rowsPerPageTemplate="10,20,30,40,50"
+                         style="width: 98%;margin-left: 1%"
+                         rowIndexVar="index"
+                         emptyMessage="#{langue.tableau_vide}"
+                         widgetVar="fonctionTable"
+                         draggableColumns="true"
+                         resizableColumns="true"
+                         selectionMode="single"
+                         selection="#{completudeController.selectedEtape}">
 
-            <p:columns style="text-align: center; background-color: #{completudeController.loadValueByEtapeStyle(item.idetape,var.idperiode)}" value="#{completudeController.sousPeriodeFilters}" var="var">
-                <h:outputText value="#{completudeController.loadValueByEtape(item.idetape,var.idperiode)}" />                    
-            </p:columns>
+                <p:ajax event="rowSelect" update=":CompletudeForm:datalist_2"/>
+                <p:ajax event="rowUnselect"/>
 
-            <p:column style="text-align: center; background-color:  #{completudeController.agregateByEtapeStyle(item)} ">
-                <h:outputText value="#{completudeController.agregateValueByEtape(item)}"/>
-            </p:column>
+                <f:facet name="header"> 
+                    <h:outputText value="#{langue.detail_par_etape}"/>
+                </f:facet>
 
-            <p:column style="text-align: center;">
-                <p:commandButton 
-                    rendered="#{completudeController.periode.idperiode!=null and completudeController.sousPeriodeFilters.size()!=0}"
-                    value="R"
-                    actionListener="#{completudeController.initRetardByRegion(item , '/index.html')}"
-                    update=":CompletudeForm:datalist_2,:CompletudeForm:datalist_3"/>
-                <p:commandButton 
-                    rendered="#{completudeController.periode.idperiode!=null and completudeController.sousPeriodeFilters.size()!=0}"
-                    value="A"
-                    actionListener="#{completudeController.initRetardByActeur(item , '/index.html')}"
-                    update=":CompletudeForm:datalist_2,:CompletudeForm:datalist_3" />
-            </p:column>
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.etapes}"/>
+                        <p:column class="hardBreak" colspan="#{completudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
+                        <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
+                        <p:column class="hardBreak" rowspan="2" headerText="#{langue.action}"/>
+                    </p:row>
+                    <p:row>
+                        <ui:repeat value="#{completudeController.sousPeriodeFilters}" var="sp">
+                            <p:column class="hardBreak" headerText="#{sp.nom}"/>
+                        </ui:repeat>
+                    </p:row>
+                </p:columnGroup>
 
-            <p:columnGroup type="footer">
-                <p:row>
-                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
-                    <p:columns style="text-align: center;" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtape(s)}">                        
-                    </p:columns> 
-                    <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParent()}" />
-                    <p:column style="text-align:center" />
-                </p:row>
-            </p:columnGroup>
+                <p:column colspan="3" >
+                    <h:outputText value="#{item.nom}"/>
+                </p:column>
 
-        </p:dataTable>
+                <p:columns style="text-align: center; background-color: #{completudeController.loadValueByEtapeStyle(item.idetape,var.idperiode)}" value="#{completudeController.sousPeriodeFilters}" var="var">
+                    <h:outputText value="#{completudeController.loadValueByEtape(item.idetape,var.idperiode)}" />                    
+                </p:columns>
 
-        <p:separator style="width: 98%;margin-left: 1%" 
-                     rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionRegion==true}"/>
+                <p:column style="text-align: center; background-color:  #{completudeController.agregateByEtapeStyle(item)} ">
+                    <h:outputText value="#{completudeController.agregateValueByEtape(item)}"/>
+                </p:column>
 
-        <p:dataTable id="datalist_2" 
-                     value="#{completudeController.regions}" 
-                     var="item"                             
-                     paginator="true"
-                     rowKey="#{item.idservice}"
-                     rows="#{completudeController.regions.size()}"
-                     rowsPerPageTemplate="10,20,30,40,50"
-                     style="width: 98%;margin-left: 1%"
-                     rowIndexVar="index"
-                     emptyMessage="#{langue.tableau_vide}"
-                     widgetVar="fonctionTable"
-                     draggableColumns="true"
-                     resizableColumns="true"
-                     selectionMode="single"
-                     selection="#{completudeController.selectedRegion}"
-                     rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionRegion==true}">
+                <p:column style="text-align: center;">
+                    <p:commandButton 
+                        rendered="#{completudeController.periode.idperiode!=null and completudeController.sousPeriodeFilters.size()!=0}"
+                        value="R"
+                        actionListener="#{completudeController.initRetardByRegion(item , '/index.html')}"
+                        update=":CompletudeForm:datalist_2,:CompletudeForm:datalist_3"/>
+                    <p:commandButton 
+                        rendered="#{completudeController.periode.idperiode!=null and completudeController.sousPeriodeFilters.size()!=0}"
+                        value="A"
+                        actionListener="#{completudeController.initRetardByActeur(item , '/index.html')}"
+                        update=":CompletudeForm:datalist_2,:CompletudeForm:datalist_3" />
+                </p:column>
 
-            <p:ajax event="rowSelect"/>
-            <p:ajax event="rowUnselect"/>
+                <p:columnGroup type="footer">
+                    <p:row>
+                        <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
+                        <p:columns style="text-align: center;" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtape(s)}">                        
+                        </p:columns> 
+                        <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParent()}" />
+                        <p:column style="text-align:center" />
+                    </p:row>
+                </p:columnGroup>
 
-            <f:facet name="header"> 
-                <h:outputText value="DETAILS PAR REGION ETAPE / #{completudeController.selectedEtape.nom}"/>
-            </f:facet>
+            </p:dataTable>
 
-            <p:columnGroup type="header">
-                <p:row>
-                    <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.regions}"/>
-                    <p:column class="hardBreak" colspan="#{completudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
-                    <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
-                    <p:column class="hardBreak" rowspan="2" headerText="#{langue.action}"/>
-                </p:row>
-                <p:row>
-                    <ui:repeat value="#{completudeController.sousPeriodeFilters}" var="sp">
-                        <p:column class="hardBreak" headerText="#{sp.nom}"/>
-                    </ui:repeat>
-                </p:row>                
-            </p:columnGroup>
+            <p:separator style="width: 98%;margin-left: 1%" 
+                         rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionRegion==true}"/>
 
-            <p:column colspan="3" >
-                <h:outputText value="#{item.nom}"/>
-            </p:column>
+            <p:dataTable id="datalist_2" 
+                         value="#{completudeController.regions}" 
+                         var="item"                             
+                         paginator="true"
+                         rowKey="#{item.idservice}"
+                         rows="#{completudeController.regions.size()}"
+                         rowsPerPageTemplate="10,20,30,40,50"
+                         style="width: 98%;margin-left: 1%"
+                         rowIndexVar="index"
+                         emptyMessage="#{langue.tableau_vide}"
+                         widgetVar="fonctionTable"
+                         draggableColumns="true"
+                         resizableColumns="true"
+                         selectionMode="single"
+                         selection="#{completudeController.selectedRegion}"
+                         rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionRegion==true}">
 
-            <p:columns style="text-align: center; background-color: #{completudeController.loadValueByRegionStyle(item.idservice, var.idperiode)}" value="#{completudeController.sousPeriodeFilters}" var="var">
-                <h:outputText value="#{completudeController.loadValueByRegion(item.idservice, var.idperiode)}" />                    
-            </p:columns>
+                <p:ajax event="rowSelect"/>
+                <p:ajax event="rowUnselect"/>
 
-            <p:column style="text-align: center; background-color: #{completudeController.agregateByEtapeByRegionStyle(item)}">
-                <h:outputText value="#{completudeController.agregateByEtapeByRegion(item)}"/>
-            </p:column>
+                <f:facet name="header"> 
+                    <h:outputText value="#{langue.detail_par_region} / #{completudeController.selectedEtape.nom}"/>
+                </f:facet>
 
-            <p:column style="text-align: center;">
-                <p:commandButton 
-                    rendered="true"
-                    value="D"
-                    actionListener="#{completudeController.initRetardDistrict(item , '/index.html')}"
-                    update=""/>                
-            </p:column>
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.regions}"/>
+                        <p:column class="hardBreak" colspan="#{completudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
+                        <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
+                        <p:column class="hardBreak" rowspan="2" headerText="#{langue.action}"/>
+                    </p:row>
+                    <p:row>
+                        <ui:repeat value="#{completudeController.sousPeriodeFilters}" var="sp">
+                            <p:column class="hardBreak" headerText="#{sp.nom}"/>
+                        </ui:repeat>
+                    </p:row>                
+                </p:columnGroup>
 
-            <p:columnGroup type="footer">
-                <p:row>
-                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
-                    <p:columns style="text-align: center" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtapeNiveauRegion(s)}">                        
-                    </p:columns> 
-                    <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParentNiveauRegion()}" />
-                    <p:column style="text-align:center" />
-                </p:row>
-            </p:columnGroup>
+                <p:column colspan="3" >
+                    <h:outputText value="#{item.nom}"/>
+                </p:column>
 
-        </p:dataTable>
+                <p:columns style="text-align: center; background-color: #{completudeController.loadValueByRegionStyle(item.idservice, var.idperiode)}" value="#{completudeController.sousPeriodeFilters}" var="var">
+                    <h:outputText value="#{completudeController.loadValueByRegion(item.idservice, var.idperiode)}" />                    
+                </p:columns>
 
-        <p:separator style="width: 98%;margin-left: 1%" 
-                     rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionActeur ==true}"/>
+                <p:column style="text-align: center; background-color: #{completudeController.agregateByEtapeByRegionStyle(item)}">
+                    <h:outputText value="#{completudeController.agregateByEtapeByRegion(item)}"/>
+                </p:column>
 
-        <p:dataTable id="datalist_3" 
-                     value="#{completudeController.acteurs}" 
-                     var="itemActeur"                             
-                     paginator="true"
-                     rowKey="#{itemActeur.idacteur}"
-                     rows="#{completudeController.acteurs.size()}"
-                     rowsPerPageTemplate="10,20,30,40,50"
-                     style="width: 98%;margin-left: 1%"
-                     rowIndexVar="index"
-                     emptyMessage="#{langue.tableau_vide}"
-                     widgetVar="fonctionTable"
-                     draggableColumns="true"
-                     resizableColumns="true"
-                     rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionActeur ==true}">
+                <p:column style="text-align: center;">
+                    <p:commandButton 
+                        rendered="true"
+                        value="D"
+                        actionListener="#{completudeController.initRetardDistrict(item , '/index.html')}"
+                        update=""/>                
+                </p:column>
 
-            <f:facet name="header"> 
-                <h:outputText value="DONNEES PAR ACTEUR / #{completudeController.selectedEtape.nom}" />
-            </f:facet>
+                <p:columnGroup type="footer">
+                    <p:row>
+                        <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
+                        <p:columns style="text-align: center" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtapeNiveauRegion(s)}">                        
+                        </p:columns> 
+                        <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParentNiveauRegion()}" />
+                        <p:column style="text-align:center" />
+                    </p:row>
+                </p:columnGroup>
 
-            <p:columnGroup type="header">
-                <p:row>
-                    <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.acteurs}"/>
-                    <p:column class="hardBreak" colspan="#{completudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
-                    <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
-                </p:row>
-                <p:row>
-                    <ui:repeat value="#{completudeController.sousPeriodeFilters}" var="sp">
-                        <p:column class="hardBreak" headerText="#{sp.nom}"/>
-                    </ui:repeat>
-                </p:row>                
-            </p:columnGroup>
+            </p:dataTable>
 
-            <p:column colspan="3" >
-                <h:outputText value="#{itemActeur.nom} #{itemActeur.titre}"/>
-            </p:column>
+            <p:separator style="width: 98%;margin-left: 1%" 
+                         rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionActeur ==true}"/>
 
-            <p:columns style="text-align: center; background-color: #{completudeController.loadValueNiveauActeurStyle(itemActeur.idacteur, var.idperiode)}" value="#{completudeController.sousPeriodeFilters}" var="var">
-                <h:outputText value="#{completudeController.loadValueNiveauActeur(itemActeur.idacteur, var.idperiode)}">
-                    <f:convertNumber />
-                </h:outputText>
-            </p:columns>
+            <p:dataTable id="datalist_3" 
+                         value="#{completudeController.acteurs}" 
+                         var="itemActeur"                             
+                         paginator="true"
+                         rowKey="#{itemActeur.idacteur}"
+                         rows="#{completudeController.acteurs.size()}"
+                         rowsPerPageTemplate="10,20,30,40,50"
+                         style="width: 98%;margin-left: 1%"
+                         rowIndexVar="index"
+                         emptyMessage="#{langue.tableau_vide}"
+                         widgetVar="fonctionTable"
+                         draggableColumns="true"
+                         resizableColumns="true"
+                         rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionActeur ==true}">
 
-            <p:column style="text-align: center; background-color: #{completudeController.agregateByEtapeNiveauRegionActeurStyle(itemActeur)}">
-                <h:outputText value="#{completudeController.agregateByEtapeNiveauActeur(itemActeur)}"/>
-            </p:column>
+                <f:facet name="header"> 
+                    <h:outputText value="#{langue.detail_par_acteur} / #{completudeController.selectedEtape.nom}" />
+                </f:facet>
 
-            <p:columnGroup type="footer">
-                <p:row>
-                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
-                    <p:columns style="text-align: center" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtapeNiveauActeur(s)}">                        
-                    </p:columns> 
-                    <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParentNiveauActeur()}" />
-                </p:row>
-            </p:columnGroup>
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.acteurs}"/>
+                        <p:column class="hardBreak" colspan="#{completudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
+                        <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
+                    </p:row>
+                    <p:row>
+                        <ui:repeat value="#{completudeController.sousPeriodeFilters}" var="sp">
+                            <p:column class="hardBreak" headerText="#{sp.nom}"/>
+                        </ui:repeat>
+                    </p:row>                
+                </p:columnGroup>
 
-        </p:dataTable>
+                <p:column colspan="3" >
+                    <h:outputText value="#{itemActeur.nom} #{itemActeur.titre}"/>
+                </p:column>
 
-        <p:separator style="width: 98%;margin-left: 1%" 
-                     rendered="#{completudeController.selectedRegion!=null and completudeController.selectedRegion.idservice!=null and completudeController.regionDistrict==true}"/>
+                <p:columns style="text-align: center; background-color: #{completudeController.loadValueNiveauActeurStyle(itemActeur.idacteur, var.idperiode)}" value="#{completudeController.sousPeriodeFilters}" var="var">
+                    <h:outputText value="#{completudeController.loadValueNiveauActeur(itemActeur.idacteur, var.idperiode)}">
+                        <f:convertNumber />
+                    </h:outputText>
+                </p:columns>
 
-        <p:dataTable id="datalist_4" 
-                     value="#{completudeController.districts}" 
-                     var="itemServiceD"                             
-                     paginator="true"
-                     rowKey="#{itemServiceD.idservice}"
-                     rows="#{completudeController.districts.size()}"
-                     rowsPerPageTemplate="10,20,30,40,50"
-                     style="width: 98%;margin-left: 1%"
-                     rowIndexVar="index"
-                     emptyMessage="#{langue.tableau_vide}"
-                     widgetVar="fonctionTable"
-                     draggableColumns="true"
-                     resizableColumns="true"                     
-                     rendered="#{completudeController.selectedRegion!=null and completudeController.selectedRegion.idservice!=null and completudeController.regionDistrict==true}" >
+                <p:column style="text-align: center; background-color: #{completudeController.agregateByEtapeNiveauRegionActeurStyle(itemActeur)}">
+                    <h:outputText value="#{completudeController.agregateByEtapeNiveauActeur(itemActeur)}"/>
+                </p:column>
 
-            <f:facet name="header"> 
-                <h:outputText value="DONNEES PAR DISTRICT / REGION #{completudeController.selectedRegion.nom} / #{completudeController.selectedEtape.nom}"/>
-            </f:facet>
+                <p:columnGroup type="footer">
+                    <p:row>
+                        <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
+                        <p:columns style="text-align: center" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtapeNiveauActeur(s)}">                        
+                        </p:columns> 
+                        <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParentNiveauActeur()}" />
+                    </p:row>
+                </p:columnGroup>
 
-            <p:columnGroup type="header">
-                <p:row>
-                    <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.regions}"/>
-                    <p:column class="hardBreak" colspan="#{completudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
-                    <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
-                </p:row>
-                <p:row>
-                    <ui:repeat value="#{completudeController.sousPeriodeFilters}" var="sp">
-                        <p:column class="hardBreak" headerText="#{sp.nom}"/>
-                    </ui:repeat>
-                </p:row>                
-            </p:columnGroup>
+            </p:dataTable>
 
-            <p:column colspan="3" >
-                <h:outputText value="#{itemServiceD.nom}" />
-            </p:column>
+            <p:separator style="width: 98%;margin-left: 1%" 
+                         rendered="#{completudeController.selectedRegion!=null and completudeController.selectedRegion.idservice!=null and completudeController.regionDistrict==true}"/>
 
-            <p:columns style="text-align: center; background-color: #{completudeController.loadValueByDistrictStyle(itemServiceD.idservice, var.idperiode)}" value="#{completudeController.sousPeriodeFilters}" var="var">
-                <h:outputText value="#{completudeController.loadValueByDistrict(itemServiceD.idservice, var.idperiode)}" />                   
-            </p:columns>
+            <p:dataTable id="datalist_4" 
+                         value="#{completudeController.districts}" 
+                         var="itemServiceD"                             
+                         paginator="true"
+                         rowKey="#{itemServiceD.idservice}"
+                         rows="#{completudeController.districts.size()}"
+                         rowsPerPageTemplate="10,20,30,40,50"
+                         style="width: 98%;margin-left: 1%"
+                         rowIndexVar="index"
+                         emptyMessage="#{langue.tableau_vide}"
+                         widgetVar="fonctionTable"
+                         draggableColumns="true"
+                         resizableColumns="true"                     
+                         rendered="#{completudeController.selectedRegion!=null and completudeController.selectedRegion.idservice!=null and completudeController.regionDistrict==true}" >
 
-            <p:column style="text-align: center; background-color: #{completudeController.agregateByEtapeNiveauDistrictStyle(itemServiceD)}">
-                <h:outputText value="#{completudeController.agregateByEtapeNiveauDistrict(itemServiceD)}"/>
-            </p:column>
+                <f:facet name="header"> 
+                    <h:outputText value="#{langue.detail_par_district} / #{completudeController.selectedRegion.nom} / #{completudeController.selectedEtape.nom}"/>
+                </f:facet>
 
-            <p:columnGroup type="footer">
-                <p:row>
-                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
-                    <p:columns style="text-align: center" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtapeNiveauDistrict(s)}">                        
-                    </p:columns> 
-                    <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParentNiveauDistrict()}" />
-                </p:row>
-            </p:columnGroup>
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.regions}"/>
+                        <p:column class="hardBreak" colspan="#{completudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
+                        <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
+                    </p:row>
+                    <p:row>
+                        <ui:repeat value="#{completudeController.sousPeriodeFilters}" var="sp">
+                            <p:column class="hardBreak" headerText="#{sp.nom}"/>
+                        </ui:repeat>
+                    </p:row>                
+                </p:columnGroup>
 
-        </p:dataTable>
+                <p:column colspan="3" >
+                    <h:outputText value="#{itemServiceD.nom}" />
+                </p:column>
 
-    </h:form>
+                <p:columns style="text-align: center; background-color: #{completudeController.loadValueByDistrictStyle(itemServiceD.idservice, var.idperiode)}" value="#{completudeController.sousPeriodeFilters}" var="var">
+                    <h:outputText value="#{completudeController.loadValueByDistrict(itemServiceD.idservice, var.idperiode)}" />                   
+                </p:columns>
+
+                <p:column style="text-align: center; background-color: #{completudeController.agregateByEtapeNiveauDistrictStyle(itemServiceD)}">
+                    <h:outputText value="#{completudeController.agregateByEtapeNiveauDistrict(itemServiceD)}"/>
+                </p:column>
+
+                <p:columnGroup type="footer">
+                    <p:row>
+                        <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
+                        <p:columns style="text-align: center" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtapeNiveauDistrict(s)}">                        
+                        </p:columns> 
+                        <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParentNiveauDistrict()}" />
+                    </p:row>
+                </p:columnGroup>
+
+            </p:dataTable>
+
+        </h:form>
 
         <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
 

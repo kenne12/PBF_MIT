@@ -16,7 +16,7 @@
         <center>
             <h:panelGrid columns="5">
 
-                <h:outputLabel value="#{langue.periode_parent}" />
+                <h:outputLabel value="#{langue.periode_parent}" />&nbsp;
                 <p:selectOneMenu filter="true" value="#{completudeController.periode.idperiode}">
                     <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
                     <f:selectItems value="#{completudeController.periodeParents}" var="obj" itemLabel="#{obj.nom}" itemValue="#{obj.idperiode}"/>
@@ -28,6 +28,30 @@
                                  onclick="PF('AjaxNotifyDialog').show()" />
             </h:panelGrid>       
         </center>
+
+        <p:separator style="width: 98%;margin-left: 1%"/>
+
+        <div style="margin-left: 1%">
+            <ui:repeat value="#{completudeController.completudeDataStyles}" var="var">
+                <div style="width: 180px;float: left;height: 30px;border: solid 1px blue;margin-left: 5px;background-color: #{var.backGroundColor}" class="container">
+                    <div style="margin-top : 5px">
+                        <center>
+                            <h:outputText style="font-size: 18px" value=" &ge; #{completudeController.toInt(var.borneInferieur)} &amp; &le; #{completudeController.toInt(var.borneSuperieur)} (%)" />
+                        </center>  
+                    </div>
+                </div>
+            </ui:repeat>
+
+            <div style="width: 180px;float: left;height: 30px;border: solid 1px blue;margin-left: 5px;" class="container">
+                <div style="margin-top : 5px">
+                    <center>
+                        <h:outputText style="font-size: 18px;" value="No Data" />
+                    </center>
+                </div>
+            </div>
+        </div>
+
+        <br />
 
         <p:separator style="width: 98%;margin-left: 1%"/>
 
@@ -51,7 +75,7 @@
             <p:ajax event="rowUnselect"/>
 
             <f:facet name="header"> 
-                <h:outputText value="DETAILS PAR ETAPES"/>
+                <h:outputText value="#{langue.detail_par_etape}"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -95,7 +119,7 @@
 
             <p:columnGroup type="footer">
                 <p:row>
-                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
+                    <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
                     <p:columns style="text-align: center;" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtape(s)}">                        
                     </p:columns> 
                     <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParent()}" />
@@ -129,7 +153,7 @@
             <p:ajax event="rowUnselect"/>
 
             <f:facet name="header"> 
-                <h:outputText value="DETAILS PAR REGION ETAPE / #{completudeController.selectedEtape.nom}"/>
+                <h:outputText value="#{langue.detail_par_region} / #{completudeController.selectedEtape.nom}"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -168,7 +192,7 @@
 
             <p:columnGroup type="footer">
                 <p:row>
-                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
+                    <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
                     <p:columns style="text-align: center" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtapeNiveauRegion(s)}">                        
                     </p:columns> 
                     <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParentNiveauRegion()}" />
@@ -197,7 +221,7 @@
                      rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionActeur ==true}">
 
             <f:facet name="header"> 
-                <h:outputText value="DONNEES PAR ACTEUR / #{completudeController.selectedEtape.nom}" />
+                <h:outputText value="#{langue.detail_par_acteur} / #{completudeController.selectedEtape.nom}" />
             </f:facet>
 
             <p:columnGroup type="header">
@@ -229,7 +253,7 @@
 
             <p:columnGroup type="footer">
                 <p:row>
-                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
+                    <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
                     <p:columns style="text-align: center" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtapeNiveauActeur(s)}">                        
                     </p:columns> 
                     <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParentNiveauActeur()}" />
@@ -257,7 +281,7 @@
                      rendered="#{completudeController.selectedRegion!=null and completudeController.selectedRegion.idservice!=null and completudeController.regionDistrict==true}" >
 
             <f:facet name="header"> 
-                <h:outputText value="DONNEES PAR DISTRICT / REGION #{completudeController.selectedRegion.nom} / #{completudeController.selectedEtape.nom}"/>
+                <h:outputText value="#{langue.detail_par_district} / #{completudeController.selectedRegion.nom} / #{completudeController.selectedEtape.nom}"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -287,7 +311,7 @@
 
             <p:columnGroup type="footer">
                 <p:row>
-                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
+                    <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
                     <p:columns style="text-align: center" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtapeNiveauDistrict(s)}">                        
                     </p:columns> 
                     <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParentNiveauDistrict()}" />

@@ -168,4 +168,8 @@ public class AbstractCompletudeController {
         return regionDistrict;
     }
 
+    public List<CompletudeDataStyle> getCompletudeDataStyles() {
+        return completudeDataStyles;
+    }
+
 }

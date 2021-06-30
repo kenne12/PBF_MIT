@@ -168,8 +168,8 @@ public class AbstractPromptitudeController {
         return regionDistrict;
     }
 
-    public void setRegionDistrict(boolean regionDistrict) {
-        this.regionDistrict = regionDistrict;
+    public List<PromptitudeDataStyle> getPromptitudeDataStyles() {
+        return promptitudeDataStyles;
     }
 
 }

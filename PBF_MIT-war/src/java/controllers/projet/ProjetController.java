@@ -23,7 +23,10 @@ import org.primefaces.context.RequestContext;
 import utils.EmailRequest;
 import utils.MailThread;
 import utils.Receipient;
+import utils.ReceipientSms;
 import utils.SessionMBean;
+import utils.SmsRequest;
+import utils.SmsThread;
 import utils.Utilitaires;
 
 @ManagedBean
@@ -223,19 +226,29 @@ public class ProjetController extends AbstractProjetController implements Serial
                 projetservices = projetserviceFacadeLocal.findByIdprojet(projet.getIdprojet(), false);
                 List<Acteur> listActeurCtn = acteurFacadeLocal.findAllRange(true);
 
+                Service acv = serviceFacadeLocal.findByServiceParentAndRegion(projetservices.get(0).getIdservice().getIdparent(), true);
+
+                List<Acteur> listActeurAcv = new ArrayList<>();
+                if (acv != null) {
+                    listActeurAcv.addAll(acteurFacadeLocal.findByIdservice(acv.getIdservice()));
+                }
+
                 int i = 0;
                 for (Projetservice p : projetservices) {
 
                     List<Acteur> listActeurDistrict = new ArrayList<>();
 
-                    if (p.getIdservice().getIdparent() != 0) {
-                        listActeurDistrict = acteurFacadeLocal.findByIdservice(p.getIdservice().getIdparent());
-                        listActeurDistrict.addAll(acteurFacadeLocal.findByIdservice(p.getIdservice().getIdservice()));
-                    } else {
+                    if (p.getIdservice().getIdparent() != 0 && !p.getIdservice().getRegional()) {
                         listActeurDistrict.addAll(acteurFacadeLocal.findByIdservice(p.getIdservice().getIdservice()));
                     }
 
-                    listActeurDistrict.addAll(listActeurCtn);
+                    if (!listActeurCtn.isEmpty()) {
+                        listActeurDistrict.addAll(listActeurCtn);
+                    }
+
+                    listActeurDistrict.removeAll(listActeurAcv);
+                    listActeurDistrict.addAll(listActeurAcv);
+
                     projetservices.get(i).getIdservice().getActeurList().addAll(listActeurDistrict);
 
                     List<Programmation> programmations = new ArrayList<>();
@@ -545,6 +558,22 @@ public class ProjetController extends AbstractProjetController implements Serial
         }
     }
 
+    public void programmer(Projetservice projetservice) {
+        int i = 0;
+        for (Programmation p : projetservice.getProgrammationList()) {
+            if (p.getIdprogrammation() != 0L && p.getIdprogrammation() != null) {
+                programmationFacadeLocal.edit(p);
+            } else {
+                p.setIdprogrammation(programmationFacadeLocal.nextVal());
+                programmationFacadeLocal.create(p);
+            }
+            projetservice.getProgrammationList().set(i, p);
+            i++;
+        }
+        int index = projetservices.indexOf(projetservice);
+        projetservices.set(index, projetservice);
+    }
+
     public void programmer() {
         try {
             boolean sendMail = projet.isNotifMail();
@@ -559,7 +588,7 @@ public class ProjetController extends AbstractProjetController implements Serial
                             pr.setActive(true);
                             pr.setNotifEmailProgram(true);
                             pr.setNotifEmailValidation(true);
-                            if (sendMail || sendSms) {
+                            if ((sendMail || sendSms) == true) {
                                 if (pr.getIdacteur() != null) {
                                     if (!acteurMails.contains(pr.getIdacteur())) {
                                         acteurMails.add(pr.getIdacteur());
@@ -591,11 +620,21 @@ public class ProjetController extends AbstractProjetController implements Serial
                 }
             }
             signalSuccess();
-            if (sendMail) {
+            /*if (sendMail) {
+                System.err.println("Run block");
                 if (!acteurMails.isEmpty()) {
                     this.sendMail(acteurMails);
                 }
+            }*/
+
+            if (sendSms) {
+                System.err.println("Run block sms");
+                if (!acteurMails.isEmpty()) {
+                    this.sendSms(acteurMails);
+                }
             }
+            
+            System.err.println("Fin : -------------");
         } catch (Exception e) {
             signalException(e);
         }
@@ -604,20 +643,42 @@ public class ProjetController extends AbstractProjetController implements Serial
     private void sendMail(List<Acteur> acteurs) {
         EmailRequest emailRequest = new EmailRequest();
         emailRequest.setSubject("Information : " + projet.getNom());
-        emailRequest.setText("Bonjour M. / Mme ;\nLa CTN Vous informe que vous etes concernés par l'étape initiale du projet mensionnée en object;"
-                + "\nVeuillez vous connecter sur le portail du suivi des facture pour fournir les documents exigés."
+        emailRequest.setText("Bonjour M. / Mme ;\nLa CTN Vous informe que vous etes concernés par le projet mensionné en objet ;"
+                + "\nVeuillez vous connecter sur le portail pour fournir les documents exigés aux étapes vous concernant."
                 + "\nCordialement.");
         List<Receipient> receipients = new ArrayList<>();
         for (Acteur a : acteurs) {
             try {
-                receipients.add(new Receipient(a.getIdaddresse().getEmail(), a.getTitre()));
+                if (a.getIdaddresse().getEmail() != null) {
+                    receipients.add(new Receipient(a.getIdaddresse().getEmail(), a.getTitre()));
+                }
             } catch (Exception e) {
             }
         }
         emailRequest.setReceipients(receipients);
-
         MailThread mailThread = new MailThread(emailRequest);
         mailThread.start();
+    }
+
+    private void sendSms(List<Acteur> acteurs) {
+        SmsRequest smsRequest = new SmsRequest();
+        smsRequest.setSubject("Information : " + projet.getNom());
+        smsRequest.setText("Bonjour M. / Mme ;\nLa CTN Vous informe que vous etes concernés par le projet mensionné en object ;"
+                + "\nVeuillez vous connecter sur le portail pour fournir les documents exigés aux étapes vous concernant."
+                + "\nCordialement.");
+        List<ReceipientSms> receipients = new ArrayList<>();
+        for (Acteur a : acteurs) {
+            try {
+                if (a.getIdaddresse().getTelephone1() != null) {
+                    receipients.add(new ReceipientSms(a.getIdaddresse().getTelephone1()));
+                }
+            } catch (Exception e) {
+            }
+        }
+        smsRequest.setReceipients(receipients);
+        SmsThread smsThread = new SmsThread(smsRequest);
+        smsThread.setMode("MULTIPLE");
+        smsThread.start();
     }
 
     public void prepareAddService() {
@@ -638,6 +699,14 @@ public class ProjetController extends AbstractProjetController implements Serial
             return true;
         }
         return false;
+    }
+
+    public boolean renderLastUnderLined(Projetservice p) {
+        int i = projetservices.indexOf(p);
+        if ((i + 1) == projetservices.size()) {
+            return false;
+        }
+        return true;
     }
 
     public void prepareReplication() {
@@ -716,6 +785,27 @@ public class ProjetController extends AbstractProjetController implements Serial
                 }
             }
             RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
+        } catch (Exception e) {
+            signalException(e);
+        }
+    }
+
+    public void deleteProgrammtion(Projetservice projetservice) {
+        try {
+            if (!Utilitaires.isAccess(23L)) {
+                signalError("acces_refuse");
+                return;
+            }
+
+            ut.begin();
+            programmationFacadeLocal.deleteByIdprojetIdservice(projetservice.getIdprojetservice());
+            piecejointesFacadeLocal.deleteByIdprojetservice(projetservice.getIdprojetservice());
+            projetserviceFacadeLocal.remove(projetservice);
+            projetservices.remove(projetservice);
+            ut.commit();
+
+            Utilitaires.saveOperation(mouchardFacadeLocal, "Annulation de la programmation ; Projet : " + projetservice.getIdprojet().getNom() + " Unité d'organisation : " + projetservice.getIdservice().getNom(), SessionMBean.getUserAccount());
+            //signalSuccess();
         } catch (Exception e) {
             signalException(e);
         }

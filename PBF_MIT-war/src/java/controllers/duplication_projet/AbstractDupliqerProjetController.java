@@ -1,12 +1,7 @@
 package controllers.duplication_projet;
 
-import entities.Acteur;
-import entities.Etape;
-import entities.Etapeprojet;
 import entities.Periode;
 import entities.Projet;
-import entities.Projetservice;
-import entities.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,8 +9,6 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.transaction.UserTransaction;
 import sessions.MouchardFacadeLocal;
-import sessions.ActeurFacadeLocal;
-import sessions.EtapeFacadeLocal;
 import sessions.EtapeprojetFacadeLocal;
 import sessions.PeriodeFacadeLocal;
 import sessions.ProgrammationFacadeLocal;
@@ -36,28 +29,13 @@ public class AbstractDupliqerProjetController {
     protected List<Projet> projets = new ArrayList<>();
 
     @EJB
-    protected EtapeFacadeLocal etapeFacadeLocal;
-    protected List<Etape> etapes = new ArrayList<>();
-    protected List<Etape> selectedEtapes = new ArrayList<>();
-
-    @EJB
     protected EtapeprojetFacadeLocal etapeprojetFacadeLocal;
-    protected List<Etapeprojet> etapeprojets = new ArrayList<>();
-
-    @EJB
-    protected ActeurFacadeLocal acteurFacadeLocal;
-    protected List<Acteur> acteurs = new ArrayList<>();
 
     @EJB
     protected ServiceFacadeLocal serviceFacadeLocal;
-    protected Service service = new Service();
-    protected List<Service> services = new ArrayList<>();
-    protected List<Service> service_parents = new ArrayList<>();
-    protected List<Service> selectedServices = new ArrayList<>();
 
     @EJB
     protected ProjetserviceFacadeLocal projetserviceFacadeLocal;
-    protected List<Projetservice> projetservices = new ArrayList<>();
 
     @EJB
     protected PeriodeFacadeLocal periodeFacadeLocal;
@@ -71,10 +49,6 @@ public class AbstractDupliqerProjetController {
     protected MouchardFacadeLocal mouchardFacadeLocal;
 
     protected Date dateDebut;
-
-    protected boolean showValidateBtn;
-    protected boolean showAddServiceBtn;
-    protected boolean showAddEtapeBtn;
 
     protected Routine routine = new Routine();
 
@@ -90,40 +64,20 @@ public class AbstractDupliqerProjetController {
         return this.detail;
     }
 
-    public void setDetail(Boolean detail) {
-        this.detail = detail;
-    }
-
     public Boolean getModifier() {
         return this.modifier;
-    }
-
-    public void setModifier(Boolean modifier) {
-        this.modifier = modifier;
     }
 
     public Boolean getConsulter() {
         return this.consulter;
     }
 
-    public void setConsulter(Boolean consulter) {
-        this.consulter = consulter;
-    }
-
     public Boolean getImprimer() {
         return this.imprimer;
     }
 
-    public void setImprimer(Boolean imprimer) {
-        this.imprimer = imprimer;
-    }
-
     public Boolean getSupprimer() {
         return this.supprimer;
-    }
-
-    public void setSupprimer(Boolean supprimer) {
-        this.supprimer = supprimer;
     }
 
     public Routine getRoutine() {
@@ -132,27 +86,6 @@ public class AbstractDupliqerProjetController {
 
     public void setRoutine(Routine routine) {
         this.routine = routine;
-    }
-
-    public List<Acteur> getActeurs() {
-        try {
-            acteurs = acteurFacadeLocal.findAllRange();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return acteurs;
-    }
-
-    public void setActeurs(List<Acteur> acteurs) {
-        this.acteurs = acteurs;
-    }
-
-    public List<Service> getServices() {
-        return services;
-    }
-
-    public void setServices(List<Service> services) {
-        this.services = services;
     }
 
     public Projet getProjet() {
@@ -178,51 +111,6 @@ public class AbstractDupliqerProjetController {
         this.projets = projets;
     }
 
-    public List<Etape> getEtapes() {
-        try {
-            etapes = etapeFacadeLocal.findAllRange();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return etapes;
-    }
-
-    public void setEtapes(List<Etape> etapes) {
-        this.etapes = etapes;
-    }
-
-    public List<Etape> getSelectedEtapes() {
-        return selectedEtapes;
-    }
-
-    public void setSelectedEtapes(List<Etape> selectedEtapes) {
-        this.selectedEtapes = selectedEtapes;
-    }
-
-    public List<Etapeprojet> getEtapeprojets() {
-        return etapeprojets;
-    }
-
-    public void setEtapeprojets(List<Etapeprojet> etapeprojets) {
-        this.etapeprojets = etapeprojets;
-    }
-
-    public List<Service> getSelectedServices() {
-        return selectedServices;
-    }
-
-    public void setSelectedServices(List<Service> selectedServices) {
-        this.selectedServices = selectedServices;
-    }
-
-    public List<Projetservice> getProjetservices() {
-        return projetservices;
-    }
-
-    public void setProjetservices(List<Projetservice> projetservices) {
-        this.projetservices = projetservices;
-    }
-
     public Periode getPeriode() {
         return periode;
     }
@@ -244,53 +132,8 @@ public class AbstractDupliqerProjetController {
         this.periodes = periodes;
     }
 
-    public boolean isShowValidateBtn() {
-        return showValidateBtn;
-    }
-
-    public void setShowValidateBtn(boolean showValidateBtn) {
-        this.showValidateBtn = showValidateBtn;
-    }
-
     public String getMode() {
         return mode;
-    }
-
-    public Service getService() {
-        return service;
-    }
-
-    public void setService(Service service) {
-        this.service = service;
-    }
-
-    public List<Service> getService_parents() {
-        try {
-            service_parents = serviceFacadeLocal.findAllRangeParent();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return service_parents;
-    }
-
-    public void setService_parents(List<Service> service_parents) {
-        this.service_parents = service_parents;
-    }
-
-    public boolean isShowAddServiceBtn() {
-        return showAddServiceBtn;
-    }
-
-    public void setShowAddServiceBtn(boolean showAddServiceBtn) {
-        this.showAddServiceBtn = showAddServiceBtn;
-    }
-
-    public boolean isShowAddEtapeBtn() {
-        return showAddEtapeBtn;
-    }
-
-    public void setShowAddEtapeBtn(boolean showAddEtapeBtn) {
-        this.showAddEtapeBtn = showAddEtapeBtn;
     }
 
     public Date getDateDebut() {

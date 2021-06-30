@@ -8,17 +8,16 @@
 
     <ui:composition>
 
-        <p:dialog id="ProjetCreerDlg" 
-                  widgetVar="ProjetCreerDialog" 
+        <p:dialog id="DuplicationCreerDlg" 
+                  widgetVar="DuplicationCreerDialog" 
                   modal="true" resizable="false"
-                  height="600px"
-                  width="85%"
+                  width="55%"
                   style="overflow: auto"
                   appendTo="@(body)" 
-                  header="#{langue['Titre.Dlg.Creation']} : #{langue.projet}" 
+                  header="#{langue['Titre.Dlg.Creation']} : Dupplication Des Projets" 
                   closeOnEscape="true">
 
-            <h:form id="ProjetCreerForm">
+            <h:form id="DuplicationCreerForm">
 
                 <h:panelGroup id="display">
 
@@ -27,12 +26,20 @@
                         <h:panelGrid columns="3" columnClasses ="column">
 
                             <p:outputLabel value="#{langue.periode}" for="periode"/>
-                            <p:selectOneMenu filter="true" id="periode" value="#{dupliqerProjetController.periode.idperiode}" required="true" requiredMessage="#{langue.valeur_obligatoire}">
+                            <p:selectOneMenu filter="true" filterMatchMode="contains" id="periode" value="#{dupliqerProjetController.periode.idperiode}" required="true" requiredMessage="#{langue.valeur_obligatoire}">
                                 <f:selectItem itemLabel="#{langue.choisir}"/>
                                 <f:selectItems value="#{dupliqerProjetController.periodes}" var="item" itemLabel="#{item.nom}" itemValue="#{item.idperiode}"/>
                                 <p:ajax/>
                             </p:selectOneMenu>
-                            <p:message for="periode"/>                       
+                            <p:message for="periode"/>
+
+                            <p:outputLabel value="#{langue.projet}" for="projet"/>
+                            <p:selectOneMenu filter="true" filterMatchMode="contains" id="projet" value="#{dupliqerProjetController.projet_d.idprojet}" required="true" requiredMessage="#{langue.valeur_obligatoire}">
+                                <f:selectItem itemLabel="#{langue.choisir}"/>
+                                <f:selectItems value="#{dupliqerProjetController.projets}" var="prj" itemLabel="#{prj.nom}" itemValue="#{prj.idprojet}"/>
+                                <p:ajax/>
+                            </p:selectOneMenu>                            
+                            <p:message for="projet"/>
 
                             <p:outputLabel value="#{langue.libelle}" for="libelle" />
                             <p:inputTextarea style="width: 600px" cols="130" rows="5" id="libelle" value="#{dupliqerProjetController.projet.nom}" required="true" 
@@ -55,6 +62,14 @@
                             </p:calendar>
                             <p:message for="delai"/>
 
+                            <p:outputLabel value="#{langue.notif_email}" for="notif_email" />
+                            <h:selectBooleanCheckbox id="notif_email" value="#{dupliqerProjetController.projet.notifMail}" />
+                            <p:message for="notif_email" />
+
+                            <p:outputLabel value="#{langue.notif_sms}" for="notif_sms" />
+                            <h:selectBooleanCheckbox id="notif_sms" value="#{dupliqerProjetController.projet.notifSms}" />
+                            <p:message for="notif_sms" />
+
                             <p:outputLabel value="#{langue.etat}" for="etat" rendered="#{dupliqerProjetController.mode.equals('Edit')?true:false}"/>
                             <h:selectBooleanCheckbox id="etat" value="#{dupliqerProjetController.projet.etat}" rendered="#{dupliqerProjetController.mode.equals('Edit')?true:false}"/>
                             <p:message for="etat" rendered="#{dupliqerProjetController.mode.equals('Edit')?true:false}"/>
@@ -63,21 +78,13 @@
                             <h:selectBooleanCheckbox id="cloturee" value="#{dupliqerProjetController.projet.cloture}" rendered="#{dupliqerProjetController.mode.equals('Edit')?true:false}"/>
                             <p:message for="cloturee" rendered="#{dupliqerProjetController.mode.equals('Edit')?true:false}"/>
 
-                            <p:outputLabel value="#{langue.projet}" for="projet"/>
-                            <p:selectOneMenu filter="true" id="projet" value="#{dupliqerProjetController.projet_d.idprojet}" required="true" requiredMessage="#{langue.valeur_obligatoire}">
-                                <f:selectItem itemLabel="#{langue.choisir}"/>
-                                <f:selectItems value="#{dupliqerProjetController.projets}" var="prj" itemLabel="#{prj.nom}" itemValue="#{prj.idprojet}"/>
-                                <p:ajax/>
-                            </p:selectOneMenu>                            
-                            <p:message for="projet"/> 
-
                         </h:panelGrid>
 
                     </center>
 
                     <p:separator/>
                     <center>
-                        <p:commandButton value="#{langue.annuler}" onclick="PF('ProjetCreerDialog').hide()"/>
+                        <p:commandButton value="#{langue.annuler}" onclick="PF('DuplicationCreerDialog').hide()"/>
                         <p:commandButton value="#{langue.dupliquer}" onclick="PF('AjaxNotifyDialog').show()" 
                                          update=":actionsForm,:notify1," 
                                          actionListener="#{dupliqerProjetController.duplicateProject()}" />                    
@@ -86,9 +93,6 @@
                 </h:panelGroup>  
 
             </h:form>
-
         </p:dialog>
-
     </ui:composition>
-
 </html>

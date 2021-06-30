@@ -16,7 +16,7 @@
         <center>
             <h:panelGrid columns="5">
 
-                <h:outputLabel value="#{langue.periode_parent}" />
+                <h:outputLabel value="#{langue.periode_parent}" />&nbsp;
                 <p:selectOneMenu filter="true" value="#{promptitudeController.periode.idperiode}">
                     <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
                     <f:selectItems value="#{promptitudeController.periodeParents}" var="obj" itemLabel="#{obj.nom}" itemValue="#{obj.idperiode}"/>
@@ -28,6 +28,30 @@
                                  onclick="PF('AjaxNotifyDialog').show()" />
             </h:panelGrid>       
         </center>
+
+        <p:separator style="width: 98%;margin-left: 1%"/>
+        
+        <div style="margin-left: 1%">
+            <ui:repeat value="#{promptitudeController.promptitudeDataStyles}" var="var">
+                <div style="width: 180px;float: left;height: 30px;border: solid 1px blue;margin-left: 5px;background-color: #{var.backGroundColor}" class="container">
+                    <div style="margin-top : 5px">
+                        <center>
+                            <h:outputText style="font-size: 18px" value=" &ge; #{promptitudeController.toInt(var.borneInferieur)} &amp; &le; #{promptitudeController.toInt(var.borneSuperieur)} (Jr)" />
+                        </center>  
+                    </div>
+                </div>
+            </ui:repeat>
+
+            <div style="width: 180px;float: left;height: 30px;border: solid 1px blue;margin-left: 5px;" class="container">
+                <div style="margin-top : 5px">
+                    <center>
+                        <h:outputText style="font-size: 18px;" value="No Data" />
+                    </center>
+                </div>
+            </div>
+        </div>
+
+        <br />
 
         <p:separator style="width: 98%;margin-left: 1%"/>
 
@@ -51,7 +75,7 @@
             <p:ajax event="rowUnselect"/>
 
             <f:facet name="header"> 
-                <h:outputText value="DETAILS PAR ETAPES"/>
+                <h:outputText value="#{langue.detail_par_etape}"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -97,7 +121,7 @@
 
             <p:columnGroup type="footer">
                 <p:row>
-                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
+                    <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
                     <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="s" footerText="#{promptitudeController.agregateRetardByEtape(s)}">                        
                     </p:columns> 
                     <p:column style="text-align:center" footerText="#{promptitudeController.agregatePeriodParent()}" />
@@ -131,7 +155,7 @@
             <p:ajax event="rowUnselect"/>
 
             <f:facet name="header"> 
-                <h:outputText value="DETAILS PAR REGION ETAPE / #{promptitudeController.selectedEtape.nom}"/>
+                <h:outputText value="#{langue.detail_par_region} / #{promptitudeController.selectedEtape.nom}"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -172,7 +196,7 @@
 
             <p:columnGroup type="footer">
                 <p:row>
-                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
+                    <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
                     <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="s" footerText="#{promptitudeController.agregateRetardByEtapeNiveauRegion(s)}">                        
                     </p:columns> 
                     <p:column style="text-align:center" footerText="#{promptitudeController.agregatePeriodParentNiveauRegion()}" />
@@ -202,7 +226,7 @@
 
 
             <f:facet name="header"> 
-                <h:outputText value="DONNEES PAR ACTEUR / #{promptitudeController.selectedEtape.nom}" />
+                <h:outputText value="#{langue.detail_par_acteur} / #{promptitudeController.selectedEtape.nom}" />
             </f:facet>
 
             <p:columnGroup type="header">
@@ -234,7 +258,7 @@
 
             <p:columnGroup type="footer">
                 <p:row>
-                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
+                    <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
                     <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="s" footerText="#{promptitudeController.agregateRetardByEtapeNiveauRegionActeur(s)}">                        
                     </p:columns> 
                     <p:column style="text-align:center" footerText="#{promptitudeController.agregatePeriodParentNiveauRegionActeur()}" />
@@ -262,7 +286,7 @@
                      rendered="#{promptitudeController.selectedRegion!=null and promptitudeController.selectedRegion.idservice!=null and promptitudeController.regionDistrict==true}" >
 
             <f:facet name="header"> 
-                <h:outputText value="DONNEES PAR DISTRICT / REGION #{promptitudeController.selectedRegion.nom} / #{promptitudeController.selectedEtape.nom}"/>
+                <h:outputText value="#{langue.detail_par_district} / #{promptitudeController.selectedRegion.nom} / #{promptitudeController.selectedEtape.nom}"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -294,7 +318,7 @@
 
             <p:columnGroup type="footer">
                 <p:row>
-                    <p:column colspan="3" style="text-align:right" footerText="Totaux" />                                       
+                    <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
                     <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="s" footerText="#{promptitudeController.agregateRetardByEtapeDistrict(s)}">                        
                     </p:columns> 
                     <p:column style="text-align:center" footerText="#{promptitudeController.agregatePeriodParentDistrict()}" />

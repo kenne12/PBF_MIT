@@ -4,7 +4,8 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf">
 
     <ui:composition>
 
@@ -25,106 +26,132 @@
 
                     <ui:repeat id="datalist" value="#{projetController.projetservices}" var="var"  >
 
-                        <h:outputText value="#{var.idservice.nom}" style="font-size: 18px;color: red"/>  
-                        <center>
-                            <p:commandButton icon="ui-icon-refresh" value="#{langue.repliquer} à tous" rendered="#{projetController.renderReplicationBtn(var)}" actionListener="#{projetController.replicateData(var)}" update=":notify1,:ProgrammationAddForm" onclick="PF('AjaxNotifyDialog').show()" />
-                            <p:commandButton icon="ui-icon-plus" value="#{langue.repliquer} personnalisée" rendered="#{projetController.renderReplicationBtn(var)}" actionListener="#{projetController.prepareReplication()}" update=":DuplicationCreerForm" />
-                        </center>
+                        <p:panel header="#{var.idservice.nom}">
 
-                        <p:separator/>
+                            <center>
+                                <p:commandButton icon="ui-icon-refresh" value="#{langue.repliquer} à tous" rendered="#{projetController.renderReplicationBtn(var)}" actionListener="#{projetController.replicateData(var)}" update=":notify1,:ProgrammationAddForm" onclick="PF('AjaxNotifyDialog').show()" />
+                                <p:commandButton icon="ui-icon-plus" value="#{langue.repliquer} personnalisée" rendered="#{projetController.renderReplicationBtn(var)}" actionListener="#{projetController.prepareReplication()}" update=":DuplicationCreerForm" />
+                            </center>
 
-                        <p:dataTable 
-                            value="#{var.programmationList}"
-                            var="item1"
-                            rowKey="#{item1.idprogrammation}"
-                            paginator="true"
-                            rowIndexVar="index"
-                            rows="10"
-                            rowsPerPageTemplate="10,20,30,40,50"
-                            editable="true"
-                            editMode="cell">
+                            <p:separator rendered="#{projetController.renderReplicationBtn(var)}" />
 
-                            <p:column style="width: 20%">
-                                <f:facet name="header">
-                                    <h:outputText value="#{langue.etape}"/>
-                                </f:facet>
-                                <h:outputText value="#{item1.idetapeprojet.idetape.nom}"/>
-                            </p:column>
+                            <p:dataTable 
+                                value="#{var.programmationList}"
+                                var="item1"
+                                rowKey="#{item1.idprogrammation}"
+                                paginator="true"
+                                rowIndexVar="index" rows="10"                               
+                                rowsPerPageTemplate="10,20,30,40,50"
+                                editable="true" editMode="cell">
+                                
+                                <p:column style="width: 20%">
+                                    <f:facet name="header">
+                                        <h:outputText value="#{langue.etape}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item1.idetapeprojet.idetape.nom}"/>
+                                </p:column>
 
-                            <p:column style="width: 5%;text-align: center">
-                                <f:facet name="header">
-                                    <h:outputText value="#{langue.numero_ordre}"/>
-                                </f:facet>
-                                <h:outputText value="#{item1.idetapeprojet.numero}"/>
-                            </p:column>
+                                <p:column style="width: 5%;text-align: center">
+                                    <f:facet name="header">
+                                        <h:outputText value="#{langue.numero_ordre}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{item1.idetapeprojet.numero}"/>
+                                </p:column>
 
-                            <p:column style="width: 20%;" headerText="#{langue.document}">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{item1.iddocument.nom}">
-                                            <f:convertNumber/>
-                                        </h:outputText>
-                                    </f:facet>
-                                    <f:facet  name="input">
-                                        <p:selectOneMenu filter="true" required="true" value="#{item1.iddocument}" converter="documentConverter">                                             
-                                            <f:selectItem itemLabel="#{langue.choisir}"/>
-                                            <f:selectItems value="#{programmationController.documents}" var="doc" itemLabel="#{doc.nom}" itemValue="#{doc}"/>
-                                            <p:ajax event="keyup"/>
-                                        </p:selectOneMenu>
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>
+                                <p:column style="width: 20%;" headerText="#{langue.document}">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{item1.iddocument.nom}">
+                                                <f:convertNumber/>
+                                            </h:outputText>
+                                        </f:facet>
+                                        <f:facet  name="input">
+                                            <p:selectOneMenu filter="true" required="true" value="#{item1.iddocument}" converter="documentConverter">                                             
+                                                <f:selectItem itemLabel="#{langue.choisir}"/>
+                                                <f:selectItems value="#{programmationController.documents}" var="doc" itemLabel="#{doc.nom}" itemValue="#{doc}"/>
+                                                <p:ajax event="keyup"/>
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
 
-                            <p:column style="width: 25%;" headerText="#{langue.acteur}">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{item1.idacteur.nom} #{item1.idacteur.prenom}"/>                                        
-                                    </f:facet>
-                                    <f:facet  name="input">
-                                        <p:selectOneMenu filter="true" required="true" value="#{item1.idacteur}" converter="acteurConverter">                                             
-                                            <f:selectItem itemLabel="#{langue.choisir}"/>
-                                            <f:selectItems value="#{var.idservice.acteurList}" var="obj" itemLabel="#{obj.nom} #{obj.prenom}" itemValue="#{obj}"/>
-                                            <p:ajax event="keyup"/>
-                                        </p:selectOneMenu>
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>
+                                <p:column style="width: 25%;" headerText="#{langue.acteur}">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{item1.idacteur.nom} #{item1.idacteur.prenom}"/>                                        
+                                        </f:facet>
+                                        <f:facet  name="input">
+                                            <p:selectOneMenu filter="true" required="true" value="#{item1.idacteur}" converter="acteurConverter">                                             
+                                                <f:selectItem itemLabel="#{langue.choisir}"/>
+                                                <f:selectItems value="#{var.idservice.acteurList}" var="obj" itemLabel="#{obj.nom} #{obj.prenom}" itemValue="#{obj}"/>
+                                                <p:ajax event="keyup"/>
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
 
-                            <p:column style="width: 10%;text-align: center" headerText="#{langue.delai}">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{item1.dateprevisionnel}">
-                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
-                                        </h:outputText>
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:calendar required="#{index==0}" disabled="#{index!=0}" value="#{item1.dateprevisionnel}" navigator="true" pattern="dd/MM/yyyy">                                             
-                                            <p:ajax event="dateSelect"/>
-                                        </p:calendar>
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>
-                            
-                            <p:column style="width: 10%;text-align: center" headerText="#{langue.delai}">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{item1.dateFinPrevisionnel}">
-                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
-                                        </h:outputText>
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:calendar required="#{index ==0 }" disabled="#{index!=0}" value="#{item1.dateFinPrevisionnel}" navigator="true" pattern="dd/MM/yyyy">                                             
-                                            <p:ajax event="dateSelect"/>
-                                        </p:calendar>
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>
+                                <p:column style="width: 10%;text-align: center" headerText="#{langue.delai}">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{item1.dateprevisionnel}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:calendar required="#{index==0}" disabled="#{index!=0}" value="#{item1.dateprevisionnel}" navigator="true" pattern="dd/MM/yyyy">                                             
+                                                <p:ajax event="dateSelect"/>
+                                            </p:calendar>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column style="width: 10%;text-align: center" headerText="#{langue.delai}">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{item1.dateFinPrevisionnel}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:calendar required="#{index ==0 }" disabled="#{index!=0}" value="#{item1.dateFinPrevisionnel}" navigator="true" pattern="dd/MM/yyyy">                                             
+                                                <p:ajax event="dateSelect"/>
+                                            </p:calendar>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                            </p:dataTable>
+
+                            <br/>
+                            <center>
+                                <p:commandButton icon="ui-icon-pencil"
+                                                 disabled="true"
+                                                 value="#{langue.modifier}" 
+                                                 actionListener="#{programmationController.prepareCreate(var)}"
+                                                 update=":notify1"/>
+                                
+                                <p:commandButton value="#{langue.valider}" 
+                                                 update="ProgrammationAddForm,:notify1" disabled="false"       
+                                                 actionListener="#{projetController.programmer(var)}">
+                                    <p:confirm header="#{langue['Titre.Dlg.Confirm']}"
+                                               message="#{langue['Message.Confirm.Supprimer']}?"
+                                               icon="ui-icon-alert"/>
+                                </p:commandButton>
+
+                                <p:commandButton icon="ui-icon-trash" value="#{langue.annuler}" 
+                                                 update="ProgrammationAddForm,:notify1" disabled="false"       
+                                                 actionListener="#{projetController.deleteProgrammtion(var)}">
+                                    <p:confirm header="#{langue['Titre.Dlg.Confirm']}"
+                                               message="#{langue['Message.Confirm.Supprimer']}?"
+                                               icon="ui-icon-alert"/>
+                                </p:commandButton>
+                            </center>
+
+                        </p:panel>
                         
-                        </p:dataTable>
+                        <br jsf:rendred="#{projetController.renderLastUnderLined(var)}" />
 
                     </ui:repeat>
-
-                    <p:separator/>
 
                     <center>
                         <p:commandButton update=":ProjetListerForm" value="#{langue.fermer}" onclick="PF('ProgrammationAddDialog').hide()"/>

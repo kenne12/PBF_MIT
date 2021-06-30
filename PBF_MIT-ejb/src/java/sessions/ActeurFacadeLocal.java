@@ -42,4 +42,6 @@ public interface ActeurFacadeLocal {
 
     List<Acteur> findByIdserviceParent(int idParent);
 
+    List<Acteur> findByIdserviceAndRegion(int idservice, boolean region);
+
 }

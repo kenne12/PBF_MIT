@@ -82,11 +82,7 @@ public class AbstractStylecompletudeController {
     }
 
     public List<CompletudeDataStyle> getCompletudeDataStyles() {
-        try {
-            completudeDataStyles = completudeDataStyleFacadeLocal.findAllRange();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        completudeDataStyles = completudeDataStyleFacadeLocal.findAllRange();
         return completudeDataStyles;
     }
 

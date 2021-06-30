@@ -34,6 +34,11 @@
                              actionListener="#{projetController.prepareProgrammation()}"
                              update=":ProgrammationAddForm,:notify1" 
                              disabled="#{projetController.modifier}"/>
+                        
+            <p:commandButton id="duplication_btn" icon="ui-icon-plus"   
+                             value="Dupplication" 
+                             actionListener="#{dupliqerProjetController.prepareCreate()}"
+                             update=":DuplicationCreerForm,:notify1"/>
 
             <p:commandButton id="supprimer" 
                              icon="ui-icon-trash"  

@@ -88,11 +88,23 @@ public class ServiceFacade extends AbstractFacade<Service> implements ServiceFac
                 .setParameter("central", true).setParameter("regional", true)
                 .getResultList();
     }
-    
+
     @Override
     public List<Service> findAllRangeParentOrCtn() {
         return this.em.createQuery("SELECT s FROM Service s WHERE s.idparent=0 OR s.central=true ORDER BY s.nom")
                 .getResultList();
+    }
+
+    @Override
+    public Service findByServiceParentAndRegion(int idparent, boolean regional) {
+        List list = this.em.createQuery("SELECT s FROM Service s WHERE s.idparent!=0 AND s.idparent=:idparent AND s.regional=:regional ORDER BY s.nom")
+                .setParameter("idparent", idparent).setParameter("regional", regional)
+                .getResultList();
+
+        if (!list.isEmpty()) {
+            return (Service) list.get(0);
+        }
+        return null;
     }
 
 }

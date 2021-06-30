@@ -384,4 +384,8 @@ public class CompletudeController extends AbstractCompletudeController implement
         return "";
     }
 
+    public int toInt(double value) {
+        return value == 0 ? 0 : (int) value;
+    }
+
 }

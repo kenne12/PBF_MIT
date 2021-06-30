@@ -40,12 +40,14 @@ public interface ServiceFacadeLocal {
 
     List<Service> findAllRangeParent();
 
-    List<Service> findByServiceParent(int idparent);
+    public List<Service> findByServiceParent(int idparent);
 
-    List<Service> findByServiceParent(int idparent, boolean central, boolean regional);
+    public List<Service> findByServiceParent(int idparent, boolean central, boolean regional);
 
-    List<Service> findAllCentralAndRegional();
+    public List<Service> findAllCentralAndRegional();
 
-    List<Service> findAllRangeParentOrCtn();
+    public List<Service> findAllRangeParentOrCtn();
+
+    public Service findByServiceParentAndRegion(int idparent, boolean regional);
 
 }
