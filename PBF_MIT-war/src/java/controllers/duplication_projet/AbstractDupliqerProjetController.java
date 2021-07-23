@@ -99,11 +99,7 @@ public class AbstractDupliqerProjetController {
     }
 
     public List<Projet> getProjets() {
-        try {
-            projets = projetFacadeLocal.findAllRange();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        projets = projetFacadeLocal.findAllRange();
         return projets;
     }
 
@@ -120,16 +116,8 @@ public class AbstractDupliqerProjetController {
     }
 
     public List<Periode> getPeriodes() {
-        try {
-            periodes = periodeFacadeLocal.findAllRange();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        periodes = periodeFacadeLocal.findAllRange();
         return periodes;
-    }
-
-    public void setPeriodes(List<Periode> periodes) {
-        this.periodes = periodes;
     }
 
     public String getMode() {

@@ -106,6 +106,12 @@ public class Programmation implements Serializable {
     @OneToMany(mappedBy = "idprogrammation", fetch = FetchType.LAZY)
     private List<Piecejointes> piecejointesList;
 
+    @Column(name = "notif_sms_program")
+    private boolean notifSmsProgram;
+
+    @Column(name = "notif_sms_validation")
+    private boolean notifSmsValidation;
+
     public Programmation() {
     }
 
@@ -307,6 +313,22 @@ public class Programmation implements Serializable {
 
     public void setNotifEmailValidation(boolean notifEmailValidation) {
         this.notifEmailValidation = notifEmailValidation;
+    }
+
+    public boolean isNotifSmsProgram() {
+        return notifSmsProgram;
+    }
+
+    public void setNotifSmsProgram(boolean notifSmsProgram) {
+        this.notifSmsProgram = notifSmsProgram;
+    }
+
+    public boolean isNotifSmsValidation() {
+        return notifSmsValidation;
+    }
+
+    public void setNotifSmsValidation(boolean notifSmsValidation) {
+        this.notifSmsValidation = notifSmsValidation;
     }
 
     @XmlTransient

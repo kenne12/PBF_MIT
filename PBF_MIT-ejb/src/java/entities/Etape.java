@@ -53,6 +53,12 @@ public class Etape implements Serializable {
     @OneToMany(mappedBy = "idetape", fetch = FetchType.LAZY)
     private List<Etapeprojet> etapeprojetList;
 
+    @Column(name = "notif_mail_default")
+    private boolean notifMailDefault;
+
+    @Column(name = "notif_sms_default")
+    private boolean notifSmsDefault;
+
     public Etape() {
     }
 
@@ -106,6 +112,22 @@ public class Etape implements Serializable {
 
     public void setRepertoire(String repertoire) {
         this.repertoire = repertoire;
+    }
+
+    public boolean isNotifMailDefault() {
+        return notifMailDefault;
+    }
+
+    public void setNotifMailDefault(boolean notifMailDefault) {
+        this.notifMailDefault = notifMailDefault;
+    }
+
+    public boolean isNotifSmsDefault() {
+        return notifSmsDefault;
+    }
+
+    public void setNotifSmsDefault(boolean notifSmsDefault) {
+        this.notifSmsDefault = notifSmsDefault;
     }
 
     public List<Etapeprojet> getEtapeprojetList() {

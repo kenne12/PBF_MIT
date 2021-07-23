@@ -37,8 +37,7 @@ public interface PeriodeFacadeLocal {
     List<Periode> findAllRange();
 
     List<Periode> findByIdParent(int idParent);
-    
-    
+
     Periode findParentPeriodDefault();
 
 }

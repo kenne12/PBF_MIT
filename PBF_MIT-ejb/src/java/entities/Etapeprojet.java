@@ -64,6 +64,12 @@ public class Etapeprojet implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private Projet idprojet;
 
+    @Column(name = "notif_sms")
+    private boolean notifSms;
+
+    @Column(name = "notif_mail")
+    private boolean notifMail;
+
     public Etapeprojet() {
     }
 
@@ -125,6 +131,22 @@ public class Etapeprojet implements Serializable {
 
     public void setIdetapeparent(Integer idetapeparent) {
         this.idetapeparent = idetapeparent;
+    }
+
+    public boolean isNotifSms() {
+        return notifSms;
+    }
+
+    public void setNotifSms(boolean notifSms) {
+        this.notifSms = notifSms;
+    }
+
+    public boolean isNotifMail() {
+        return notifMail;
+    }
+
+    public void setNotifMail(boolean notifMail) {
+        this.notifMail = notifMail;
     }
 
     @XmlTransient

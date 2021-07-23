@@ -95,13 +95,9 @@ public class LoginBean extends AbstractLoginBean implements Serializable {
 
                     String sc = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
                     FacesContext.getCurrentInstance().getExternalContext().redirect(sc + "/index.html");
-
-                    //EmailRequest emailRequest = new EmailRequest();
-                    //emailRequest.getReceipients().add(new Receipient("kennegervais@beininfoplus.com", "ACV LITTORAL"));
-                    //emailRequest.setText("Bonjour monsieur gervais , Veuillez prendre note des differentes stratégie à appliquer");
-                    //emailRequest.setSubject("Réunion de coordination");
-
-                    //JavaMailUtils.sendMail(emailRequest);
+                    
+                    //CheckAccount.detailCompteJsonOkHttp();
+                    //Sendered.send();
                 } else {
                     JsfUtil.addWarningMessage("Compte bloqué ! contactez l'administrateur");
                 }

@@ -51,13 +51,17 @@
                             <p:outputLabel value="#{langue.etat}" for="etat" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
                             <h:selectBooleanCheckbox id="etat" value="#{projetController.projet.etat}" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
                             <p:message for="etat" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
-                            
+
                             <p:outputLabel value="#{langue.notif_email}" for="notif_email" />
-                            <h:selectBooleanCheckbox id="notif_email" value="#{projetController.projet.notifMail}" />
+                            <h:selectBooleanCheckbox id="notif_email" value="#{projetController.projet.notifMail}" >
+                                <p:ajax />
+                            </h:selectBooleanCheckbox>
                             <p:message for="notif_email" />
-                            
+
                             <p:outputLabel value="#{langue.notif_sms}" for="notif_sms" />
-                            <h:selectBooleanCheckbox id="notif_sms" value="#{projetController.projet.notifSms}" />
+                            <h:selectBooleanCheckbox id="notif_sms" value="#{projetController.projet.notifSms}" >
+                                <p:ajax />
+                            </h:selectBooleanCheckbox>
                             <p:message for="notif_sms" />
 
                             <p:outputLabel value="#{langue.cloturee} ?" for="cloturee" rendered="#{projetController.mode.equals('Edit')?true:false}"/>
@@ -118,21 +122,21 @@
                                  editable="true"
                                  editMode="cell">
 
-                        <p:column style="width: 25%;text-align: left">
+                        <p:column style="width: 20%;text-align: left">
                             <f:facet name="header">
                                 <h:outputText value="#{langue.etape}"/>
                             </f:facet>
                             <h:outputText value="#{item1.idetape.nom}"/>
                         </p:column>
 
-                        <p:column style="width: 8%;text-align:center" headerText="#{langue.numero_ordre}">
+                        <p:column style="width: 5%;text-align:center" headerText="#{langue.numero_ordre}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{item1.numero}">
                                         <f:convertNumber/>
                                     </h:outputText>
                                 </f:facet>
-                                <f:facet  name="input">
+                                <f:facet name="input">
                                     <p:inputText required="true" value="#{item1.numero}">                                             
                                         <p:ajax event="keyup"/>
                                         <f:convertNumber/>
@@ -141,14 +145,14 @@
                             </p:cellEditor>
                         </p:column>
 
-                        <p:column style="width: 8%;text-align: center" headerText="#{langue.delai}">
+                        <p:column style="width: 6%;text-align: center" headerText="#{langue.delai}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{item1.delai}">
                                         <f:convertNumber/>
                                     </h:outputText>
                                 </f:facet>
-                                <f:facet  name="input">
+                                <f:facet name="input">
                                     <p:inputText required="true" value="#{item1.delai}">                                             
                                         <p:ajax event="keyup"/>
                                     </p:inputText>
@@ -171,20 +175,35 @@
                             </p:cellEditor>
                         </p:column>
 
-
                         <p:column style="width: 24%;text-align: left" headerText="#{langue.repertoire}">
                             <p:cellEditor>
                                 <f:facet name="output">
-                                    <h:outputText value="#{item1.repertoire}">
-                                        <f:convertNumber/>
-                                    </h:outputText>
+                                    <h:outputText value="#{item1.repertoire}" />                                        
                                 </f:facet>
-                                <f:facet  name="input">
+                                <f:facet name="input">
                                     <p:inputText required="true" value="#{item1.repertoire}">                                             
                                         <p:ajax event="keyup"/>
                                     </p:inputText>
                                 </f:facet>
                             </p:cellEditor>
+                        </p:column>
+
+                        <p:column style="width: 5%;text-align: left">
+                            <f:facet name="header">
+                                <h:outputText value="Notif Mail"/>
+                            </f:facet>
+                            <h:selectBooleanCheckbox value="#{item1.notifMail}">
+                                <p:ajax />
+                            </h:selectBooleanCheckbox>
+                        </p:column>
+
+                        <p:column style="width: 5%;text-align: left">
+                            <f:facet name="header">
+                                <h:outputText value="Notif Sms"/>
+                            </f:facet>
+                            <h:selectBooleanCheckbox value="#{item1.notifSms}">
+                                <p:ajax />
+                            </h:selectBooleanCheckbox>
                         </p:column>
 
                         <p:column style="width: 8%">

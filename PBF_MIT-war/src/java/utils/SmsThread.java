@@ -24,11 +24,9 @@ public class SmsThread extends Thread {
 
     @Override
     public void run() {
-        System.err.println("Thread sms executed");
         if (mode.equals("UNIC")) {
             AllmySms.send(smsRequest.getText(), smsRequest.getReceipientSms().getReceipient());
         } else if (mode.equals("MULTIPLE")) {
-            System.err.println("mode multiple");
             smsRequest.getReceipients().stream().forEach((r) -> {
                 AllmySms.send(smsRequest.getText(), r.getReceipient());
             });

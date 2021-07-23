@@ -39,11 +39,10 @@
                                 value="#{var.programmationList}"
                                 var="item1"
                                 rowKey="#{item1.idprogrammation}"
-                                paginator="true"
-                                rowIndexVar="index" rows="10"                               
-                                rowsPerPageTemplate="10,20,30,40,50"
+                                paginator="true" rowIndexVar="index"
+                                rows="10" rowsPerPageTemplate="10,20,30,40,50"                             
                                 editable="true" editMode="cell">
-                                
+
                                 <p:column style="width: 20%">
                                     <f:facet name="header">
                                         <h:outputText value="#{langue.etape}"/>
@@ -81,7 +80,7 @@
                                             <h:outputText value="#{item1.idacteur.nom} #{item1.idacteur.prenom}"/>                                        
                                         </f:facet>
                                         <f:facet  name="input">
-                                            <p:selectOneMenu filter="true" required="true" value="#{item1.idacteur}" converter="acteurConverter">                                             
+                                            <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" value="#{item1.idacteur}" converter="acteurConverter">                                             
                                                 <f:selectItem itemLabel="#{langue.choisir}"/>
                                                 <f:selectItems value="#{var.idservice.acteurList}" var="obj" itemLabel="#{obj.nom} #{obj.prenom}" itemValue="#{obj}"/>
                                                 <p:ajax event="keyup"/>
@@ -113,7 +112,7 @@
                                             </h:outputText>
                                         </f:facet>
                                         <f:facet name="input">
-                                            <p:calendar required="#{index ==0 }" disabled="#{index!=0}" value="#{item1.dateFinPrevisionnel}" navigator="true" pattern="dd/MM/yyyy">                                             
+                                            <p:calendar required="#{index ==0}" disabled="#{index!=0}" value="#{item1.dateFinPrevisionnel}" navigator="true" pattern="dd/MM/yyyy">                                             
                                                 <p:ajax event="dateSelect"/>
                                             </p:calendar>
                                         </f:facet>
@@ -129,7 +128,7 @@
                                                  value="#{langue.modifier}" 
                                                  actionListener="#{programmationController.prepareCreate(var)}"
                                                  update=":notify1"/>
-                                
+
                                 <p:commandButton value="#{langue.valider}" 
                                                  update="ProgrammationAddForm,:notify1" disabled="false"       
                                                  actionListener="#{projetController.programmer(var)}">
@@ -148,7 +147,7 @@
                             </center>
 
                         </p:panel>
-                        
+
                         <br jsf:rendred="#{projetController.renderLastUnderLined(var)}" />
 
                     </ui:repeat>
