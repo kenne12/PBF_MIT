@@ -202,7 +202,7 @@ public class DupliqerProjetController extends AbstractDupliqerProjetController i
 
             if (sendSms) {
                 if (!acteurMails.isEmpty()) {
-                    this.sendSms(acteurMails);
+                    //this.sendSms(acteurMails);
                 }
             }
 

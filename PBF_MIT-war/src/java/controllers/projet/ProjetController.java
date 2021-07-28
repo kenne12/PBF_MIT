@@ -592,6 +592,15 @@ public class ProjetController extends AbstractProjetController implements Serial
                     if (pr.getIdprogrammation() == 0L) {
                         pr.setIdprogrammation(programmationFacadeLocal.nextVal());
                         pr.setActive(false);
+                        pr.setValide(false);
+                        pr.setEnvoye(false);
+                        pr.setTypefichier("-");
+                        pr.setRetard(0);
+                        pr.setObservee(false);
+                        pr.setObservationvalidee(false);
+                        pr.setConteur(0);
+                        pr.setObservation("-");
+                        pr.setObservationarchivee("-");
                         if (pr.getIdetapeprojet().getDelai() == 0) {
                             pr.setActive(true);
                             pr.setNotifEmailValidation(true);
@@ -636,7 +645,7 @@ public class ProjetController extends AbstractProjetController implements Serial
             
             if (sendSms) {
                 if (!acteurMails.isEmpty()) {
-                    this.sendSms(acteurMails);
+                    //this.sendSms(acteurMails);
                 }
             }
             
@@ -802,12 +811,12 @@ public class ProjetController extends AbstractProjetController implements Serial
                 return;
             }
             
-            ut.begin();
+            //ut.begin();
             piecejointesFacadeLocal.deleteByIdprojetservice(projetservice.getIdprojetservice());
             programmationFacadeLocal.deleteByIdprojetIdservice(projetservice.getIdprojetservice());
-            projetserviceFacadeLocal.remove(projetservice);
+            projetserviceFacadeLocal.deleteByIdprojetService(projetservice.getIdprojetservice());
             projetservices.remove(projetservice);
-            ut.commit();
+            //ut.commit();
             
             Utilitaires.saveOperation(mouchardFacadeLocal, "Annulation de la programmation ; Projet : " + projetservice.getIdprojet().getNom() + " Unité d'organisation : " + projetservice.getIdservice().getNom(), SessionMBean.getUserAccount());
             //signalSuccess();
