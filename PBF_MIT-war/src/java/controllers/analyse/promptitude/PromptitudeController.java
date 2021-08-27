@@ -30,6 +30,7 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
     private void init() {
         etapes = etapeFacadeLocal.findAllRange();
         promptitudeDataStyles = promptitudeDataStyleFacadeLocal.findAllRange();
+        acteurs = acteurFacadeLocal.findAllRange();
         try {
             Periode p = periodeFacadeLocal.findParentPeriodDefault();
             if (p != null) {
@@ -274,6 +275,12 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
     public void initRetardByActeur(Etape e) {
         selectedEtape = e;
         regionActeur = true;
+        acteurs_finals.clear();
+        acteurs.forEach(a -> {
+            if (!programmationFacadeLocal.findByIdetapeParentIdActeurIdetape(periode.getIdperiode(), a.getIdacteur(), e.getIdetape()).isEmpty()) {
+                acteurs_finals.add(a);
+            }
+        });
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect(this.sc + "/analyse/promptitude/index.html");
         } catch (Exception ex) {
@@ -283,7 +290,7 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
     public void initRetardDistrict(Service s) {
         selectedRegion = s;
         regionDistrict = true;
-        districts = serviceFacadeLocal.findByServiceParent(s.getIdservice());
+        districts = serviceFacadeLocal.findByServiceWithoutAcv(s.getIdservice());
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect(this.sc + "/analyse/promptitude/index.html");
         } catch (Exception ex) {

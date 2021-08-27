@@ -210,11 +210,11 @@
                      rendered="#{promptitudeController.selectedEtape!=null and promptitudeController.selectedEtape.idetape!=null and promptitudeController.regionActeur ==true}" />
 
         <p:dataTable id="datalist_3" 
-                     value="#{promptitudeController.acteurs}" 
+                     value="#{promptitudeController.acteurs_finals}" 
                      var="itemActeur"                             
                      paginator="true"
                      rowKey="#{itemActeur.idacteur}"
-                     rows="#{promptitudeController.acteurs.size()}"
+                     rows="#{promptitudeController.acteurs_finals.size()}"
                      rowsPerPageTemplate="10,20,30,40,50"
                      style="width: 98%;margin-left: 1%"
                      rowIndexVar="index"
@@ -291,7 +291,7 @@
 
             <p:columnGroup type="header">
                 <p:row>
-                    <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.regions}"/>
+                    <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.districts}"/>
                     <p:column class="hardBreak" colspan="#{promptitudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
                     <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
                 </p:row>

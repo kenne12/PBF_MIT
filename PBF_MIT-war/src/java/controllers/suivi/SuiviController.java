@@ -4,6 +4,7 @@ import com.google.common.io.Files;
 import entities.Acteur;
 import entities.Etape;
 import entities.Etapeprojet;
+import entities.Notification;
 import entities.Piecejointes;
 import entities.Programmation;
 import entities.Projet;
@@ -13,7 +14,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -25,7 +28,10 @@ import org.primefaces.event.FileUploadEvent;
 import utils.EmailRequest;
 import utils.MailThread;
 import utils.Receipient;
+import utils.ReceipientSms;
 import utils.SessionMBean;
+import utils.SmsRequest;
+import utils.SmsThread;
 import utils.Utilitaires;
 
 @ManagedBean
@@ -44,6 +50,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                 List<Projetservice> list = projetserviceFacadeLocal.findByIdservice(SessionMBean.getUserAccount().getIdacteur().getIdservice().getIdservice(), true, false);
                 projets = exTractProject(list);
             }
+            listActeurCtn = acteurFacadeLocal.findAllRange(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -359,6 +366,37 @@ public class SuiviController extends AbstractSuiviController implements Serializ
 
     public void activateStape(Programmation p) {
         try {
+            notification = new Notification();
+            notification.setMail(p.isNotifEmailProgram());
+            notification.setSms(p.isNotifSmsProgram());
+            notification.setMessage("-");
+            notification.setObjet("-");
+            templateMessage = "0";
+
+            acteurNotifiables.clear();
+            if (listActeurCtn != null) {
+                acteurNotifiables.addAll(listActeurCtn);
+            }
+
+            List<Acteur> listActeurAcv = new ArrayList<>();
+            Service acv = serviceFacadeLocal.findByServiceParentAndRegion(p.getIdprojetservice().getIdservice().getIdparent(), true);
+            if (acv != null) {
+                listActeurAcv.addAll(acteurFacadeLocal.findByIdservice(acv.getIdservice()));
+                if (listActeurAcv != null) {
+                    acteurNotifiables.addAll(listActeurAcv);
+                }
+            }
+
+            List<Programmation> programmations = programmationFacadeLocal.findByIdprojetIdservice(p.getIdprojetservice().getIdprojetservice());
+            if (programmations != null) {
+                programmations.forEach(obj -> {
+                    if (!acteurNotifiables.contains(obj.getIdacteur())) {
+                        acteurNotifiables.add(obj.getIdacteur());
+                    }
+                });
+            }
+            selectedActeurNotifiables.clear();
+
             programmation = p;
             programmation.setValide(true);
             if (!p.getEnvoye()) {
@@ -381,6 +419,50 @@ public class SuiviController extends AbstractSuiviController implements Serializ
         }
     }
 
+    public void updateMessage() {
+        try {
+            notification.setMessage(programmation.getObservation());
+        } catch (Exception e) {
+        }
+    }
+
+    public void openActeurDialog() {
+        RequestContext.getCurrentInstance().execute("PF('AddActeurDialog').show()");
+    }
+
+    public void addActeur() {
+        RequestContext.getCurrentInstance().execute("PF('AddActeurDialog').hide()");
+    }
+
+    public void updateTemplate() {
+        if (templateMessage.equals("0")) {
+            notification.setMessage("RAS");
+        } else if (templateMessage.equals("1")) {
+            String message = "Bonjour ! \nLa CTN Vous Informe que les documents transmis dans le cadre du projet : "
+                    + programmation.getIdetapeprojet().getIdprojet().getNom()
+                    + " Ont été acceptés.\nCe Message a été envoyé automatiquement, nous vous remercions de ne pas répondre.";
+            notification.setObjet("Validation");
+            notification.setMessage(message);
+        } else if (templateMessage.equals("2")) {
+            String message = "Bonjour ! \nLa CTN vous informe que les documents transmis dans le cadre du projet : " + programmation.getIdetapeprojet().getIdprojet().getNom() + "\n"
+                    + "Structure : " + programmation.getIdprojetservice().getIdservice().getNom() + "\n"
+                    + "Etape : " + programmation.getIdetapeprojet().getIdetape().getNom() + "\n"
+                    + "Pour des raisons suivantes : \n"
+                    + programmation.getObservation() + "\n"
+                    + "Ce Message a été envoyé automatiquement, nous vous remercions de ne pas répondre.";
+            notification.setMessage(message);
+            notification.setObjet("Rejet");
+        } else if (templateMessage.equals("3")) {
+            String message = "Bonjour !\nLa CTN Vous informe que des rémarques ont été faites sur les documents envoyés dans le cadre du projet -> " + programmation.getIdetapeprojet().getIdprojet().getNom()
+                    + "Structure : " + programmation.getIdprojetservice().getIdservice().getNom() + "\n"
+                    + "Etape : " + programmation.getIdetapeprojet().getIdetape().getNom() + "\n"
+                    + "" + programmation.getObservation() + "\n"
+                    + "Veuillez-Vous connecter sur le portail pour apporter des corrections sollicitées en pièces jointes.\nCe Message a été envoyé automatiquement, nous vous remercions de ne pas répondre.";
+            notification.setObjet("Observation");
+            notification.setMessage(message);
+        }
+    }
+
     @Transactional
     public void validate() {
         try {
@@ -397,7 +479,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
             } else {
                 programmation.setRetard(0);
             }
-            programmation.setConteur(programmation.getConteur() + 1);
+
             programmation.setNotifEmailValidation(true);
             Programmation p1 = programmationFacadeLocal.findByIdprojetIdservice(programmation.getIdprojetservice().getIdprojetservice(), (programmation.getIdetapeprojet().getNumero() + 1));
 
@@ -410,32 +492,82 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                 p1.setDaterealisation(null);
                 p1.setDateValidation(null);
                 p1.setValide(false);
-
-                if (p1.getIdetapeprojet().getIdprojet().isNotifMail()) {
-                    if (!p1.isNotifEmailProgram()) {
-                        p1.setNotifEmailProgram(true);
-                        EmailRequest emailRequest = new EmailRequest();
-                        emailRequest.setSubject("Notification : " + p1.getIdetapeprojet().getIdprojet().getNom());
-                        emailRequest.setText("Bonjour M / Mme " + p1.getIdacteur().getNom() + ";\nLa CTN Vous informe de la date initiale de transfert des document pour le projet en objet"
-                                + "Structure -> " + p1.getIdprojetservice().getIdservice().getNom() + " Que la date de début de transfert des documents c'est le."
-                                + sdf.format(p1.getDateprevisionnel()) + " Et la date de fin c'est le : " + sdf.format(p1.getDateFinPrevisionnel())
-                                + "\nVeuillez vous connecter sur la plateforme pour télécharger les documents sollicités.");
-
-                        emailRequest.getReceipients().add(new Receipient(p1.getIdacteur().getIdaddresse().getEmail(), p1.getIdacteur().getTitre()));
-                        MailThread mailThread = new MailThread(emailRequest);
-                        mailThread.start();
-                    }
-                }
+                p1.setNotifEmailProgram(true);
                 programmationFacadeLocal.edit(p1);
             }
 
+            programmation.setConteur(programmation.getConteur() + 1);
             programmationFacadeLocal.edit(programmation);
+
             RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
             RequestContext.getCurrentInstance().execute("PF('ValidationCreerDialog').hide()");
             signalSuccess();
+
+            if (programmation.getValide()) {
+                if ((programmation.getConteur() - 1) == 0) {
+                    if (p1 != null) {
+                        EmailRequest emailRequest = new EmailRequest();
+                        emailRequest.setSubject("Notification : " + p1.getIdetapeprojet().getIdprojet().getNom());
+                        emailRequest.setText("Bonjour M / Mme " + p1.getIdacteur().getNom() + ";\nLa CTN Vous informe de la date initiale de transfert des document pour le projet en objet "
+                                + "Structure -> " + p1.getIdprojetservice().getIdservice().getNom() + " Que la date de début de transfert des documents c'est le : "
+                                + sdf.format(p1.getDateprevisionnel()) + " Et la date de fin c'est le : " + sdf.format(p1.getDateFinPrevisionnel())
+                                + "\nVeuillez vous connecter sur la plateforme pour télécharger les documents sollicités.\nCe Message a été envoyé automatiquement, nous vous remercions de ne pas répondre.");
+                        try {
+                            emailRequest.getReceipients().add(new Receipient(p1.getIdacteur().getIdaddresse().getEmail(), p1.getIdacteur().getTitre()));
+                            MailThread mailThread = new MailThread(emailRequest);
+                            mailThread.start();
+                        } catch (Exception e) {
+                        }
+                    }
+                }
+            }
+
+            List<Receipient> receipients = Utilitaires.extracEmail(selectedActeurNotifiables);
+            if (notification.isMail()) {
+                if (!receipients.isEmpty()) {
+                    EmailRequest emailRequest = new EmailRequest();
+                    emailRequest.setSender("CTNPBF");
+                    emailRequest.setSubject(notification.getObjet());
+                    emailRequest.setText(notification.getMessage());
+                    emailRequest.setReceipients(receipients);
+                    if (!emailRequest.getReceipients().isEmpty()) {
+                        sendMail(emailRequest);
+                    }
+                }
+            }
+
+            List<ReceipientSms> receipientSmses = Utilitaires.extracPhoneNumber(selectedActeurNotifiables);
+            if (notification.isSms()) {
+                if (!receipientSmses.isEmpty()) {
+                    SmsRequest smsRequest = new SmsRequest();
+                    smsRequest.setText(notification.getMessage());
+                    smsRequest.setReceipients(receipientSmses);
+                    if (!smsRequest.getReceipients().isEmpty()) {
+                        sendSms(smsRequest);
+                    }
+                }
+            }
+
+            if ((!receipients.isEmpty() || !receipientSmses.isEmpty()) == true) {
+                notification.setIdnotification(notificationFacadeLocal.nextVal());
+                notification.setDateEnvoi(Date.from(Instant.now()));
+                notificationFacadeLocal.create(notification);
+                notification.getActeurs().addAll((Collection<Acteur>) selectedActeurNotifiables);
+            }
         } catch (Exception e) {
             signalException(e);
         }
+    }
+
+    private void sendMail(EmailRequest emailRequest) {
+        MailThread mailThread = new MailThread(emailRequest);
+        mailThread.start();
+    }
+
+    private void sendSms(SmsRequest smsRequest) {
+        SmsThread smsThread = new SmsThread(smsRequest);
+        smsThread.setMode("MULTIPLE");
+        smsThread.start();
     }
 
     public void validateUser() {

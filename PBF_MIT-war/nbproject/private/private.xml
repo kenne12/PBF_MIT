@@ -6,8 +6,12 @@
             <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/web/operation/projet/crud/Programmation.xhtml</file>
             <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/src/java/controllers/projet/ProjetController.java</file>
             <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/web/analyse/completude/crud/Lister.xhtml</file>
-            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/src/java/controllers/analyse/completude/AbstractCompletudeController.java</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/src/java/controllers/analyse/completude/CompletudeController.java</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/src/java/controllers/analyse/promptitude/PromptitudeController.java</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/web/operation/projet/crud/Duplication.xhtml</file>
             <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/web/index.xhtml</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/web/operation/projet/crud/ReplicationConfig.xhtml</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/src/java/controllers/analyse/promptitude/AbstractPromptitudeController.java</file>
         </group>
     </open-files>
 </project-private>

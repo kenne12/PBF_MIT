@@ -47,6 +47,7 @@ public class AbstractCompletudeController {
     protected ActeurFacadeLocal acteurFacadeLocal;
     protected Acteur acteur = new Acteur();
     protected List<Acteur> acteurs = new ArrayList<>();
+    protected List<Acteur> acteurs_finals = new ArrayList<>();
 
     @EJB
     protected EtapeFacadeLocal etapeFacadeLocal;
@@ -78,7 +79,7 @@ public class AbstractCompletudeController {
     }
 
     public List<Service> getRegions() {
-        regions = serviceFacadeLocal.findAllRangeParentOrCtn();
+        regions = serviceFacadeLocal.findAllRangeParentWithoutAllCentral();
         return regions;
     }
 
@@ -156,7 +157,6 @@ public class AbstractCompletudeController {
     }
 
     public List<Acteur> getActeurs() {
-        acteurs = acteurFacadeLocal.findAllRange();
         return acteurs;
     }
 
@@ -170,6 +170,14 @@ public class AbstractCompletudeController {
 
     public List<CompletudeDataStyle> getCompletudeDataStyles() {
         return completudeDataStyles;
+    }
+
+    public List<Acteur> getActeurs_finals() {
+        return acteurs_finals;
+    }
+
+    public void setActeurs_finals(List<Acteur> acteurs_finals) {
+        this.acteurs_finals = acteurs_finals;
     }
 
 }

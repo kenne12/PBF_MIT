@@ -4,6 +4,7 @@ import entities.Acteur;
 import entities.Document;
 import entities.Etape;
 import entities.Etapeprojet;
+import entities.Notification;
 import entities.Piecejointes;
 import entities.Programmation;
 import entities.Projet;
@@ -20,6 +21,7 @@ import sessions.ActeurFacadeLocal;
 import sessions.DocumentFacadeLocal;
 import sessions.EtapeFacadeLocal;
 import sessions.EtapeprojetFacadeLocal;
+import sessions.NotificationFacadeLocal;
 import sessions.PiecejointesFacadeLocal;
 import sessions.ProgrammationFacadeLocal;
 import sessions.ProjetFacadeLocal;
@@ -64,6 +66,9 @@ public class AbstractSuiviController {
     @EJB
     protected ActeurFacadeLocal acteurFacadeLocal;
     protected List<Acteur> acteurs = new ArrayList<>();
+    protected List<Acteur> acteurNotifiables = new ArrayList<>();
+    protected List<Acteur> selectedActeurNotifiables = new ArrayList<>();
+    protected List<Acteur> listActeurCtn = new ArrayList<>();
 
     @EJB
     protected ServiceFacadeLocal serviceFacadeLocal;
@@ -81,6 +86,12 @@ public class AbstractSuiviController {
 
     @EJB
     protected MouchardFacadeLocal mouchardFacadeLocal;
+
+    @EJB
+    protected NotificationFacadeLocal notificationFacadeLocal;
+    protected Notification notification = new Notification();
+
+    protected String templateMessage;
 
     protected boolean showValidateBtn;
     protected boolean disabledDownPiece = true;
@@ -332,6 +343,34 @@ public class AbstractSuiviController {
 
     public void setDisabledDownPiece(boolean disabledDownPiece) {
         this.disabledDownPiece = disabledDownPiece;
+    }
+
+    public List<Acteur> getActeurNotifiables() {
+        return acteurNotifiables;
+    }
+
+    public List<Acteur> getSelectedActeurNotifiables() {
+        return selectedActeurNotifiables;
+    }
+
+    public void setSelectedActeurNotifiables(List<Acteur> selectedActeurNotifiables) {
+        this.selectedActeurNotifiables = selectedActeurNotifiables;
+    }
+
+    public Notification getNotification() {
+        return notification;
+    }
+
+    public void setNotification(Notification notification) {
+        this.notification = notification;
+    }
+
+    public String getTemplateMessage() {
+        return templateMessage;
+    }
+
+    public void setTemplateMessage(String templateMessage) {
+        this.templateMessage = templateMessage;
     }
 
 }

@@ -292,11 +292,12 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
     }
 
     /**
-     *Promptitude niveau region
-     @param idEtape
-     @param idPeriode
-     @param idServiceParent
-     @return Long
+     * Promptitude niveau region
+     *
+     * @param idEtape
+     * @param idPeriode
+     * @param idServiceParent
+     * @return Long
      */
     @Override
     public Double getRetardByIdEtapeIdPeriodeIdserviceParent(int idEtape, int idPeriode, long idServiceParent) {
@@ -850,6 +851,13 @@ public class ProgrammationFacade extends AbstractFacade<Programmation> implement
                 .getResultList();
 
         return list.isEmpty() ? 0 : list.size();
+    }
+
+    @Override
+    public List<Programmation> findByIdetapeParentIdActeurIdetape(int idPeriode, int idActeur , int idEtape) {
+        return em.createQuery("SELECT p FROM Programmation p WHERE p.idetapeprojet.idprojet.idperiode.idparent=:idParent AND p.idacteur.idacteur=:idActeur AND p.idetapeprojet.idetape.idetape=:idEtape")
+                .setParameter("idParent", idPeriode).setParameter("idActeur", idActeur).setParameter("idEtape", idEtape)
+                .getResultList();
     }
 
 }

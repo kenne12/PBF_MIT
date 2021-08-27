@@ -30,6 +30,7 @@ public class CompletudeController extends AbstractCompletudeController implement
     private void init() {
         etapes = etapeFacadeLocal.findAllRange();
         completudeDataStyles = completudeDataStyleFacadeLocal.findAllRange();
+        acteurs = acteurFacadeLocal.findAllRange();
         try {
             Periode p = periodeFacadeLocal.findParentPeriodDefault();
             if (p != null) {
@@ -323,6 +324,12 @@ public class CompletudeController extends AbstractCompletudeController implement
     public void initRetardByActeur(Etape e, String link) {
         selectedEtape = e;
         regionActeur = true;
+        acteurs_finals.clear();
+        acteurs.forEach(a -> {
+            if (!programmationFacadeLocal.findByIdetapeParentIdActeurIdetape(periode.getIdperiode(), a.getIdacteur(), e.getIdetape()).isEmpty()) {
+                acteurs_finals.add(a);
+            }
+        });
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect(this.sc + link);
         } catch (Exception ex) {
@@ -332,7 +339,7 @@ public class CompletudeController extends AbstractCompletudeController implement
     public void initRetardDistrict(Service s, String link) {
         selectedRegion = s;
         regionDistrict = true;
-        districts = serviceFacadeLocal.findByServiceParent(s.getIdservice());
+        districts = serviceFacadeLocal.findByServiceWithoutAcv(s.getIdservice());
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect(this.sc + link);
         } catch (Exception ex) {

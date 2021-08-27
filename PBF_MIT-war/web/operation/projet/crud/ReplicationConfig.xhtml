@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition>
+
+        <p:dialog id="ReplicationConfigCreerDlg" 
+                  widgetVar="ReplicationConfigCreerDialog" 
+                  modal="true" resizable="false"
+                  width="55%"
+                  style="overflow: auto"
+                  appendTo="@(body)" 
+                  header="#{langue['Titre.Dlg.Creation']} : Réplication personnalisée des configuration" 
+                  closeOnEscape="true">
+
+            <h:form id="ReplicationConfigCreerForm">
+
+                <h:panelGroup id="display">
+
+                    <center>
+                        <h:panelGrid columns="3" columnClasses ="column">
+                            <p:outputLabel value="#{langue.fosa_source}" for="service_source"/>
+                            <p:selectOneMenu filter="true" filterMatchMode="contains" id="service_source" value="#{projetController.replicationServiceSource}"
+                                             required="true" requiredMessage="#{langue.valeur_obligatoire}" converter="projetServiceConverter">
+                                <f:selectItem itemLabel="#{langue.choisir}" itemValue="#{null}"/>
+                                <f:selectItems value="#{projetController.projetservices}" var="ps" itemLabel="#{ps.idservice.nom}" itemValue="#{ps}"/>
+                                <p:ajax/>
+                            </p:selectOneMenu>                            
+                            <p:message for="service_source"/> 
+                        </h:panelGrid>
+                    </center>
+
+                    <p:selectManyCheckbox id="grid2" value="#{projetController.selectedReplicationServices}" layout="responsive" columns="3" converter="projetServiceConverter">
+                        <f:selectItems value="#{projetController.projetservices}" var="obj" itemLabel="#{obj.idservice.nom}" itemValue="#{obj}"/>
+                    </p:selectManyCheckbox>
+
+                    <p:separator/>
+                    <center>
+                        <p:commandButton value="#{langue.annuler}" onclick="PF('ReplicationConfigCreerDialog').hide()"/>
+                        <p:commandButton value="#{langue.dupliquer}" onclick="PF('AjaxNotifyDialog').show()" 
+                                         update=":ProjetListerForm:msg_growl,display,:ProgrammationAddForm" 
+                                         actionListener="#{projetController.replicationConfig()}" />                    
+                    </center>                    
+
+                </h:panelGroup>  
+
+            </h:form>
+
+        </p:dialog>
+
+    </ui:composition>
+
+</html>

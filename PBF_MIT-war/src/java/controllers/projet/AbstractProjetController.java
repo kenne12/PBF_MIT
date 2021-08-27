@@ -57,9 +57,11 @@ public class AbstractProjetController {
     @EJB
     protected ProjetserviceFacadeLocal projetserviceFacadeLocal;
     protected Projetservice projetservice = new Projetservice();
+    protected Projetservice replicationServiceSource = new Projetservice();
     protected List<Projetservice> projetservices = new ArrayList<>();
     protected List<Projetservice> projetservices_1 = new ArrayList<>();
     protected List<Projetservice> selectedProjetservices = new ArrayList<>();
+    protected List<Projetservice> selectedReplicationServices = new ArrayList<>();
 
     @EJB
     protected PeriodeFacadeLocal periodeFacadeLocal;
@@ -337,6 +339,22 @@ public class AbstractProjetController {
 
     public void setAddFlagP(boolean addFlagP) {
         this.addFlagP = addFlagP;
+    }
+
+    public Projetservice getReplicationServiceSource() {
+        return replicationServiceSource;
+    }
+
+    public void setReplicationServiceSource(Projetservice replicationServiceSource) {
+        this.replicationServiceSource = replicationServiceSource;
+    }
+
+    public List<Projetservice> getSelectedReplicationServices() {
+        return selectedReplicationServices;
+    }
+
+    public void setSelectedReplicationServices(List<Projetservice> selectedReplicationServices) {
+        this.selectedReplicationServices = selectedReplicationServices;
     }
 
 }

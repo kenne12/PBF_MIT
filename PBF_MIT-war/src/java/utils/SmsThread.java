@@ -44,5 +44,4 @@ public class SmsThread extends Thread {
     public void setMode(String mode) {
         this.mode = mode;
     }
-
 }

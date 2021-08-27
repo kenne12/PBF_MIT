@@ -183,11 +183,8 @@
             </p:column>
 
             <p:column style="text-align: center;">
-                <p:commandButton 
-                    rendered="true"
-                    value="D"
-                    actionListener="#{completudeController.initRetardDistrict(item , '/analyse/completude/index.html')}"
-                    update=""/>                
+                <p:commandButton rendered="true" value="D" update=""  
+                                 actionListener="#{completudeController.initRetardDistrict(item , '/analyse/completude/index.html')}" />                           
             </p:column>
 
             <p:columnGroup type="footer">
@@ -206,11 +203,11 @@
                      rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionActeur ==true}"/>
 
         <p:dataTable id="datalist_3" 
-                     value="#{completudeController.acteurs}" 
+                     value="#{completudeController.acteurs_finals}" 
                      var="itemActeur"                             
                      paginator="true"
                      rowKey="#{itemActeur.idacteur}"
-                     rows="#{completudeController.acteurs.size()}"
+                     rows="#{completudeController.acteurs_finals.size()}"
                      rowsPerPageTemplate="10,20,30,40,50"
                      style="width: 98%;margin-left: 1%"
                      rowIndexVar="index"
@@ -286,7 +283,7 @@
 
             <p:columnGroup type="header">
                 <p:row>
-                    <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.regions}"/>
+                    <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.districts}"/>
                     <p:column class="hardBreak" colspan="#{completudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
                     <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
                 </p:row>

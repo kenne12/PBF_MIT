@@ -30,7 +30,7 @@
 
                             <center>
                                 <p:commandButton icon="ui-icon-refresh" value="#{langue.repliquer} à tous" rendered="#{projetController.renderReplicationBtn(var)}" actionListener="#{projetController.replicateData(var)}" update=":notify1,:ProgrammationAddForm" onclick="PF('AjaxNotifyDialog').show()" />
-                                <p:commandButton icon="ui-icon-plus" value="#{langue.repliquer} personnalisée" rendered="#{projetController.renderReplicationBtn(var)}" actionListener="#{projetController.prepareReplication()}" update=":DuplicationCreerForm" />
+                                <p:commandButton icon="ui-icon-plus" value="#{langue.repliquer} personnalisée" rendered="#{projetController.renderReplicationBtn(var)}" actionListener="#{projetController.prepareReplication()}" update=":ReplicationConfigCreerForm" />
                             </center>
 
                             <p:separator rendered="#{projetController.renderReplicationBtn(var)}" />

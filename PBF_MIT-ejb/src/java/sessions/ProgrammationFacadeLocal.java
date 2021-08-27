@@ -328,4 +328,6 @@ public interface ProgrammationFacadeLocal {
      */
     public int getCompletudeByIdEtapeIdPeriodeIdserviceValidees(int idEtape, int idPeriode, long idService);
 
+    List<Programmation> findByIdetapeParentIdActeurIdetape(int idPeriode, int idActeur , int idEtape);
+
 }

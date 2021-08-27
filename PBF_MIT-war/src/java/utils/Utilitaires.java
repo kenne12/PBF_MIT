@@ -1,5 +1,6 @@
 package utils;
 
+import entities.Acteur;
 import entities.Mouchard;
 import entities.Utilisateur;
 import java.io.File;
@@ -9,10 +10,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -308,6 +311,33 @@ public class Utilitaires {
         m.put("systeme", linux);
         m.put("lien", lienRepertoire);
         return m;
+    }
+
+    public static List<Receipient> extracEmail(List<Acteur> acteurs) {
+        List<Receipient> list = new ArrayList<>();
+        acteurs.forEach(a -> {
+            try {
+                if (a.getIdaddresse().getEmail() != null) {
+                    list.add(new Receipient(a.getIdaddresse().getEmail(), a.getTitre()));
+                }
+            } catch (Exception e) {
+            }
+        });
+        return list;
+    }
+
+    public static List<ReceipientSms> extracPhoneNumber(List<Acteur> acteurs) {
+        List<ReceipientSms> list = new ArrayList<>();
+        acteurs.forEach(a -> {
+            try {
+                if (a.getIdaddresse().getEmail() != null) {
+                    String contact = a.getIdaddresse().getTelephone1().replaceAll(" ", "");
+                    list.add(new ReceipientSms(contact));
+                }
+            } catch (Exception e) {
+            }
+        });
+        return list;
     }
 
 }

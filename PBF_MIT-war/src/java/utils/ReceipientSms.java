@@ -21,11 +21,6 @@ public class ReceipientSms {
         this.receipient = receipient;
     }
 
-    public ReceipientSms(String receipient, String title) {
-        this.receipient = receipient;
-        this.title = title;
-    }
-
     public String getReceipient() {
         return receipient;
     }
