@@ -30,7 +30,7 @@
         </center>
 
         <p:separator style="width: 98%;margin-left: 1%"/>
-        
+
         <div style="margin-left: 1%">
             <ui:repeat value="#{promptitudeController.promptitudeDataStyles}" var="var">
                 <div style="width: 180px;float: left;height: 30px;border: solid 1px blue;margin-left: 5px;background-color: #{var.backGroundColor}" class="container">
@@ -74,8 +74,13 @@
             <p:ajax event="rowSelect" update=":PromptitudeForm:datalist_2"/>
             <p:ajax event="rowUnselect"/>
 
-            <f:facet name="header"> 
-                <h:outputText value="#{langue.detail_par_etape}"/>
+            <f:facet name="header">
+                <div>
+                    <h:outputText value="#{langue.detail_par_etape}"/>
+                    <p:commandButton value="Graphique" actionListener="#{promptitudeController.promptitudeByEtape()}" 
+                                     update=":ModelDataPromptitudeByEtapeCreerForm" style="float: right" 
+                                     onclick="PF('AjaxNotifyDialog').show()"/>
+                </div> 
             </f:facet>
 
             <p:columnGroup type="header">
@@ -108,13 +113,11 @@
 
             <p:column style="text-align: center;">
                 <p:commandButton 
-                    rendered="#{promptitudeController.periode.idperiode!=null and promptitudeController.sousPeriodeFilters.size()!=0}"
-                    value="R"
+                    value="R" rendered="#{promptitudeController.periode.idperiode!=null and promptitudeController.sousPeriodeFilters.size()!=0}"
                     actionListener="#{promptitudeController.initRetardByRegion(item)}"
                     update=":PromptitudeForm:datalist_2,:PromptitudeForm:datalist_3"/>
                 <p:commandButton 
-                    rendered="#{promptitudeController.periode.idperiode!=null and promptitudeController.sousPeriodeFilters.size()!=0}"
-                    value="A"
+                    value="A" rendered="#{promptitudeController.periode.idperiode!=null and promptitudeController.sousPeriodeFilters.size()!=0}"
                     actionListener="#{promptitudeController.initRetardByActeur(item)}"
                     update=":PromptitudeForm:datalist_2,:PromptitudeForm:datalist_3" />
             </p:column>
@@ -156,6 +159,10 @@
 
             <f:facet name="header"> 
                 <h:outputText value="#{langue.detail_par_region} / #{promptitudeController.selectedEtape.nom}"/>
+
+                <p:commandButton value="Graphique" actionListener="#{promptitudeController.promptitudeByRegion()}" 
+                                 update=":ModelDataPromptitudeByEtapeCreerForm" style="float: right" 
+                                 onclick="PF('AjaxNotifyDialog').show()"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -188,10 +195,8 @@
 
             <p:column style="text-align: center;">
                 <p:commandButton 
-                    rendered="true"
-                    value="D"
-                    actionListener="#{promptitudeController.initRetardDistrict(item)}"
-                    update=""/>                
+                    rendered="true" value="D"  
+                    actionListener="#{promptitudeController.initRetardDistrict(item)}" />                            
             </p:column>
 
             <p:columnGroup type="footer">
@@ -224,9 +229,12 @@
                      resizableColumns="true"
                      rendered="#{promptitudeController.selectedEtape!=null and promptitudeController.selectedEtape.idetape!=null and promptitudeController.regionActeur ==true}" >
 
-
             <f:facet name="header"> 
                 <h:outputText value="#{langue.detail_par_acteur} / #{promptitudeController.selectedEtape.nom}" />
+
+                <p:commandButton value="Graphique" actionListener="#{promptitudeController.promptitudeByActeur()}" 
+                                 update=":ModelDataPromptitudeByEtapeCreerForm" style="float: right" 
+                                 onclick="PF('AjaxNotifyDialog').show()"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -243,7 +251,7 @@
             </p:columnGroup>
 
             <p:column colspan="3" >
-                <h:outputText value="#{itemActeur.nom} #{itemActeur.titre}"/>
+                <h:outputText value="#{itemActeur.nom} - #{itemActeur.titre}"/>
             </p:column>
 
             <p:columns style="text-align: center; background-color: #{promptitudeController.loadValueActeurStyle(itemActeur.idacteur, var.idperiode)}" value="#{promptitudeController.sousPeriodeFilters}" var="var">
@@ -287,6 +295,9 @@
 
             <f:facet name="header"> 
                 <h:outputText value="#{langue.detail_par_district} / #{promptitudeController.selectedRegion.nom} / #{promptitudeController.selectedEtape.nom}"/>
+                <p:commandButton value="Graphique" actionListener="#{promptitudeController.promptitudeByDistrict()}" 
+                                 update=":ModelDataPromptitudeByEtapeCreerForm" style="float: right" 
+                                 onclick="PF('AjaxNotifyDialog').show()"/>
             </f:facet>
 
             <p:columnGroup type="header">

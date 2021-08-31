@@ -16,6 +16,12 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
+import org.primefaces.model.chart.Axis;
+import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.CategoryAxis;
+import org.primefaces.model.chart.ChartSeries;
+import org.primefaces.model.chart.LineChartModel;
+import org.primefaces.model.chart.LineChartSeries;
 import utils.JsfUtil;
 
 /**
@@ -341,4 +347,136 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         return value == 0 ? 0 : (int) value;
     }
 
+    public void resetModel() {
+        this.lineModel = new LineChartModel();
+        RequestContext.getCurrentInstance().execute("PF('ModelDataPromptitudeByEtapeCreerDialog').hide()");
+    }
+
+    public void promptitudeByDistrict() {
+        this.createLineModel("Courbe évolutive de la promptitude des données par District , Etape -> " + selectedEtape.getNom(), this.fillDataPromptitudeByDistrict());
+        this.clodeAndDialog();
+    }
+
+    public void promptitudeByActeur() {
+        this.createLineModel("Courbe évolutive de la promptitude des données par Acteur , Etape -> " + selectedEtape.getNom(), this.fillDataPromptitudeByActeur());
+        this.clodeAndDialog();
+    }
+
+    public void promptitudeByRegion() {
+        this.createLineModel("Courbe évolutive de la promptitude des données par Region , Etape -> " + selectedEtape.getNom(), this.fillDataPromptitudeByRegion());
+        this.clodeAndDialog();
+    }
+
+    public void promptitudeByEtape() {
+        this.createLineModel("Courbe évolutive de la promptitude des données par Etape", this.fillDataPromptitudeByEtape());
+        this.clodeAndDialog();
+    }
+
+    private void clodeAndDialog() {
+        RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
+        RequestContext.getCurrentInstance().execute("PF('ModelDataPromptitudeByEtapeCreerDialog').show()");
+    }
+
+    private void createLineModel(String title, LineChartModel lineChartModel) {
+        this.lineModel = lineChartModel;
+        this.lineModel.setTitle(title);
+        this.lineModel.setLegendPosition("e");
+        this.lineModel.getAxes().put(AxisType.X, new CategoryAxis("Période"));
+        this.lineModel.getAxes().put(AxisType.Y, new CategoryAxis("Moyenne (En jour)"));
+        Axis yAxis = this.lineModel.getAxis(AxisType.Y);
+        yAxis.setMin(0);
+    }
+
+    private LineChartModel fillDataPromptitudeByEtape() {
+        try {
+            LineChartModel model = new LineChartModel();
+
+            etapes.stream().map((e) -> {
+                LineChartSeries series = new LineChartSeries();
+                series.setLabel(e.getNom());
+                this.sousPeriodeFilters.stream().forEach((p) -> {
+                    Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriode(e.getIdetape(), p.getIdperiode());
+                    val = val == -1d ? 0d : val;
+                    series.set(p.getNom(), val);
+                });
+                return series;
+            }).forEach((series) -> {
+                model.addSeries((ChartSeries) series);
+            });
+            return model;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new LineChartModel();
+        }
+    }
+
+    private LineChartModel fillDataPromptitudeByRegion() {
+        try {
+            LineChartModel model = new LineChartModel();
+
+            regions.stream().map((s) -> {
+                LineChartSeries series = new LineChartSeries();
+                series.setLabel(s.getNom());
+                this.sousPeriodeFilters.stream().forEach((p) -> {
+                    Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), p.getIdperiode(), s.getIdservice());
+                    val = val == -1d ? 0d : val;
+                    series.set(p.getNom(), val);
+                });
+                return series;
+            }).forEach((series) -> {
+                model.addSeries((ChartSeries) series);
+            });
+            return model;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new LineChartModel();
+        }
+    }
+
+    private LineChartModel fillDataPromptitudeByActeur() {
+        try {
+            LineChartModel model = new LineChartModel();
+
+            acteurs_finals.stream().map((a) -> {
+                LineChartSeries series = new LineChartSeries();
+                series.setLabel(a.getNom() + " - " + a.getTitre());
+                this.sousPeriodeFilters.stream().forEach((p) -> {
+                    Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdActeur(selectedEtape.getIdetape(), p.getIdperiode(), a.getIdacteur());
+                    val = val == -1 ? 0d : val;
+                    series.set(p.getNom(), val);
+                });
+                return series;
+            }).forEach((series) -> {
+                model.addSeries((ChartSeries) series);
+            });
+            return model;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new LineChartModel();
+        }
+    }
+
+    private LineChartModel fillDataPromptitudeByDistrict() {
+        try {
+            LineChartModel model = new LineChartModel();
+
+            districts.stream().map((d) -> {
+                LineChartSeries serie = new LineChartSeries();
+                serie.setLabel(d.getNom());
+                this.sousPeriodeFilters.stream().forEach((p) -> {
+                    Double val = programmationFacadeLocal.getRetardByIdEtapeIdPeriodeIdservice(selectedEtape.getIdetape(), p.getIdperiode(), d.getIdservice());
+
+                    val = val == -1 ? 0d : val;
+                    serie.set(p.getNom(), val);
+                });
+                return serie;
+            }).forEach((series) -> {
+                model.addSeries((ChartSeries) series);
+            });
+            return model;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new LineChartModel();
+        }
+    }
 }

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
+import org.primefaces.model.chart.LineChartModel;
 import sessions.ActeurFacadeLocal;
 import sessions.EtapeFacadeLocal;
 import sessions.PeriodeFacadeLocal;
@@ -65,6 +66,8 @@ public class AbstractPromptitudeController {
 
     @EJB
     protected ProgrammationFacadeLocal programmationFacadeLocal;
+
+    protected LineChartModel lineModel = new LineChartModel();
 
     protected String sc = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
 
@@ -178,6 +181,14 @@ public class AbstractPromptitudeController {
 
     public void setActeurs_finals(List<Acteur> acteurs_finals) {
         this.acteurs_finals = acteurs_finals;
+    }
+
+    public LineChartModel getLineModel() {
+        return lineModel;
+    }
+
+    public void setLineModel(LineChartModel lineModel) {
+        this.lineModel = lineModel;
     }
 
 }

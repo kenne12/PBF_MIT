@@ -76,6 +76,10 @@
 
             <f:facet name="header"> 
                 <h:outputText value="#{langue.detail_par_etape}"/>
+
+                <p:commandButton value="Graphique" actionListener="#{completudeController.completudeByEtape()}" 
+                                 update=":ModelDataCompletudeForm" style="float: right" 
+                                 onclick="PF('AjaxNotifyDialog').show()"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -105,16 +109,14 @@
             </p:column>
 
             <p:column style="text-align: center;">
-                <p:commandButton 
-                    rendered="#{completudeController.periode.idperiode!=null and completudeController.sousPeriodeFilters.size()!=0}"
-                    value="R"
-                    actionListener="#{completudeController.initRetardByRegion(item , '/analyse/completude/index.html')}"
-                    update=":CompletudeForm:datalist_2,:CompletudeForm:datalist_3"/>
-                <p:commandButton 
-                    rendered="#{completudeController.periode.idperiode!=null and completudeController.sousPeriodeFilters.size()!=0}"
-                    value="A"
-                    actionListener="#{completudeController.initRetardByActeur(item , '/analyse/completude/index.html')}"
-                    update=":CompletudeForm:datalist_2,:CompletudeForm:datalist_3" />
+                <p:commandButton value="R"
+                                 rendered="#{completudeController.periode.idperiode!=null and completudeController.sousPeriodeFilters.size()!=0}"                    
+                                 actionListener="#{completudeController.initRetardByRegion(item , '/analyse/completude/index.html')}"
+                                 update=":CompletudeForm:datalist_2,:CompletudeForm:datalist_3"/>
+                <p:commandButton value="A"
+                                 rendered="#{completudeController.periode.idperiode!=null and completudeController.sousPeriodeFilters.size()!=0}"
+                                 actionListener="#{completudeController.initRetardByActeur(item , '/analyse/completude/index.html')}"
+                                 update=":CompletudeForm:datalist_2,:CompletudeForm:datalist_3" />
             </p:column>
 
             <p:columnGroup type="footer">
@@ -149,11 +151,15 @@
                      selection="#{completudeController.selectedRegion}"
                      rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionRegion==true}">
 
-            <p:ajax event="rowSelect"/>
-            <p:ajax event="rowUnselect"/>
+            <p:ajax event="rowSelect" />
+            <p:ajax event="rowUnselect" />
 
             <f:facet name="header"> 
                 <h:outputText value="#{langue.detail_par_region} / #{completudeController.selectedEtape.nom}"/>
+
+                <p:commandButton value="Graphique" actionListener="#{completudeController.completudeByRegion()}" 
+                                 update=":ModelDataCompletudeForm" style="float: right" 
+                                 onclick="PF('AjaxNotifyDialog').show()"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -219,6 +225,10 @@
 
             <f:facet name="header"> 
                 <h:outputText value="#{langue.detail_par_acteur} / #{completudeController.selectedEtape.nom}" />
+
+                <p:commandButton value="Graphique" actionListener="#{completudeController.completudeByActeur()}" 
+                                 update=":ModelDataCompletudeForm" style="float: right" 
+                                 onclick="PF('AjaxNotifyDialog').show()"/>
             </f:facet>
 
             <p:columnGroup type="header">
@@ -279,6 +289,10 @@
 
             <f:facet name="header"> 
                 <h:outputText value="#{langue.detail_par_district} / #{completudeController.selectedRegion.nom} / #{completudeController.selectedEtape.nom}"/>
+
+                <p:commandButton value="Graphique" actionListener="#{completudeController.completudeByDistrict()}" 
+                                 update=":ModelDataCompletudeForm" style="float: right" 
+                                 onclick="PF('AjaxNotifyDialog').show()"/>
             </f:facet>
 
             <p:columnGroup type="header">
