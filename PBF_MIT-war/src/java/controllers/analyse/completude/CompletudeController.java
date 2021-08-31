@@ -425,11 +425,19 @@ public class CompletudeController extends AbstractCompletudeController implement
         this.lineModel = lineChartModel;
         this.lineModel.setTitle(title);
         this.lineModel.setLegendPosition("e");
-        this.lineModel.getAxes().put(AxisType.X, new CategoryAxis("Période"));
-        this.lineModel.getAxes().put(AxisType.Y, new CategoryAxis("Valeur (%)"));
-        this.lineModel.setBreakOnNull(true);
-        Axis yAxis = this.lineModel.getAxis(AxisType.Y);
-        yAxis.setMin(0);
+
+        //this.lineModel.setBreakOnNull(false);
+        Axis yAxis = lineModel.getAxes().get(AxisType.Y);
+        yAxis.setLabel("Valeur (%)");
+        yAxis.setMin(0d);
+        yAxis.setMax(100d);
+        yAxis.setTickInterval("5");
+        yAxis.setTickFormat("%d");
+        lineModel.getAxes().put(AxisType.Y, yAxis);
+
+        Axis xAxis = new CategoryAxis("Période");
+        xAxis.setTickAngle(-90);
+        lineModel.getAxes().put(AxisType.X, xAxis);
     }
 
     private double calculPercentage(double validee, double programme) {
@@ -443,10 +451,10 @@ public class CompletudeController extends AbstractCompletudeController implement
             etapes.stream().map((e) -> {
                 LineChartSeries series = new LineChartSeries();
                 series.setLabel(e.getNom());
-                this.sousPeriodeFilters.stream().forEach((p) -> { 
+                this.sousPeriodeFilters.stream().forEach((p) -> {
                     double valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriode(e.getIdetape(), p.getIdperiode());
                     if (valeurProgrammee == -1) {
-                        series.set(p.getNom(), null);
+                        series.set(p.getNom(), 50);
                     } else {
                         double val = this.calculPercentage(programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeValidees(e.getIdetape(), p.getIdperiode()), valeurProgrammee);
                         series.set(p.getNom(), val);
@@ -456,7 +464,6 @@ public class CompletudeController extends AbstractCompletudeController implement
             }).forEach((series) -> {
                 model.addSeries((ChartSeries) series);
             });
-            System.err.println("fini");
             return model;
         } catch (Exception e) {
             e.printStackTrace();
@@ -474,8 +481,8 @@ public class CompletudeController extends AbstractCompletudeController implement
                 this.sousPeriodeFilters.stream().forEach((p) -> {
 
                     double valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), p.getIdperiode(), s.getIdservice());
-                    if (valeurProgrammee != -1) {
-                        series.set(p.getNom(), 50d);
+                    if (valeurProgrammee == -1) {
+                        series.set(p.getNom(), 50);
                     } else {
                         double val = this.calculPercentage(programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParentValidees(selectedEtape.getIdetape(), p.getIdperiode(), s.getIdservice()), valeurProgrammee);
                         series.set(p.getNom(), val);
@@ -502,7 +509,7 @@ public class CompletudeController extends AbstractCompletudeController implement
                 this.sousPeriodeFilters.stream().forEach((p) -> {
 
                     double valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdActeur(selectedEtape.getIdetape(), p.getIdperiode(), a.getIdacteur());
-                    if (valeurProgrammee != -1) {
+                    if (valeurProgrammee == -1) {
                         series.set(p.getNom(), 50);
                     } else {
                         double val = this.calculPercentage(programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdActeurValidees(selectedEtape.getIdetape(), p.getIdperiode(), a.getIdacteur()), valeurProgrammee);
@@ -530,7 +537,7 @@ public class CompletudeController extends AbstractCompletudeController implement
                 this.sousPeriodeFilters.stream().forEach((p) -> {
 
                     double valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdservice(selectedEtape.getIdetape(), p.getIdperiode(), d.getIdservice());
-                    if (valeurProgrammee != -1) {
+                    if (valeurProgrammee == -1) {
                         serie.set(p.getNom(), 50);
                     } else {
                         double val = this.calculPercentage(programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceValidees(selectedEtape.getIdetape(), p.getIdperiode(), d.getIdservice()), valeurProgrammee);

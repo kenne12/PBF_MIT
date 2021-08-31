@@ -381,10 +381,16 @@ public class PromptitudeController extends AbstractPromptitudeController impleme
         this.lineModel = lineChartModel;
         this.lineModel.setTitle(title);
         this.lineModel.setLegendPosition("e");
-        this.lineModel.getAxes().put(AxisType.X, new CategoryAxis("Période"));
-        this.lineModel.getAxes().put(AxisType.Y, new CategoryAxis("Moyenne (En jour)"));
         Axis yAxis = this.lineModel.getAxis(AxisType.Y);
-        yAxis.setMin(0);
+        yAxis.setMin(0);       
+        yAxis.setLabel("Valeur (Jrs)");
+        yAxis.setTickInterval("5");
+        //yAxis.setTickFormat("%d");
+        lineModel.getAxes().put(AxisType.Y, yAxis);
+
+        Axis xAxis = new CategoryAxis("Période");
+        xAxis.setTickAngle(-90);
+        lineModel.getAxes().put(AxisType.X, xAxis);
     }
 
     private LineChartModel fillDataPromptitudeByEtape() {
