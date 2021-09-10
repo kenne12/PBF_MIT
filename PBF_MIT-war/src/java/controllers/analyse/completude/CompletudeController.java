@@ -23,6 +23,7 @@ import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.LineChartModel;
 import org.primefaces.model.chart.LineChartSeries;
 import utils.JsfUtil;
+import utils.Utilitaires;
 
 /**
  *
@@ -44,6 +45,18 @@ public class CompletudeController extends AbstractCompletudeController implement
                 sousPeriodeFilters = periodeFacadeLocal.findByIdParent(periode.getIdperiode());
             }
         } catch (Exception e) {
+        }
+    }
+
+    public void initOption(String link) {
+        if (option.equals("%")) {
+            option = "val";
+        } else {
+            option = "%";
+        }
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(this.sc + link);
+        } catch (Exception ex) {
         }
     }
 
@@ -70,7 +83,14 @@ public class CompletudeController extends AbstractCompletudeController implement
             if (valeurProgrammee == -1) {
                 return "";
             }
-            return "" + programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeValidees(idEtape, idPeriode) + " / " + valeurProgrammee;
+            if (option.equals("val")) {
+                return "" + programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeValidees(idEtape, idPeriode) + " / " + valeurProgrammee;
+            }
+
+            if (option.equals("%")) {
+                double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeValidees(idEtape, idPeriode)), valeurProgrammee);
+                return "" + Utilitaires.arrondiNDecimales(val, 2);
+            }
         }
         return "";
     }
@@ -108,7 +128,14 @@ public class CompletudeController extends AbstractCompletudeController implement
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), idPeriode, idServiceParent);
                 if (valeurProgrammee != -1) {
-                    return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParentValidees(selectedEtape.getIdetape(), idPeriode, idServiceParent) + " / " + valeurProgrammee;
+                    if (option.equals("val")) {
+                        return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParentValidees(selectedEtape.getIdetape(), idPeriode, idServiceParent) + " / " + valeurProgrammee;
+                    }
+
+                    if (option.equals("%")) {
+                        double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParentValidees(selectedEtape.getIdetape(), idPeriode, idServiceParent)), valeurProgrammee);
+                        return "" + Utilitaires.arrondiNDecimales(val, 2);
+                    }
                 }
             }
         }
@@ -120,7 +147,14 @@ public class CompletudeController extends AbstractCompletudeController implement
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdservice(selectedEtape.getIdetape(), idPeriode, idService);
                 if (valeurProgrammee != -1) {
-                    return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceValidees(selectedEtape.getIdetape(), idPeriode, idService) + " / " + valeurProgrammee;
+                    if (option.equals("val")) {
+                        return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceValidees(selectedEtape.getIdetape(), idPeriode, idService) + " / " + valeurProgrammee;
+                    }
+
+                    if (option.equals("%")) {
+                        double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceValidees(selectedEtape.getIdetape(), idPeriode, idService)), valeurProgrammee);
+                        return "" + Utilitaires.arrondiNDecimales(val, 2);
+                    }
                 }
             }
         }
@@ -154,7 +188,14 @@ public class CompletudeController extends AbstractCompletudeController implement
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
                 int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdActeur(selectedEtape.getIdetape(), idPeriode, idActeur);
                 if (valeurProgrammee != -1) {
-                    return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdActeurValidees(selectedEtape.getIdetape(), idPeriode, idActeur) + " / " + valeurProgrammee;
+                    if (option.equals("val")) {
+                        return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdActeurValidees(selectedEtape.getIdetape(), idPeriode, idActeur) + " / " + valeurProgrammee;
+                    }
+
+                    if (option.equals("%")) {
+                        double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdActeurValidees(selectedEtape.getIdetape(), idPeriode, idActeur)), valeurProgrammee);
+                        return "" + Utilitaires.arrondiNDecimales(val, 2);
+                    }
                 }
             }
         }
@@ -174,7 +215,16 @@ public class CompletudeController extends AbstractCompletudeController implement
 
     public String agregateValueByEtape(Etape item) {
         if (!sousPeriodeFilters.isEmpty()) {
-            return "" + programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentValidees(item.getIdetape(), periode.getIdperiode()) + " / " + programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParent(item.getIdetape(), periode.getIdperiode());
+            if (option.equals("val")) {
+                int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParent(item.getIdetape(), periode.getIdperiode());
+                return "" + programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentValidees(item.getIdetape(), periode.getIdperiode()) + " / " + valeurProgrammee;
+            }
+
+            if (option.equals("%")) {
+                int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParent(item.getIdetape(), periode.getIdperiode());
+                double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentValidees(item.getIdetape(), periode.getIdperiode())), valeurProgrammee);
+                return "" + Utilitaires.arrondiNDecimales(val, 2);
+            }
         }
         return "";
     }
@@ -196,7 +246,14 @@ public class CompletudeController extends AbstractCompletudeController implement
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
                 if (valeurProgrammee != -1) {
-                    return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParentValidees(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice()) + " / " + valeurProgrammee;
+                    if (option.equals("val")) {
+                        return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParentValidees(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice()) + " / " + valeurProgrammee;
+                    }
+
+                    if (option.equals("%")) {
+                        double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParentValidees(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice())), valeurProgrammee);
+                        return "" + Utilitaires.arrondiNDecimales(val, 2);
+                    }
                 }
             }
         }
@@ -244,7 +301,15 @@ public class CompletudeController extends AbstractCompletudeController implement
             if (valeurProgrammee == -1) {
                 return "";
             }
-            return "" + programmationFacadeLocal.getCompletudeByIdPeriodeValidees(periode.getIdperiode()) + " / " + valeurProgrammee;
+
+            if (option.equals("val")) {
+                return "" + programmationFacadeLocal.getCompletudeByIdPeriodeValidees(periode.getIdperiode()) + " / " + valeurProgrammee;
+            }
+
+            if (option.equals("%")) {
+                double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdPeriodeValidees(periode.getIdperiode())), valeurProgrammee);
+                return "" + Utilitaires.arrondiNDecimales(val, 2);
+            }
         }
         return "";
     }
@@ -265,7 +330,14 @@ public class CompletudeController extends AbstractCompletudeController implement
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdPeriodeIdEtape(periode.getIdperiode(), selectedEtape.getIdetape());
                 if (valeurProgrammee != -1) {
-                    return programmationFacadeLocal.getCompletudeByIdPeriodeIdEtapeValidees(periode.getIdperiode(), selectedEtape.getIdetape()) + " / " + valeurProgrammee;
+                    if (option.equals("val")) {
+                        return programmationFacadeLocal.getCompletudeByIdPeriodeIdEtapeValidees(periode.getIdperiode(), selectedEtape.getIdetape()) + " / " + valeurProgrammee;
+                    }
+
+                    if (option.equals("%")) {
+                        double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdPeriodeIdEtapeValidees(periode.getIdperiode(), selectedEtape.getIdetape())), valeurProgrammee);
+                        return "" + Utilitaires.arrondiNDecimales(val, 2);
+                    }
                 }
             }
         }
@@ -277,7 +349,14 @@ public class CompletudeController extends AbstractCompletudeController implement
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
                 int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdPeriodeIdEtapeSize(periode.getIdperiode(), selectedEtape.getIdetape());
                 if (valeurProgrammee != -1) {
-                    return programmationFacadeLocal.getCompletudeByIdPeriodeIdEtapeSizeValidees(periode.getIdperiode(), selectedEtape.getIdetape()) + " / " + valeurProgrammee;
+                    if (option.equals("val")) {
+                        return programmationFacadeLocal.getCompletudeByIdPeriodeIdEtapeSizeValidees(periode.getIdperiode(), selectedEtape.getIdetape()) + " / " + valeurProgrammee;
+                    }
+
+                    if (option.equals("%")) {
+                        double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdPeriodeIdEtapeSizeValidees(periode.getIdperiode(), selectedEtape.getIdetape())), valeurProgrammee);
+                        return "" + Utilitaires.arrondiNDecimales(val, 2);
+                    }
                 }
             }
         }
@@ -288,7 +367,15 @@ public class CompletudeController extends AbstractCompletudeController implement
         if (!sousPeriodeFilters.isEmpty()) {
             int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdPeriodeParent(periode.getIdperiode());
             if (valeurProgrammee != -11) {
-                return programmationFacadeLocal.getCompletudeByIdPeriodeParentValidees(periode.getIdperiode()) + " / " + valeurProgrammee;
+
+                if (option.equals("val")) {
+                    return programmationFacadeLocal.getCompletudeByIdPeriodeParentValidees(periode.getIdperiode()) + " / " + valeurProgrammee;
+                }
+
+                if (option.equals("%")) {
+                    double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdPeriodeParentValidees(periode.getIdperiode())), valeurProgrammee);
+                    return "" + Utilitaires.arrondiNDecimales(val, 2);
+                }
             }
         }
         return "";
@@ -299,7 +386,14 @@ public class CompletudeController extends AbstractCompletudeController implement
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionRegion) {
                 int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdPeriodeParentIdEtape(periode.getIdperiode(), selectedEtape.getIdetape());
                 if (valeurProgrammee != -1) {
-                    return programmationFacadeLocal.getCompletudeByIdPeriodeParentIdEtapeValidees(periode.getIdperiode(), selectedEtape.getIdetape()) + " / " + valeurProgrammee;
+                    if (option.equals("val")) {
+                        return programmationFacadeLocal.getCompletudeByIdPeriodeParentIdEtapeValidees(periode.getIdperiode(), selectedEtape.getIdetape()) + " / " + valeurProgrammee;
+                    }
+
+                    if (option.equals("%")) {
+                        double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdPeriodeParentIdEtapeValidees(periode.getIdperiode(), selectedEtape.getIdetape())), valeurProgrammee);
+                        return "" + Utilitaires.arrondiNDecimales(val, 2);
+                    }
                 }
             }
         }
@@ -311,7 +405,14 @@ public class CompletudeController extends AbstractCompletudeController implement
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionActeur) {
                 int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdPeriodeParentIdEtapeSize(periode.getIdperiode(), selectedEtape.getIdetape());
                 if (valeurProgrammee != -1) {
-                    return programmationFacadeLocal.getCompletudeByIdPeriodeParentIdEtapeSizeValidees(periode.getIdperiode(), selectedEtape.getIdetape()) + " / " + valeurProgrammee;
+                    if (option.equals("val")) {
+                        return programmationFacadeLocal.getCompletudeByIdPeriodeParentIdEtapeSizeValidees(periode.getIdperiode(), selectedEtape.getIdetape()) + " / " + valeurProgrammee;
+                    }
+
+                    if (option.equals("%")) {
+                        double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdPeriodeParentIdEtapeSizeValidees(periode.getIdperiode(), selectedEtape.getIdetape())), valeurProgrammee);
+                        return "" + Utilitaires.arrondiNDecimales(val, 2);
+                    }
                 }
             }
         }
@@ -355,7 +456,15 @@ public class CompletudeController extends AbstractCompletudeController implement
     public String agregateByEtapeNiveauDistrict(Service item) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && selectedRegion != null && regionDistrict) {
-                return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceValidees(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice()) + " / " + programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdservice(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
+                if (option.equals("val")) {
+                    return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceValidees(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice()) + " / " + programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdservice(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
+                }
+
+                if (option.equals("%")) {
+                    int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdservice(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice());
+                    double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceValidees(selectedEtape.getIdetape(), periode.getIdperiode(), item.getIdservice())), valeurProgrammee);
+                    return "" + Utilitaires.arrondiNDecimales(val, 2);
+                }
             }
         }
         return "";
@@ -376,9 +485,16 @@ public class CompletudeController extends AbstractCompletudeController implement
     public String agregateRetardByEtapeNiveauDistrict(Periode periode) {
         if (!sousPeriodeFilters.isEmpty()) {
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedRegion != null) {
-                int valeurPgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice());
-                if (valeurPgrammee != -1) {
-                    return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParentValidees(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice()) + " / " + valeurPgrammee;
+                int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice());
+                if (valeurProgrammee != -1) {
+                    if (option.equals("val")) {
+                        return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParentValidees(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice()) + " / " + valeurProgrammee;
+                    }
+
+                    if (option.equals("%")) {
+                        double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeIdserviceParentValidees(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice())), valeurProgrammee);
+                        return "" + Utilitaires.arrondiNDecimales(val, 2);
+                    }
                 }
             }
         }
@@ -390,7 +506,14 @@ public class CompletudeController extends AbstractCompletudeController implement
             if (selectedEtape != null && selectedEtape.getIdetape() != null && regionDistrict && selectedRegion != null) {
                 int valeurProgrammee = programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParent(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice());
                 if (valeurProgrammee != -1) {
-                    return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParentValidees(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice()) + " / " + valeurProgrammee;
+                    if (option.equals("val")) {
+                        return programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParentValidees(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice()) + " / " + valeurProgrammee;
+                    }
+
+                    if (option.equals("%")) {
+                        double val = this.calculPercentage(((double) programmationFacadeLocal.getCompletudeByIdEtapeIdPeriodeParentIdserviceParentValidees(selectedEtape.getIdetape(), periode.getIdperiode(), selectedRegion.getIdservice())), valeurProgrammee);
+                        return "" + Utilitaires.arrondiNDecimales(val, 2);
+                    }
                 }
             }
         }

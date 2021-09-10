@@ -64,6 +64,10 @@
                         </center>
                     </div>
                 </div>
+
+                <p:commandButton id="option_btn" value="#{completudeController.option}" 
+                                 actionListener="#{completudeController.initOption('/index.html')}"
+                                 update="option_btn" style="float: right ; margin-right: 12px"/>
             </div>
 
             <br />

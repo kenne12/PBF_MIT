@@ -71,6 +71,8 @@ public class AbstractCompletudeController {
 
     protected String sc = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
 
+    protected String option = "%";
+
     protected Routine routine = new Routine();
 
     public Service getService() {
@@ -189,6 +191,10 @@ public class AbstractCompletudeController {
 
     public void setLineModel(LineChartModel lineModel) {
         this.lineModel = lineModel;
+    }
+
+    public String getOption() {
+        return option;
     }
 
 }

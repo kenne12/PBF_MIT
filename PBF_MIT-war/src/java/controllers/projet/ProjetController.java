@@ -574,6 +574,22 @@ public class ProjetController extends AbstractProjetController implements Serial
                 programmationFacadeLocal.edit(p);
             } else {
                 p.setIdprogrammation(programmationFacadeLocal.nextVal());
+                if (p.getIdetapeprojet().getDelai() == 0) {
+                    p.setActive(true);
+                    p.setNotifEmailValidation(true);
+                    p.setNotifSmsValidation(true);  
+                }
+                p.setEnvoye(false);
+                p.setValide(false);
+                p.setTypefichier("-");
+                p.setChemin("-");
+                p.setRetard(0);
+                p.setObservation("-");
+                p.setObservationarchivee("-");
+                p.setObservee(false);
+                p.setConteur(0);
+                p.setObservationvalidee(false);
+                p.setObservationutilisateur("-");
                 programmationFacadeLocal.create(p);
             }
             projetservice.getProgrammationList().set(i, p);

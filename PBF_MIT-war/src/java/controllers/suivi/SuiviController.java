@@ -213,8 +213,12 @@ public class SuiviController extends AbstractSuiviController implements Serializ
         return false;
     }
 
-    public boolean renderedViewBtn(boolean valide, boolean observee) {
-        if (valide && observee) {
+    public boolean renderedViewBtn(boolean valide, boolean observee, boolean observation_validee, int count) {
+        if (count > 0 && !valide) {
+            return true;
+        }
+
+        if (valide && observee && !observation_validee) {
             return true;
         }
         return false;
@@ -238,7 +242,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
 
     public boolean renderedViewObservation(boolean envoye, boolean valide, Programmation p) {
         try {
-            if (envoye && valide) {
+            if ((!valide && p.getConteur() > 0)==true) {
                 if (Utilitaires.isAccess(1L)) {
                     return false;
                 }
@@ -258,16 +262,41 @@ public class SuiviController extends AbstractSuiviController implements Serializ
         }
     }
 
-    public String checkFooterColor(boolean valide, boolean observee, boolean observation_validee) {
-        if (!valide) {
-            return "red";
-        } else if (observee) {
-            if (observation_validee) {
-                return "Green";
-            }
+    public String checkFooterColor(boolean valide, boolean observee, boolean observation_validee, int conteur) {
+
+        if ((valide && !observee && !observation_validee) == true) {
+            return "green";
+        }
+        if ((conteur > 0 && !observee && !observation_validee && !valide) == true) {
             return "yellow";
         }
-        return "green";
+
+        if (valide == true && observee == true && observation_validee == false) {
+            return "yellow";
+        }
+
+        if (conteur == 0 && valide == false) {
+            return "red";
+        }
+
+        if ((!valide && !observee && !observation_validee && !valide) == true) {
+            return "red";
+        }
+
+        if (valide == true && observee == true && observation_validee == true && valide == true) {
+            return "green";
+        }
+
+        /*if (!valide) {
+         return "red";
+         } else if (observee) {
+         if (observation_validee) {
+         return "Green";
+         }
+         return "yellow";
+         }
+         return "green";*/
+        return "";
     }
 
     public String returnRetard(boolean active, int retard) {
@@ -622,7 +651,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
             }
 
             programmation.setChemin("-");
-            programmation.setConteur(programmation.getConteur() + 1);
+            //programmation.setConteur(programmation.getConteur() + 1);
             programmation.setTypefichier("-");
             programmation.setEnvoye(true);
             programmation.setDateTransfert(new Date(System.currentTimeMillis()));
@@ -696,7 +725,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
 
             filename = nom;
             programmation.setChemin(nom);
-            programmation.setConteur(programmation.getConteur() + 1);
+            //programmation.setConteur(programmation.getConteur() + 1);
             programmation.setTypefichier(event.getFile().getContentType());
             programmation.setEnvoye(true);
             programmation.setDateTransfert(new Date());

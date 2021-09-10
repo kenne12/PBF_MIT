@@ -49,6 +49,11 @@
                     </center>
                 </div>
             </div>
+            
+            <p:commandButton id="option_btn" value="#{completudeController.option}" 
+                             actionListener="#{completudeController.initOption('/analyse/completude/index.html')}"
+                             update="option_btn" style="float: right ; margin-right: 12px"/>
+
         </div>
 
         <br />
