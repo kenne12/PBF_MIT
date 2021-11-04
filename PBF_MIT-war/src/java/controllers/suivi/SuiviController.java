@@ -19,12 +19,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.transaction.Transactional;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
+import utils.AllmySms;
 import utils.EmailRequest;
 import utils.MailThread;
 import utils.Receipient;
@@ -242,7 +244,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
 
     public boolean renderedViewObservation(boolean envoye, boolean valide, Programmation p) {
         try {
-            if ((!valide && p.getConteur() > 0)==true) {
+            if ((!valide && p.getConteur() > 0) == true) {
                 if (Utilitaires.isAccess(1L)) {
                     return false;
                 }
@@ -395,6 +397,10 @@ public class SuiviController extends AbstractSuiviController implements Serializ
 
     public void activateStape(Programmation p) {
         try {
+
+            servicesActeursAcv.clear();
+            servicesActeursDs.clear();
+
             notification = new Notification();
             notification.setMail(p.isNotifEmailProgram());
             notification.setSms(p.isNotifSmsProgram());
@@ -402,14 +408,18 @@ public class SuiviController extends AbstractSuiviController implements Serializ
             notification.setObjet("-");
             templateMessage = "0";
 
+            acteurNotifiablesDuplicate.clear();
             acteurNotifiables.clear();
             if (listActeurCtn != null) {
                 acteurNotifiables.addAll(listActeurCtn);
             }
 
+            servicesActeursDs.add(p.getIdprojetservice().getIdservice());
+
             List<Acteur> listActeurAcv = new ArrayList<>();
             Service acv = serviceFacadeLocal.findByServiceParentAndRegion(p.getIdprojetservice().getIdservice().getIdparent(), true);
             if (acv != null) {
+                servicesActeursAcv.add(acv);
                 listActeurAcv.addAll(acteurFacadeLocal.findByIdservice(acv.getIdservice()));
                 if (listActeurAcv != null) {
                     acteurNotifiables.addAll(listActeurAcv);
@@ -423,6 +433,15 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                         acteurNotifiables.add(obj.getIdacteur());
                     }
                 });
+            }
+
+            List<Acteur> listActeursDistrict = acteurFacadeLocal.findByIdservice(p.getIdprojetservice().getIdservice().getIdservice());
+            if (!listActeursDistrict.isEmpty()) {
+                acteurNotifiables.addAll(listActeursDistrict);
+            }
+
+            if (!acteurNotifiables.isEmpty()) {
+                acteurNotifiablesDuplicate.addAll(acteurNotifiables);
             }
             selectedActeurNotifiables.clear();
 
@@ -456,6 +475,11 @@ public class SuiviController extends AbstractSuiviController implements Serializ
     }
 
     public void openActeurDialog() {
+        modeSearchActeur = 0;
+        selectIdservice = 0;
+        modeAcv = false;
+        modeRegion = false;
+        modeDistrict = false;
         RequestContext.getCurrentInstance().execute("PF('AddActeurDialog').show()");
     }
 
@@ -467,28 +491,119 @@ public class SuiviController extends AbstractSuiviController implements Serializ
         if (templateMessage.equals("0")) {
             notification.setMessage("RAS");
         } else if (templateMessage.equals("1")) {
-            String message = "Bonjour ! \nLa CTN Vous Informe que les documents transmis dans le cadre du projet : "
-                    + programmation.getIdetapeprojet().getIdprojet().getNom()
-                    + " Ont été acceptés.\nCe Message a été envoyé automatiquement, nous vous remercions de ne pas répondre.";
             notification.setObjet("Validation");
-            notification.setMessage(message);
+
+            String smsMessage = "Bonjour, <<" + programmation.getIdetapeprojet().getIdprojet().getNom() + ">> : <<" + programmation.getIdetapeprojet().getIdetape().getNom() + ">>"
+                    + " : <<Validé>> : <<" + sdf.format(programmation.getDaterealisation()) + ">> : <<" + programmation.getIdprojetservice().getIdprojet().getIdperiode().getNom() + ">>"
+                    + " : <<" + programmation.getIdprojetservice().getIdservice().getNom() + ">>";
+
+            /*String smsMessage = "Bonjour, La CTN Vous Informe que les documents transmis dans le cadre du projet : "
+             + programmation.getIdetapeprojet().getIdprojet().getNom()
+             + " Ont été acceptés.";*/
+            notification.setMessage(smsMessage);
+
+            String mailMessage = "Bonjour,\nLa CTN Vous Informe que les documents transmis dans le cadre du projet : "
+                    + programmation.getIdetapeprojet().getIdprojet().getNom()
+                    + " Ont été acceptés. \nEtape" + programmation.getIdetapeprojet().getIdetape().getNom() + ", Date de réalisation : " + sdf.format(programmation.getDaterealisation()) + "\nCe Message a été envoyé automatiquement, nous vous remercions de ne pas répondre.";
+            notification.setMessageMail(mailMessage);
         } else if (templateMessage.equals("2")) {
-            String message = "Bonjour ! \nLa CTN vous informe que les documents transmis dans le cadre du projet : " + programmation.getIdetapeprojet().getIdprojet().getNom() + "\n"
-                    + "Structure : " + programmation.getIdprojetservice().getIdservice().getNom() + "\n"
-                    + "Etape : " + programmation.getIdetapeprojet().getIdetape().getNom() + "\n"
-                    + "Pour des raisons suivantes : \n"
-                    + programmation.getObservation() + "\n"
-                    + "Ce Message a été envoyé automatiquement, nous vous remercions de ne pas répondre.";
-            notification.setMessage(message);
             notification.setObjet("Rejet");
+
+            String smsMessage = "Bonjour, <<" + programmation.getIdetapeprojet().getIdprojet().getNom() + ">> : <<" + programmation.getIdetapeprojet().getIdetape().getNom() + ">>"
+                    + " : <<Rejet>> : Raison : <<" + programmation.getObservation() + ">> : <<" + sdf.format(programmation.getDaterealisation()) + ">> : <<" + programmation.getIdprojetservice().getIdprojet().getIdperiode().getNom() + ">>"
+                    + " : <<" + programmation.getIdprojetservice().getIdservice().getNom() + ">>";
+
+            /*String smsMessage = "Bonjour, La CTN vous informe que les documents transmis dans le cadre du projet : " + programmation.getIdetapeprojet().getIdprojet().getNom() + " "
+             + "Structure : " + programmation.getIdprojetservice().getIdservice().getNom() + ", "
+             + "Etape : " + programmation.getIdetapeprojet().getIdetape().getNom() + ", "
+             + "Pour des raisons suivantes : "
+             + programmation.getObservation() + ".";*/
+            notification.setMessage(smsMessage);
+
+            String mailMessage = "Bonjour,\nLa CTN vous informe que les documents transmis dans le cadre du projet : " + programmation.getIdetapeprojet().getIdprojet().getNom()
+                    + "\nStructure : " + programmation.getIdprojetservice().getIdservice().getNom() + ", "
+                    + "\nEtape : " + programmation.getIdetapeprojet().getIdetape().getNom() + ", "
+                    + "ont été rejetés pour des raisons suivantes : " + programmation.getObservation() + ". "
+                    + "\nCe Message a été envoyé automatiquement, nous vous remercions de ne pas répondre.";
+            notification.setMessageMail(mailMessage);
         } else if (templateMessage.equals("3")) {
-            String message = "Bonjour !\nLa CTN Vous informe que des rémarques ont été faites sur les documents envoyés dans le cadre du projet -> " + programmation.getIdetapeprojet().getIdprojet().getNom()
-                    + "Structure : " + programmation.getIdprojetservice().getIdservice().getNom() + "\n"
-                    + "Etape : " + programmation.getIdetapeprojet().getIdetape().getNom() + "\n"
-                    + "" + programmation.getObservation() + "\n"
-                    + "Veuillez-Vous connecter sur le portail pour apporter des corrections sollicitées en pièces jointes.\nCe Message a été envoyé automatiquement, nous vous remercions de ne pas répondre.";
             notification.setObjet("Observation");
-            notification.setMessage(message);
+
+            String smsMessage = "Bonjour, <<" + programmation.getIdetapeprojet().getIdprojet().getNom() + ">> : <<" + programmation.getIdetapeprojet().getIdetape().getNom() + ">>"
+                    + " : <<Acceptation avec retenu>> : Raison : <<" + programmation.getObservation() + ">> : <<" + sdf.format(programmation.getDaterealisation()) + ">> : <<" + programmation.getIdprojetservice().getIdprojet().getIdperiode().getNom() + ">>"
+                    + " : <<" + programmation.getIdprojetservice().getIdservice().getNom() + ">>";
+            /*String smsMessage = "Bonjour, \nLa CTN Vous informe que des rémarques ont été faites sur les documents envoyés dans le cadre du projet -> " + programmation.getIdetapeprojet().getIdprojet().getNom()
+             + "Structure : " + programmation.getIdprojetservice().getIdservice().getNom() + ", "
+             + "Etape : " + programmation.getIdetapeprojet().getIdetape().getNom() + ", "
+             + "" + programmation.getObservation() + " "
+             + "Veuillez-Vous connecter sur le portail pour apporter des corrections sollicitées en pièces jointes.";*/
+            notification.setMessage(smsMessage);
+
+            String mailMessage = "Bonjour, La CTN Vous informe que des remarques ont été faites sur les documents envoyés dans le cadre du projet : " + programmation.getIdetapeprojet().getIdprojet().getNom()
+                    + "\nStructure : " + programmation.getIdprojetservice().getIdservice().getNom() + ", "
+                    + "\nEtape : " + programmation.getIdetapeprojet().getIdetape().getNom() + ", "
+                    + "" + programmation.getObservation() + " "
+                    + "Veuillez-Vous connecter sur le portail pour apporter des corrections sollicitées en pièces jointes.\nCe Message a été envoyé automatiquement, nous vous remercions de ne pas répondre.";
+
+            notification.setMessageMail(mailMessage);
+        }
+    }
+
+    public void updateSearchFilter() {
+        modeAcv = false;
+        modeRegion = false;
+        modeDistrict = false;
+
+        if (modeSearchActeur == 0) {
+            acteurNotifiables.clear();
+            acteurNotifiables.addAll(acteurNotifiablesDuplicate);
+        }
+
+        if (modeSearchActeur == 1) {
+            modeRegion = true;
+        }
+
+        if (modeSearchActeur == 2) {
+            modeAcv = true;
+        }
+
+        if (modeSearchActeur == 3) {
+            modeDistrict = true;
+        }
+
+        if (modeSearchActeur == 4) {
+            acteurNotifiables.clear();
+            acteurNotifiablesDuplicate.forEach(a -> {
+                if (a.getIdservice().getCentral()) {
+                    acteurNotifiables.add(a);
+                }
+            });
+        }
+    }
+
+    public void filterActeurRegion() {
+
+    }
+
+    public void filterActeurAcv() {
+        acteurNotifiables.clear();
+        if (selectIdservice != 0) {
+            acteurNotifiablesDuplicate.forEach(a -> {
+                if (a.getIdservice().getIdservice().equals(selectIdservice)) {
+                    acteurNotifiables.add(a);
+                }
+            });
+        }
+    }
+
+    public void filterActeurDistrict() {
+        acteurNotifiables.clear();
+        if (selectIdservice != 0) {
+            acteurNotifiablesDuplicate.forEach(a -> {
+                if (a.getIdservice().getIdservice().equals(selectIdservice)) {
+                    acteurNotifiables.add(a);
+                }
+            });
         }
     }
 
@@ -524,8 +639,12 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                 p1.setNotifEmailProgram(true);
                 programmationFacadeLocal.edit(p1);
             }
+            try {
+                programmation.setConteur(programmation.getConteur() + 1);
+            } catch (Exception e) {
+                programmation.setConteur(1);
+            }
 
-            programmation.setConteur(programmation.getConteur() + 1);
             programmationFacadeLocal.edit(programmation);
 
             RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
@@ -557,7 +676,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                     EmailRequest emailRequest = new EmailRequest();
                     emailRequest.setSender("CTNPBF");
                     emailRequest.setSubject(notification.getObjet());
-                    emailRequest.setText(notification.getMessage());
+                    emailRequest.setText(notification.getMessageMail());
                     emailRequest.setReceipients(receipients);
                     if (!emailRequest.getReceipients().isEmpty()) {
                         sendMail(emailRequest);
@@ -595,8 +714,27 @@ public class SuiviController extends AbstractSuiviController implements Serializ
 
     private void sendSms(SmsRequest smsRequest) {
         SmsThread smsThread = new SmsThread(smsRequest);
-        smsThread.setMode("MULTIPLE");
-        smsThread.start();
+
+        int nbpage = Utilitaires.countSms(smsRequest.getText()).get("nombre_pages");
+        smsRequest.getReceipients().forEach(s -> {
+            SmsRequest sr = smsRequest;
+            sr.setReceipientSms(s);
+            String report = smsThread.runSingle(sr);
+
+            Map m = AllmySms.treatResponse(report, 1);
+            if (((boolean) m.get("etat"))) {
+                Service service = null;
+                if (sr.getReceipientSms().getActeur().getIdservice().getCentral()) {
+                    service = serviceFacadeLocal.find(sr.getReceipientSms().getActeur().getIdservice().getIdservice());
+                } else {
+                    service = serviceFacadeLocal.find(sr.getReceipientSms().getActeur().getIdservice().getIdparent());
+                }
+                if (service != null) {
+                    service.setSoldeSms(service.getSoldeSms() - nbpage);
+                    serviceFacadeLocal.edit(service);
+                }
+            }
+        });
     }
 
     public void validateUser() {

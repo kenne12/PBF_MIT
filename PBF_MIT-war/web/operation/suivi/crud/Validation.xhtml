@@ -38,11 +38,15 @@
                         <p:message for="date_transfert" id="msg_date_transfert" />
 
                         <p:outputLabel value="#{langue.date_realisation}" for="date_realisation" />
-                        <p:calendar id="date_realisation" navigator="true" value="#{suiviController.programmation.daterealisation}" required="true" />
+                        <p:calendar id="date_realisation" navigator="true" value="#{suiviController.programmation.daterealisation}" required="true" >
+                            <p:ajax event="dateSelect" />
+                        </p:calendar>
                         <p:message for="date_realisation" id="msg_date_realisation" />
 
                         <p:outputLabel value="#{langue.date_validation}" for="date_validation" />
-                        <p:calendar id="date_validation" navigator="true" value="#{suiviController.programmation.dateValidation}" required="true" />
+                        <p:calendar id="date_validation" navigator="true" value="#{suiviController.programmation.dateValidation}" required="true" >
+                            <p:ajax event="dateSelect" />
+                        </p:calendar>
                         <p:message for="date_validation" id="msg_date_validation" />
 
                         <p:outputLabel value="#{langue.observation}" for="observation" />
@@ -80,26 +84,32 @@
                             &nbsp;&nbsp;
                             <p:commandButton value="Ajout des acteurs" update="AddActeurForm" actionListener="#{suiviController.openActeurDialog()}"/>
                             <h:outputText style="color: red; font-size: 15px" value="#{suiviController.selectedActeurNotifiables.size()} Acteur(s)" />
-                            
+
                             <p:selectOneMenu value="#{suiviController.templateMessage}" filter="true" filterMatchMode="contains">
                                 <f:selectItem itemLabel="--" itemValue="0" />
                                 <f:selectItem itemLabel="Validation" itemValue="1" />
                                 <f:selectItem itemLabel="Rejet" itemValue="2" />
                                 <f:selectItem itemLabel="Observation" itemValue="3" />
-                                <p:ajax listener="#{suiviController.updateTemplate()}" update="objet,message" />
+                                <p:ajax listener="#{suiviController.updateTemplate()}" update="objet,message,message_mail" />
                             </p:selectOneMenu>
                         </h:panelGrid>
                         <p:message for="mode_sms" />
-                        
+
                         <p:outputLabel value="#{langue.objet}" for="objet" />
                         <p:inputText value="#{suiviController.notification.objet}" id="objet" style="width: 200px" />
                         <p:message for="objet" />
 
-                        <p:outputLabel value="#{langue.message}" for="message" />
+                        <p:outputLabel value="#{langue.message} sms" for="message" />
                         <p:inputTextarea id="message" value="#{suiviController.notification.message}" cols="450" rows="6" style="width: 500px">                                            
                             <p:ajax event="keyup" />
                         </p:inputTextarea>
                         <p:message for="message"/>
+
+                        <p:outputLabel value="#{langue.message} mail" for="message_mail" />
+                        <p:inputTextarea id="message_mail" value="#{suiviController.notification.messageMail}" cols="450" rows="6" style="width: 500px">                                            
+                            <p:ajax event="keyup" />
+                        </p:inputTextarea>
+                        <p:message for="message_mail"/>
 
                     </h:panelGrid>
                     <p:separator/>

@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.context.RequestContext;
+import utils.AllmySms;
 import utils.EmailRequest;
 import utils.JsfUtil;
 import utils.MailThread;
@@ -577,7 +578,7 @@ public class ProjetController extends AbstractProjetController implements Serial
                 if (p.getIdetapeprojet().getDelai() == 0) {
                     p.setActive(true);
                     p.setNotifEmailValidation(true);
-                    p.setNotifSmsValidation(true);  
+                    p.setNotifSmsValidation(true);
                 }
                 p.setEnvoye(false);
                 p.setValide(false);
@@ -685,14 +686,31 @@ public class ProjetController extends AbstractProjetController implements Serial
     private void sendSms(List<Acteur> acteurs) {
         SmsRequest smsRequest = new SmsRequest();
         smsRequest.setSubject("Information : " + projet.getNom());
-        smsRequest.setText("Bonjour M. / Mme ;\nLa CTN Vous informe que vous etes concernés par le projet mensionné en object ;"
-                + "\nVeuillez vous connecter sur le portail pour fournir les documents exigés aux étapes vous concernant."
-                + "\nCordialement.");
+        smsRequest.setText("Bonjour, La CTN Vous informe que vous etes concernés par le projet mensionné en object;"
+                + " Veuillez vous connecter sur le portail pour fournir les documents exigés aux étapes vous concernant."
+                + " Cordialement.");
         List<ReceipientSms> receipients = Utilitaires.extracPhoneNumber(acteurs);
         smsRequest.setReceipients(receipients);
         SmsThread smsThread = new SmsThread(smsRequest);
-        smsThread.setMode("MULTIPLE");
-        smsThread.start();
+
+        int nbpage = Utilitaires.countSms(smsRequest.getText()).get("nombre_pages");
+        smsRequest.getReceipients().forEach(s -> {
+            SmsRequest sr = smsRequest;
+            sr.setReceipientSms(s);
+            String report = smsThread.runSingle(sr);
+
+            Map m = AllmySms.treatResponse(report, 1);
+            if ((boolean) m.get("etat")) {
+                Service service = null;
+                if (sr.getReceipientSms().getActeur().getIdservice().getCentral()) {
+                    service = serviceFacadeLocal.find(sr.getReceipientSms().getActeur().getIdservice().getIdservice());
+                } else {
+                    service = serviceFacadeLocal.find(sr.getReceipientSms().getActeur().getIdservice().getIdparent());
+                }
+                service.setSoldeSms(service.getSoldeSms() - nbpage);
+                serviceFacadeLocal.edit(service);
+            }
+        });
     }
 
     public void prepareAddService() {

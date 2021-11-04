@@ -25,11 +25,13 @@ public class JavaMailUtils {
 
     public static synchronized void sendMail(EmailRequest emailRequest) {
         try {
-            properties.put("mail.smtp.host", "mail12.lwspanel.com");
+            properties.put("mail.smtp.host", "mail12.lwspanel.com");              
             //properties.put("mail.smtp.host", "smtp.gmail.com");
-            properties.put("mail.smtp.port", "465");
+            //properties.put("mail.smtp.port", "465");
+            properties.put("mail.smtp.port", "587");
             properties.put("mail.smtp.auth", "true");
-            properties.put("mail.smtp.socketFactory.port", "465");
+            //properties.put("mail.smtp.socketFactory.port", "465");
+            properties.put("mail.smtp.socketFactory.port", "587");
             properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
             Session session = Session.getInstance(properties, new AuthenticatorLws());
             Message message = new MimeMessage(session);

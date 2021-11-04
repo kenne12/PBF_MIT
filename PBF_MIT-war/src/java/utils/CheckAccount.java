@@ -11,9 +11,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 
 /**
  *
@@ -21,43 +20,37 @@ import org.codehaus.jackson.map.ObjectMapper;
  */
 public class CheckAccount {
 
-    public static String detailCompteJsonOkHttp() throws IOException {
-        //YmVpbmluZm9zOjc3NmM3NTk0YmU4YWYzMA==
-        OkHttpClient client = new OkHttpClient();
-        okhttp3.Request request = new Request.Builder().url("https://api.allmysms.com/account")
-                .get()
-                .addHeader("Authorization", "Basic YmVpbmluZm9zOjc3NmM3NTk0YmU4YWYzMA==")
-                .addHeader("cache-control", "no-cache")
-                .build();
-
-        okhttp3.Response response = client.newCall(request).execute();
-        System.err.println(response.toString());
-        return response.toString();
-    }
-
     public static AllMySmsAccountCheck getAccountDetail(String jsonString) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         AllMySmsAccountCheck account = objectMapper.readValue(jsonString, AllMySmsAccountCheck.class);
         return account;
     }
 
-    public static Object getPingDetail(String jsonString, Object o) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Object account = objectMapper.readValue(jsonString, o.getClass());
-        return account;
+    public static Object fromJsonToObject(String jsonString, Object o) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Object object = objectMapper.readValue(jsonString, o.getClass());
+            return object;
+        } catch (IOException ex) {
+            return null;
+        }
+    }
+
+    public static String fromObjectToJson(Object o) throws IOException {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        return ow.writeValueAsString(o);
     }
 
     //HTTP GET request
     public static String pingServer() throws Exception {
-        String url = "https://api.allmysms.com/ping/";
+        //String url = "https://api.allmysms.com/ping/";
+        //String url = "http://51.68.84.221:8096/api/ping";
+        String url = SessionMBean.getParametrage().getAllmysmsApiUrl() + "/api/ping";
 
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-        //optional default is GET
         con.setRequestMethod("GET");
-        //int responseCode = con.getResponseCode();
-        //http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+        con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         String inputLine;
         StringBuffer response = new StringBuffer();
@@ -66,31 +59,22 @@ public class CheckAccount {
             response.append(inputLine);
         }
         in.close();
+        System.err.println(response.toString());
         return response.toString();
     }
 
     //HTTP GET request
-    public static String returnDetailCompteJson() throws Exception {
+    public static String returnDetailCompteJson(String apiAuthKey) throws Exception {
 
-        //login : collegeco
-        //password : 1234colco@
-        //String url = "https://api.allmysms.com/account?subAccount=" + SessionMBean.getInstitution().getApiuser();
-        String url = "https://api.allmysms.com/account";
+        //String url = "http://51.68.84.221:8096/api/accountDetails?apiAuthKey=" + apiAuthKey;
+        String url = SessionMBean.getParametrage().getAllmysmsApiUrl() + "/api/accountDetails?apiAuthKey=" + apiAuthKey;
+        //String url = "https://api.allmysms.com/account";
 
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-        //optional default is GET
         con.setRequestMethod("GET");
 
-        con.setRequestProperty("Authorization", "Basic YmVpbmluZm9zOjc4ZmVmY2E2MDI5YTkxYg==");
-        con.setRequestProperty("cache-control", "no-cache");
-        //con.setRequestProperty("subAccount", "collegeco");
-
-        //add request header
-        //con.setRequestProperty("User-Agent", USER__AGENT);
-        //int responseCode = con.getResponseCode();
-        //System.out.println("Response Code : " + responseCode);
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
 

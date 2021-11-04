@@ -52,7 +52,7 @@
                                     <p:commandButton icon="ui-icon-image" value="Simul" rendered="#{suiviController.renderedDownloadSimulationBtn(var1)}"  actionListener="#{suiviController.simulateFileUpload(var1)}" update=":ProjetListerForm,:notify1" onclick="PF('AjaxNotifyDialog').show()" oncomplete="PF('AjaxNotifyDialog').hide()" style="margin-left: 5px ;margin-top: 10px"/>     
                                 </div>
 
-                                <p:commandButton icon="ui-icon-check" value="#{langue.valider}" disabled="#{suiviController.renderedActivate(var1, var1.envoye, var1.active)}"  actionListener="#{suiviController.activateStape(var1)}" update=":notify1,:ValidationCreerForm" style="margin-left: 10px ;margin-top: 10px"/>                                                     
+                                <p:commandButton icon="ui-icon-check" value="#{langue.valider}" disabled="#{suiviController.renderedActivate(var1, var1.envoye, var1.active)}" actionListener="#{suiviController.activateStape(var1)}" update=":notify1,:ValidationCreerForm" style="margin-left: 10px ;margin-top: 10px"/>                                                     
                                 <p:commandButton icon="ui-icon-search" rendered="#{suiviController.renderedViewBtn(var1.valide,var1.observee , var1.observationvalidee , var1.conteur)}" value="#{langue.observations}" disabled="#{suiviController.renderedViewObservation(var1.envoye , var1.valide , var1)}"  actionListener="#{suiviController.viewObservation(var1)}" update=":notify1,:ObservationViewForm" style="margin-left: 10px ;margin-top: 10px"/>                          
                             </div>
 

@@ -69,11 +69,17 @@ public class AbstractSuiviController {
     protected List<Acteur> acteurNotifiables = new ArrayList<>();
     protected List<Acteur> selectedActeurNotifiables = new ArrayList<>();
     protected List<Acteur> listActeurCtn = new ArrayList<>();
+    protected List<Acteur> acteurNotifiablesDuplicate = new ArrayList<>();
 
     @EJB
     protected ServiceFacadeLocal serviceFacadeLocal;
     protected List<Service> services = new ArrayList<>();
     protected List<Service> selectedServices = new ArrayList<>();
+
+    protected List<Service> servicesActeursCtn = new ArrayList<>();
+    protected List<Service> servicesActeursRegion = new ArrayList<>();
+    protected List<Service> servicesActeursAcv = new ArrayList<>();
+    protected List<Service> servicesActeursDs = new ArrayList<>();
 
     @EJB
     protected ProjetserviceFacadeLocal projetserviceFacadeLocal;
@@ -92,6 +98,12 @@ public class AbstractSuiviController {
     protected Notification notification = new Notification();
 
     protected String templateMessage;
+    protected Integer modeSearchActeur = 0;
+    protected boolean modeRegion = false;
+    protected boolean modeAcv = false;
+    protected boolean modeDistrict = false;
+
+    protected Integer selectIdservice = 0;
 
     protected boolean showValidateBtn;
     protected boolean disabledDownPiece = true;
@@ -371,6 +383,58 @@ public class AbstractSuiviController {
 
     public void setTemplateMessage(String templateMessage) {
         this.templateMessage = templateMessage;
+    }
+
+    public Integer getModeSearchActeur() {
+        return modeSearchActeur;
+    }
+
+    public void setModeSearchActeur(Integer modeSearchActeur) {
+        this.modeSearchActeur = modeSearchActeur;
+    }
+
+    public boolean isModeRegion() {
+        return modeRegion;
+    }
+
+    public boolean isModeAcv() {
+        return modeAcv;
+    }
+
+    public boolean isModeDistrict() {
+        return modeDistrict;
+    }
+
+    public List<Service> getServicesActeursCtn() {
+        return servicesActeursCtn;
+    }
+
+    public List<Service> getServicesActeursRegion() {
+        return servicesActeursRegion;
+    }
+
+    public List<Service> getServicesActeursAcv() {
+        return servicesActeursAcv;
+    }
+
+    public List<Service> getServicesActeursDs() {
+        return servicesActeursDs;
+    }
+
+    public Integer getSelectIdservice() {
+        return selectIdservice;
+    }
+
+    public void setSelectIdservice(Integer selectIdservice) {
+        this.selectIdservice = selectIdservice;
+    }
+
+    public List<Acteur> getActeurNotifiablesDuplicate() {
+        return acteurNotifiablesDuplicate;
+    }
+
+    public void setActeurNotifiablesDuplicate(List<Acteur> acteurNotifiablesDuplicate) {
+        this.acteurNotifiablesDuplicate = acteurNotifiablesDuplicate;
     }
 
 }

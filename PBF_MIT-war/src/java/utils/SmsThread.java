@@ -5,11 +5,14 @@
  */
 package utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author USER
  */
-public class SmsThread extends Thread {
+public class SmsThread {
 
     private SmsRequest smsRequest;
     private String mode;
@@ -22,15 +25,23 @@ public class SmsThread extends Thread {
         this.smsRequest = smsRequest;
     }
 
-    @Override
-    public void run() {
+    public List<String> run() {
+        List<String> reports = new ArrayList<>();
         if (mode.equals("UNIC")) {
-            AllmySms.send(smsRequest.getText(), smsRequest.getReceipientSms().getReceipient());
+            String report = AllmySms.send(smsRequest.getText(), smsRequest.getReceipientSms().getReceipient());
+            reports.add(report);
         } else if (mode.equals("MULTIPLE")) {
             smsRequest.getReceipients().stream().forEach((r) -> {
-                AllmySms.send(smsRequest.getText(), r.getReceipient());
+                String report = AllmySms.send(smsRequest.getText(), r.getReceipient());
+                reports.add(report);
             });
         }
+        return reports;
+    }
+
+    public String runSingle(SmsRequest smsRequest) {
+        String report = AllmySms.send(smsRequest.getText(), smsRequest.getReceipientSms().getReceipient());
+        return report;
     }
 
     public void setSmslRequest(SmsRequest smsRequest) {

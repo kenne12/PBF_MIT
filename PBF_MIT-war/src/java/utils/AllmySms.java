@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AllmySms {
 
@@ -79,5 +81,130 @@ public class AllmySms {
             e.printStackTrace();
             return "00001";
         }
+    }
+
+    public static Map treatResponse(String response, Integer api) {
+
+        Map m = new HashMap();
+
+        if (response.equals("00001")) {
+            m = fieldResponse(false, "00001", "ECHEC D'ENVOI, MACHINE NON CONNECTE A INTERNET");
+            return m;
+        }
+
+        if (api.equals(2)) {
+            if (response.contains("Not enough credit")) {
+                m = fieldResponse(false, "104", "SOLDE ETABLISSEMENT INSUFFISANT - ORANGE SMS API");
+            } else {
+                response = Utilitaires.removeFirstJsonChar(response, "outboundSMSMessageRequest");
+                OrangeSmsSendedResponse orangeSmsSendedResponse;
+
+                orangeSmsSendedResponse = (OrangeSmsSendedResponse) CheckAccount.fromJsonToObject(response, new OrangeSmsSendedResponse());
+                if (orangeSmsSendedResponse != null) {
+                    m = fieldResponse(true, "201", "ENVOYE AVEC SUCCESS - Orange CM SMS - API");
+                } else {
+                    m = fieldResponse(false, "00000", "ECHEC D'ENVOI, AUTRES CAUSES - Orange CM SMS - API");
+                }
+            }
+        } else {
+            if (api.equals(3)) {
+
+                ObmSmsSendResponse obmSmsSendResponse = (ObmSmsSendResponse) CheckAccount.fromJsonToObject(response, new ObmSmsSendResponse());
+                if (obmSmsSendResponse != null) {
+                    if (obmSmsSendResponse.getBody().getSents().equals(1)) {
+                        m = fieldResponse(true, "200", "ENVOYE AVEC SUCCESS - OBMAFRICA SMS - API");
+                    } else {
+                        m = fieldResponse(false, "00000", "ECHEC D'ENVOI, AUTRES CAUSES - OBMAFRICA SMS - API");
+                    }
+                } else {
+                    if (response.contains("\"code\":\"1007\"")) {
+                        m = fieldResponse(false, "1007", "NUMERO INVALIDE - OBMAFRICA SMS - API");
+                    } else {
+                        ObmSmsSendResponseError error = (ObmSmsSendResponseError) CheckAccount.fromJsonToObject(response, new ObmSmsSendResponseError());
+                        if (error != null) {
+                            m = fieldResponse(false, error.getError().getCode(), error.getError().getMessage());
+                        } else {
+                            m = fieldResponse(false, "00000", "ECHEC D'ENVOI, AUTRES CAUSES - OBMAFRICA SMS - API");
+                        }
+                    }
+                }
+            }
+
+            if (api.equals(1)) {
+                AllMySmsSendedResponse allMySmsSendedResponse = (AllMySmsSendedResponse) CheckAccount.fromJsonToObject(response, new AllMySmsSendedResponse());
+                if (allMySmsSendedResponse != null) {
+                    if (allMySmsSendedResponse.getCode() == 101) {
+                        m = fieldResponse(true, "101", "ENVOYE AVEC SUCCESS - AllMySMS - API");
+                    } else {
+                        m = treatOtherCodeApiAllMySms(allMySmsSendedResponse);
+                    }
+                } else {
+                    m = treatOtherCodeApiAllMySms(response);
+                }
+            }
+        }
+        return m;
+    }
+
+    public static String treatContact(String item) {
+        String contact = item;
+        contact = contact.replaceAll(" ", "");
+
+        if (contact.length() == 9) {
+            return contact;
+        } else if (contact.length() > 9) {
+            String[] chaines = null;
+            if (contact.contains("/")) {
+                chaines = contact.split("/");
+            } else if (contact.contains(";")) {
+                chaines = contact.split(";");
+            } else if (contact.contains(",")) {
+                chaines = contact.split(",");
+            }
+            if (chaines != null) {
+                for (int count = 0; count < chaines.length; count++) {
+                    if (chaines[count].length() == 9) {
+                        return chaines[count];
+                    }
+                }
+            }
+        }
+        return item;
+    }
+
+    private static Map fieldResponse(boolean etat, String code, String message) {
+        Map map = new HashMap();
+        map.put("etat", etat);
+        map.put("code", code);
+        map.put("message", message);
+        return map;
+    }
+
+    private static Map treatOtherCodeApiAllMySms(AllMySmsSendedResponse allMySmsSendedResponse) {
+        Map map = new HashMap();
+        if (allMySmsSendedResponse.getCode().equals(114)) {
+            map = fieldResponse(false, "114", "ECHEC D'ENVOI, NUMERO INVALIDE");
+        } else if (allMySmsSendedResponse.getCode().equals(104)) {
+            map = fieldResponse(false, "104", "ECHEC D'ENVOI, SOLDE ETABLISSEMENT INSUFFISANT - All My SMS");
+        } else if (allMySmsSendedResponse.getCode().equals(121)) {
+            map = fieldResponse(false, "121", "ECHEC D'ENVOI, REQUETTE DEJA TRANSMISE");
+        } else {
+            map = fieldResponse(false, "00000", "ECHEC D'ENVOI, AUTRES CAUSES");
+        }
+        return map;
+    }
+
+    private static Map treatOtherCodeApiAllMySms(String response) {
+        Map map = new HashMap();
+        if (response.contains("114")) {
+            map = fieldResponse(false, "114", "ECHEC D'ENVOI, NUMERO INVALIDE");
+        } else if (response.contains("104")) {
+            map = fieldResponse(false, "104", "ECHEC D'ENVOI, SOLDE ETABLISSEMENT INSUFFISANT");
+        } else if (response.contains("121")) {
+            map = fieldResponse(false, "121", "ECHEC D'ENVOI, REQUETTE DEJA TRANSMISE");
+        } else {
+            map = fieldResponse(false, "00000", "ECHEC D'ENVOI, AUTRES CAUSES");
+        }
+        return map;
     }
 }

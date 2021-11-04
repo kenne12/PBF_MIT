@@ -231,7 +231,7 @@ public class Utilitaires {
         DateTime dateDebut = new DateTime("" + (date1.getYear() + 1900) + "-" + (date1.getMonth() + 1) + "-" + date1.getDate() + "");
         DateTime dateFin = new DateTime("" + (date2.getYear() + 1900) + "-" + (date2.getMonth() + 1) + "-" + date2.getDate() + "");
 
-        Integer nbjr = Integer.valueOf(Days.daysBetween(dateDebut, dateFin).getDays());
+        Integer nbjr = Days.daysBetween(dateDebut, dateFin).getDays();
         return nbjr;
     }
 
@@ -332,12 +332,34 @@ public class Utilitaires {
             try {
                 if (a.getIdaddresse().getEmail() != null) {
                     String contact = a.getIdaddresse().getTelephone1().replaceAll(" ", "");
-                    list.add(new ReceipientSms(contact));
+                    ReceipientSms rs = new ReceipientSms(contact);
+                    rs.setActeur(a);
+                    list.add(rs);
                 }
             } catch (Exception e) {
             }
         });
         return list;
+    }
+
+    public static String removeFirstJsonChar(String jsonString, String regex) {
+        jsonString = jsonString.replace("{\"" + regex + "\":", "");
+        jsonString = jsonString.substring(0, (jsonString.length() - 1));
+        return jsonString;
+    }
+
+    public static Map<String, Integer> countSms(String message) {
+        Map<String, Integer> result = new HashMap();
+        int nombrePages = 0;
+        int nombreMots = 0;
+        if (message != null && message.length() != 0) {
+            Double val = Math.ceil(message.length() / 160.0D);
+            nombrePages = val.intValue();
+            nombreMots = message.length();
+        }
+        result.put("nombre_mots", nombreMots);
+        result.put("nombre_pages", nombrePages);
+        return result;
     }
 
 }

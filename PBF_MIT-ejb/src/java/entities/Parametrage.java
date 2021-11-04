@@ -42,6 +42,12 @@ public class Parametrage implements Serializable {
     private String repertoirePiece;
     private String repertoire;
 
+    @Column(name = "allmysms_api_url")
+    private String allmysmsApiUrl;
+
+    @Column(name = "orange_auth_header")
+    private String orangeAuthHeader;
+
     public Parametrage() {
     }
 
@@ -79,6 +85,22 @@ public class Parametrage implements Serializable {
 
     public void setRepertoire(String repertoire) {
         this.repertoire = repertoire;
+    }
+
+    public String getAllmysmsApiUrl() {
+        return allmysmsApiUrl;
+    }
+
+    public void setAllmysmsApiUrl(String allmysmsApiUrl) {
+        this.allmysmsApiUrl = allmysmsApiUrl;
+    }
+
+    public String getOrangeAuthHeader() {
+        return orangeAuthHeader;
+    }
+
+    public void setOrangeAuthHeader(String orangeAuthHeader) {
+        this.orangeAuthHeader = orangeAuthHeader;
     }
 
     @Override

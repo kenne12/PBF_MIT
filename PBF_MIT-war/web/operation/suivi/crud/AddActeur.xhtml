@@ -15,13 +15,48 @@
                   width="50%"
                   style="overflow: auto"
                   appendTo="@(body)" 
-                  header="Ajout des étapes" 
+                  header="Ajout des acteurs" 
                   closeOnEscape="true">
 
             <h:form id="AddActeurForm">
                 <h:panelGroup id="display">
-       
-                    <p:selectManyCheckbox id="grid2" value="#{suiviController.selectedActeurNotifiables}" layout="responsive" columns="3" converter="acteurConverter">
+
+                    <h:panelGrid columns="6">
+
+                        <h:outputLabel value="Mode" for="mode_search" />
+                        <p:selectOneMenu id="mode_search" value="#{suiviController.modeSearchActeur}" filter="true" filterMatchMode="contains">
+                            <f:selectItem itemLabel="Tous les acteurs" itemValue="0" />
+                            <f:selectItem itemLabel="Acteur CTN" itemValue="4" />
+                            <f:selectItem itemLabel="Acteur ACV" itemValue="2" />
+                            <f:selectItem itemLabel="Acteur Ditsrict" itemValue="3" />
+                            <p:ajax listener="#{suiviController.updateSearchFilter()}" update="display" />
+                        </p:selectOneMenu>
+
+                        <h:outputLabel rendered="#{suiviController.modeRegion}" value="Région" for="mode_region" />
+                        <p:selectOneMenu rendered="#{suiviController.modeRegion}" id="mode_region" value="#{suiviController.selectIdservice}" filter="true">
+                            <f:selectItem itemLabel="#{langue.choisir}" itemValue="0" />
+                            <f:selectItems value="#{suiviController.servicesActeursRegion}" var="r" itemLabel="#{r.nom}" itemValue="#{r.idservice}" />
+                            <p:ajax listener="#{suiviController.filterActeurRegion()}" update="display" />
+                        </p:selectOneMenu>
+
+                        <h:outputLabel rendered="#{suiviController.modeAcv}" value="ACV" for="mode_acv" />
+                        <p:selectOneMenu rendered="#{suiviController.modeAcv}" id="mode_acv" value="#{suiviController.selectIdservice}" filter="true">
+                            <f:selectItem itemLabel="#{langue.choisir}" itemValue="0" />
+                            <f:selectItems value="#{suiviController.servicesActeursAcv}" var="a" itemLabel="#{a.nom}" itemValue="#{a.idservice}" />
+                            <p:ajax listener="#{suiviController.filterActeurAcv()}" update="grid_acteur" />
+                        </p:selectOneMenu>
+
+                        <h:outputLabel rendered="#{suiviController.modeDistrict}" value="District" for="mode_ds" />
+                        <p:selectOneMenu rendered="#{suiviController.modeDistrict}" id="mode_ds" value="#{suiviController.selectIdservice}" filter="true">
+                            <f:selectItem itemLabel="#{langue.choisir}" itemValue="0" />
+                            <f:selectItems value="#{suiviController.servicesActeursDs}" var="d" itemLabel="#{d.nom}" itemValue="#{d.idservice}" />
+                            <p:ajax listener="#{suiviController.filterActeurDistrict()}" update="grid_acteur" />
+                        </p:selectOneMenu>
+
+                    </h:panelGrid>
+                    <p:separator/>
+
+                    <p:selectManyCheckbox id="grid_acteur" value="#{suiviController.selectedActeurNotifiables}" layout="responsive" columns="3" converter="acteurConverter">
                         <f:selectItems value="#{suiviController.acteurNotifiables}" var="act" itemLabel="#{act.nom} - #{act.prenom}" itemValue="#{act}"/>
                     </p:selectManyCheckbox>
 
@@ -29,7 +64,7 @@
 
                     <p:commandButton style="float: right" icon="ui-icon-plus" actionListener="#{suiviController.addActeur()}" value="#{langue.ajouter}" 
                                      update="display,ValidationCreerForm,:notify1" />
-                                     
+
 
                     <p:commandButton style="float: left" value="#{langue.annuler}" onclick="PF('AddActeurDialog').hide()"/>
                 </h:panelGroup>  

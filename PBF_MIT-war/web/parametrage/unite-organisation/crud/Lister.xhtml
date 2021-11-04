@@ -30,7 +30,7 @@
                          selectionMode="single"
                          selection="#{uniteOgranisationController.service}">
 
-                <p:ajax event="rowSelect"   update=":ServiceListerForm:ServiceDataTableContextMenu, :actionsForm"/>
+                <p:ajax event="rowSelect" update=":ServiceListerForm:ServiceDataTableContextMenu, :actionsForm"/>
                 <p:ajax event="rowUnselect" update=":ServiceListerForm:ServiceDataTableContextMenu, :actionsForm"/>
                 <p:ajax event="rowDblselect" onsuccess="document.getElementById('ServiceListerForm:viewButton').click();"/>
                 
@@ -41,14 +41,14 @@
                     <h:outputText value="#{uniteOgranisationController.findByIdparent(item.idparent).nom}"/>
                 </p:column>        
 
-                <p:column filterBy="#{item.nom}" style="text-align: left ; width: 25%">
+                <p:column filterBy="#{item.nom}" filterMatchMode="contains" style="text-align: left ; width: 25%">
                     <f:facet name="header">
                         <h:outputText value="#{langue.nom}"/>
                     </f:facet>
                     <h:outputText value="#{item.nom}"/>
                 </p:column>
                 
-                <p:column filterBy="#{item.code}" style="text-align: left; width: 12%">
+                <p:column filterBy="#{item.code}" filterMatchMode="contains" style="text-align: left; width: 12%">
                     <f:facet name="header">
                         <h:outputText value="#{langue.code}"/>
                     </f:facet>
@@ -57,7 +57,7 @@
                 
                 
                 
-                <p:column filterBy="#{item.nom}" style="text-align: left ; width: 15%">
+                <p:column filterBy="#{item.nom}" filterMatchMode="contains" style="text-align: left ; width: 15%">
                     <f:facet name="header">
                         <h:outputText value="#{langue.responsable}"/>
                     </f:facet>

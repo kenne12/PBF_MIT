@@ -32,6 +32,8 @@ public class Notification implements Serializable {
     private boolean mail;
     private String objet;
     private String message;
+    @Column(name = "message_mail")
+    private String messageMail;
     @Temporal(TemporalType.DATE)
     @Column(name = "date_envoi")
     private Date dateEnvoi;
@@ -102,6 +104,14 @@ public class Notification implements Serializable {
 
     public void setObjet(String objet) {
         this.objet = objet;
+    }
+
+    public String getMessageMail() {
+        return messageMail;
+    }
+
+    public void setMessageMail(String messageMail) {
+        this.messageMail = messageMail;
     }
 
 }

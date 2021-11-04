@@ -5,6 +5,8 @@
  */
 package utils;
 
+import entities.Acteur;
+
 /**
  *
  * @author USER
@@ -13,6 +15,7 @@ public class ReceipientSms {
 
     private String receipient;
     private String title;
+    private Acteur acteur;
 
     public ReceipientSms() {
     }
@@ -35,6 +38,14 @@ public class ReceipientSms {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Acteur getActeur() {
+        return acteur;
+    }
+
+    public void setActeur(Acteur acteur) {
+        this.acteur = acteur;
     }
 
 }

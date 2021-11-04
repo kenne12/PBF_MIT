@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -58,6 +59,8 @@ public class Service implements Serializable {
     private Integer idparent;
     private Boolean central;
     private Boolean regional;
+    @Column(name = "solde_sms")
+    private int soldeSms;
     @OneToMany(mappedBy = "idservice", fetch = FetchType.LAZY)
     private List<Projetservice> projetserviceList;
     @JoinColumn(name = "idaddresse", referencedColumnName = "idaddresse")
@@ -166,6 +169,14 @@ public class Service implements Serializable {
 
     public void setIdaddresse(Addresse idaddresse) {
         this.idaddresse = idaddresse;
+    }
+
+    public int getSoldeSms() {
+        return soldeSms;
+    }
+
+    public void setSoldeSms(int soldeSms) {
+        this.soldeSms = soldeSms;
     }
 
     @XmlTransient

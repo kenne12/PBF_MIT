@@ -9,7 +9,7 @@
                 template="/SystemTemplate/principalTemplate.xhtml">
 
     <ui:define name="contenu">
-        <ui:include src="analyse/completude/crud/ModelDataCompletudeByEtape.xhtml"/>
+        <ui:include src="analyse/promptitude/crud/ModelDataPromptitudeByEtape.xhtml"/>
 
         <br/>
         <h:form>
@@ -22,7 +22,7 @@
 
         </h:form>
 
-        <h:form id="CompletudeForm">
+        <h:form id="PromptitudeForm">
 
             <p:messages id="growl" closable="true">
                 <p:effect type="pulsate" event="load" delay="50" />
@@ -32,14 +32,14 @@
                 <h:panelGrid columns="5">
 
                     <h:outputLabel value="#{langue.periode_parent}" />&nbsp;
-                    <p:selectOneMenu filter="true" value="#{completudeController.periode.idperiode}">
+                    <p:selectOneMenu filter="true" value="#{promptitudeController.periode.idperiode}">
                         <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
-                        <f:selectItems value="#{completudeController.periodeParents}" var="obj" itemLabel="#{obj.nom}" itemValue="#{obj.idperiode}"/>
+                        <f:selectItems value="#{promptitudeController.periodeParents}" var="obj" itemLabel="#{obj.nom}" itemValue="#{obj.idperiode}"/>
                         <p:ajax />
                     </p:selectOneMenu>&nbsp;
 
-                    <p:commandButton icon="ui-icon-search" update="CompletudeForm,datalist,:notify1,growl" 
-                                     value="#{langue.chercher}" actionListener="#{completudeController.searchData()}" 
+                    <p:commandButton icon="ui-icon-search" update="PromptitudeForm,datalist,:notify1,growl" 
+                                     value="#{langue.chercher}" actionListener="#{promptitudeController.searchData()}" 
                                      onclick="PF('AjaxNotifyDialog').show()" />
                 </h:panelGrid>       
             </center>
@@ -47,11 +47,11 @@
             <p:separator style="width: 98%;margin-left: 1%"/>
 
             <div style="margin-left: 1%">
-                <ui:repeat value="#{completudeController.completudeDataStyles}" var="var">
+                <ui:repeat value="#{promptitudeController.promptitudeDataStyles}" var="var">
                     <div style="width: 180px;float: left;height: 30px;border: solid 1px blue;margin-left: 5px;background-color: #{var.backGroundColor}" class="container">
                         <div style="margin-top : 5px">
                             <center>
-                                <h:outputText style="font-size: 18px" value="&ge; #{completudeController.toInt(var.borneInferieur)} &amp; &le; #{completudeController.toInt(var.borneSuperieur)} (%)" />
+                                <h:outputText style="font-size: 18px" value=" &ge; #{promptitudeController.toInt(var.borneInferieur)} &amp; &le; #{promptitudeController.toInt(var.borneSuperieur)} (Jr)" />
                             </center>  
                         </div>
                     </div>
@@ -64,10 +64,6 @@
                         </center>
                     </div>
                 </div>
-
-                <p:commandButton id="option_btn" value="#{completudeController.option}" 
-                                 actionListener="#{completudeController.initOption('/index.html')}"
-                                 update="option_btn" style="float: right ; margin-right: 12px"/>
             </div>
 
             <br />
@@ -75,7 +71,7 @@
             <p:separator style="width: 98%;margin-left: 1%"/>
 
             <p:dataTable id="datalist" 
-                         value="#{completudeController.etapes}" 
+                         value="#{promptitudeController.etapes}" 
                          var="item"                             
                          paginator="true"
                          rowKey="#{item.idetape}"
@@ -88,28 +84,29 @@
                          draggableColumns="true"
                          resizableColumns="true"
                          selectionMode="single"
-                         selection="#{completudeController.selectedEtape}">
+                         selection="#{promptitudeController.selectedEtape}">
 
-                <p:ajax event="rowSelect" update=":CompletudeForm:datalist_2"/>
+                <p:ajax event="rowSelect" update=":PromptitudeForm:datalist_2"/>
                 <p:ajax event="rowUnselect"/>
 
-                <f:facet name="header"> 
-                    <h:outputText value="#{langue.detail_par_etape}"/>
-
-                    <p:commandButton value="Graphique" actionListener="#{completudeController.completudeByEtape()}" 
-                                     update=":ModelDataCompletudeForm" style="float: right" 
-                                     onclick="PF('AjaxNotifyDialog').show()"/>
+                <f:facet name="header">
+                    <div>
+                        <h:outputText value="#{langue.detail_par_etape}"/>
+                        <p:commandButton value="Graphique" actionListener="#{promptitudeController.promptitudeByEtape()}" 
+                                         update=":ModelDataPromptitudeByEtapeCreerForm" style="float: right" 
+                                         onclick="PF('AjaxNotifyDialog').show()"/>
+                    </div> 
                 </f:facet>
 
                 <p:columnGroup type="header">
                     <p:row>
                         <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.etapes}"/>
-                        <p:column class="hardBreak" colspan="#{completudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
+                        <p:column class="hardBreak" colspan="#{promptitudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
                         <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
                         <p:column class="hardBreak" rowspan="2" headerText="#{langue.action}"/>
                     </p:row>
                     <p:row>
-                        <ui:repeat value="#{completudeController.sousPeriodeFilters}" var="sp">
+                        <ui:repeat value="#{promptitudeController.sousPeriodeFilters}" var="sp">
                             <p:column class="hardBreak" headerText="#{sp.nom}"/>
                         </ui:repeat>
                     </p:row>
@@ -119,31 +116,33 @@
                     <h:outputText value="#{item.nom}"/>
                 </p:column>
 
-                <p:columns style="text-align: center; background-color: #{completudeController.loadValueByEtapeStyle(item.idetape,var.idperiode)}" value="#{completudeController.sousPeriodeFilters}" var="var">
-                    <h:outputText value="#{completudeController.loadValueByEtape(item.idetape,var.idperiode)}" />                    
+                <p:columns style="text-align: center; background-color: #{promptitudeController.loadValueByEtapeStyle(item.idetape,var.idperiode)}" value="#{promptitudeController.sousPeriodeFilters}" var="var">
+                    <h:outputText value="#{promptitudeController.loadValueByEtape(item.idetape,var.idperiode)}">
+                        <f:convertNumber />
+                    </h:outputText>
                 </p:columns>
 
-                <p:column style="text-align: center; background-color:  #{completudeController.agregateByEtapeStyle(item)} ">
-                    <h:outputText value="#{completudeController.agregateValueByEtape(item)}"/>
+                <p:column style="text-align: center; background-color: #{promptitudeController.agregateByEtapeStyle(item)}">
+                    <h:outputText value="#{promptitudeController.agregateByEtape(item)}"/>
                 </p:column>
 
                 <p:column style="text-align: center;">
-                    <p:commandButton value="R"
-                                     rendered="#{completudeController.periode.idperiode!=null and completudeController.sousPeriodeFilters.size()!=0}"
-                                     actionListener="#{completudeController.initRetardByRegion(item , '/index.html')}"
-                                     update=":CompletudeForm:datalist_2,:CompletudeForm:datalist_3"/>
-                    <p:commandButton value="A"
-                                     rendered="#{completudeController.periode.idperiode!=null and completudeController.sousPeriodeFilters.size()!=0}"
-                                     actionListener="#{completudeController.initRetardByActeur(item , '/index.html')}"
-                                     update=":CompletudeForm:datalist_2,:CompletudeForm:datalist_3" />
+                    <p:commandButton 
+                        value="R" rendered="#{promptitudeController.periode.idperiode!=null and promptitudeController.sousPeriodeFilters.size()!=0}"
+                        actionListener="#{promptitudeController.initRetardByRegion(item)}"
+                        update=":PromptitudeForm:datalist_2,:PromptitudeForm:datalist_3"/>
+                    <p:commandButton 
+                        value="A" rendered="#{promptitudeController.periode.idperiode!=null and promptitudeController.sousPeriodeFilters.size()!=0}"
+                        actionListener="#{promptitudeController.initRetardByActeur(item)}"
+                        update=":PromptitudeForm:datalist_2,:PromptitudeForm:datalist_3" />
                 </p:column>
 
                 <p:columnGroup type="footer">
                     <p:row>
                         <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
-                        <p:columns style="text-align: center;" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtape(s)}">                        
+                        <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="s" footerText="#{promptitudeController.agregateRetardByEtape(s)}">                        
                         </p:columns> 
-                        <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParent()}" />
+                        <p:column style="text-align:center" footerText="#{promptitudeController.agregatePeriodParent()}" />
                         <p:column style="text-align:center" />
                     </p:row>
                 </p:columnGroup>
@@ -151,14 +150,14 @@
             </p:dataTable>
 
             <p:separator style="width: 98%;margin-left: 1%" 
-                         rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionRegion==true}"/>
+                         rendered="#{promptitudeController.selectedEtape!=null and promptitudeController.selectedEtape.idetape!=null and promptitudeController.regionRegion==true}"/>
 
             <p:dataTable id="datalist_2" 
-                         value="#{completudeController.regions}" 
+                         value="#{promptitudeController.regions}" 
                          var="item"                             
                          paginator="true"
                          rowKey="#{item.idservice}"
-                         rows="#{completudeController.regions.size()}"
+                         rows="#{promptitudeController.regions.size()}"
                          rowsPerPageTemplate="10,20,30,40,50"
                          style="width: 98%;margin-left: 1%"
                          rowIndexVar="index"
@@ -167,29 +166,29 @@
                          draggableColumns="true"
                          resizableColumns="true"
                          selectionMode="single"
-                         selection="#{completudeController.selectedRegion}"
-                         rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionRegion==true}">
+                         selection="#{promptitudeController.selectedRegion}"
+                         rendered="#{promptitudeController.selectedEtape!=null and promptitudeController.selectedEtape.idetape!=null and promptitudeController.regionRegion==true}" >
 
                 <p:ajax event="rowSelect"/>
                 <p:ajax event="rowUnselect"/>
 
                 <f:facet name="header"> 
-                    <h:outputText value="#{langue.detail_par_region} / #{completudeController.selectedEtape.nom}"/>
+                    <h:outputText value="#{langue.detail_par_region} / #{promptitudeController.selectedEtape.nom}"/>
 
-                    <p:commandButton value="Graphique" actionListener="#{completudeController.completudeByRegion()}" 
-                                     update=":ModelDataCompletudeForm" style="float: right" 
+                    <p:commandButton value="Graphique" actionListener="#{promptitudeController.promptitudeByRegion()}" 
+                                     update=":ModelDataPromptitudeByEtapeCreerForm" style="float: right" 
                                      onclick="PF('AjaxNotifyDialog').show()"/>
                 </f:facet>
 
                 <p:columnGroup type="header">
                     <p:row>
                         <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.regions}"/>
-                        <p:column class="hardBreak" colspan="#{completudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
+                        <p:column class="hardBreak" colspan="#{promptitudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
                         <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
                         <p:column class="hardBreak" rowspan="2" headerText="#{langue.action}"/>
                     </p:row>
                     <p:row>
-                        <ui:repeat value="#{completudeController.sousPeriodeFilters}" var="sp">
+                        <ui:repeat value="#{promptitudeController.sousPeriodeFilters}" var="sp">
                             <p:column class="hardBreak" headerText="#{sp.nom}"/>
                         </ui:repeat>
                     </p:row>                
@@ -199,28 +198,28 @@
                     <h:outputText value="#{item.nom}"/>
                 </p:column>
 
-                <p:columns style="text-align: center; background-color: #{completudeController.loadValueByRegionStyle(item.idservice, var.idperiode)}" value="#{completudeController.sousPeriodeFilters}" var="var">
-                    <h:outputText value="#{completudeController.loadValueByRegion(item.idservice, var.idperiode)}" />                    
+                <p:columns style="text-align: center ; background-color: #{promptitudeController.loadValueByRegionStyle(item.idservice, var.idperiode)}" value="#{promptitudeController.sousPeriodeFilters}" var="var">
+                    <h:outputText value="#{promptitudeController.loadValueByRegion(item.idservice, var.idperiode)}">
+                        <f:convertNumber />
+                    </h:outputText>
                 </p:columns>
 
-                <p:column style="text-align: center; background-color: #{completudeController.agregateByEtapeByRegionStyle(item)}">
-                    <h:outputText value="#{completudeController.agregateByEtapeByRegion(item)}"/>
+                <p:column style="text-align: center; background-color: #{promptitudeController.agregateByEtapeNiveauRegionStyle(item)}">
+                    <h:outputText value="#{promptitudeController.agregateByEtapeNiveauRegion(item)}"/>
                 </p:column>
 
                 <p:column style="text-align: center;">
                     <p:commandButton 
-                        rendered="true"
-                        value="D"
-                        actionListener="#{completudeController.initRetardDistrict(item , '/index.html')}"
-                        update=""/>                
+                        rendered="true" value="D"  
+                        actionListener="#{promptitudeController.initRetardDistrict(item)}" />                            
                 </p:column>
 
                 <p:columnGroup type="footer">
                     <p:row>
                         <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
-                        <p:columns style="text-align: center" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtapeNiveauRegion(s)}">                        
+                        <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="s" footerText="#{promptitudeController.agregateRetardByEtapeNiveauRegion(s)}">                        
                         </p:columns> 
-                        <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParentNiveauRegion()}" />
+                        <p:column style="text-align:center" footerText="#{promptitudeController.agregatePeriodParentNiveauRegion()}" />
                         <p:column style="text-align:center" />
                     </p:row>
                 </p:columnGroup>
@@ -228,14 +227,14 @@
             </p:dataTable>
 
             <p:separator style="width: 98%;margin-left: 1%" 
-                         rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionActeur ==true}"/>
+                         rendered="#{promptitudeController.selectedEtape!=null and promptitudeController.selectedEtape.idetape!=null and promptitudeController.regionActeur ==true}" />
 
             <p:dataTable id="datalist_3" 
-                         value="#{completudeController.acteurs_finals}" 
+                         value="#{promptitudeController.acteurs_finals}" 
                          var="itemActeur"                             
                          paginator="true"
                          rowKey="#{itemActeur.idacteur}"
-                         rows="#{completudeController.acteurs_finals.size()}"
+                         rows="#{promptitudeController.acteurs_finals.size()}"
                          rowsPerPageTemplate="10,20,30,40,50"
                          style="width: 98%;margin-left: 1%"
                          rowIndexVar="index"
@@ -243,111 +242,112 @@
                          widgetVar="fonctionTable"
                          draggableColumns="true"
                          resizableColumns="true"
-                         rendered="#{completudeController.selectedEtape!=null and completudeController.selectedEtape.idetape!=null and completudeController.regionActeur ==true}">
+                         rendered="#{promptitudeController.selectedEtape!=null and promptitudeController.selectedEtape.idetape!=null and promptitudeController.regionActeur ==true}" >
 
                 <f:facet name="header"> 
-                    <h:outputText value="#{langue.detail_par_acteur} / #{completudeController.selectedEtape.nom}" />
+                    <h:outputText value="#{langue.detail_par_acteur} / #{promptitudeController.selectedEtape.nom}" />
 
-                    <p:commandButton value="Graphique" actionListener="#{completudeController.completudeByActeur()}" 
-                                     update=":ModelDataCompletudeForm" style="float: right" 
+                    <p:commandButton value="Graphique" actionListener="#{promptitudeController.promptitudeByActeur()}" 
+                                     update=":ModelDataPromptitudeByEtapeCreerForm" style="float: right" 
                                      onclick="PF('AjaxNotifyDialog').show()"/>
                 </f:facet>
 
                 <p:columnGroup type="header">
                     <p:row>
                         <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.acteurs}"/>
-                        <p:column class="hardBreak" colspan="#{completudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
+                        <p:column class="hardBreak" colspan="#{promptitudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
                         <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
                     </p:row>
                     <p:row>
-                        <ui:repeat value="#{completudeController.sousPeriodeFilters}" var="sp">
+                        <ui:repeat value="#{promptitudeController.sousPeriodeFilters}" var="sp">
                             <p:column class="hardBreak" headerText="#{sp.nom}"/>
                         </ui:repeat>
                     </p:row>                
                 </p:columnGroup>
 
                 <p:column colspan="3" >
-                    <h:outputText value="#{itemActeur.nom} #{itemActeur.titre}"/>
+                    <h:outputText value="#{itemActeur.nom} - #{itemActeur.titre}"/>
                 </p:column>
 
-                <p:columns style="text-align: center; background-color: #{completudeController.loadValueNiveauActeurStyle(itemActeur.idacteur, var.idperiode)}" value="#{completudeController.sousPeriodeFilters}" var="var">
-                    <h:outputText value="#{completudeController.loadValueNiveauActeur(itemActeur.idacteur, var.idperiode)}">
+                <p:columns style="text-align: center; background-color: #{promptitudeController.loadValueActeurStyle(itemActeur.idacteur, var.idperiode)}" value="#{promptitudeController.sousPeriodeFilters}" var="var">
+                    <h:outputText value="#{promptitudeController.loadValueActeur(itemActeur.idacteur, var.idperiode)}">
                         <f:convertNumber />
                     </h:outputText>
                 </p:columns>
 
-                <p:column style="text-align: center; background-color: #{completudeController.agregateByEtapeNiveauRegionActeurStyle(itemActeur)}">
-                    <h:outputText value="#{completudeController.agregateByEtapeNiveauActeur(itemActeur)}"/>
+                <p:column style="text-align: center; background-color: #{promptitudeController.agregateByEtapeActeurStyle(itemActeur)}">
+                    <h:outputText value="#{promptitudeController.agregateByEtapeActeur(itemActeur)}"/>
                 </p:column>
 
                 <p:columnGroup type="footer">
                     <p:row>
                         <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
-                        <p:columns style="text-align: center" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtapeNiveauActeur(s)}">                        
+                        <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="s" footerText="#{promptitudeController.agregateRetardByEtapeNiveauRegionActeur(s)}">                        
                         </p:columns> 
-                        <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParentNiveauActeur()}" />
+                        <p:column style="text-align:center" footerText="#{promptitudeController.agregatePeriodParentNiveauRegionActeur()}" />
                     </p:row>
                 </p:columnGroup>
 
             </p:dataTable>
 
             <p:separator style="width: 98%;margin-left: 1%" 
-                         rendered="#{completudeController.selectedRegion!=null and completudeController.selectedRegion.idservice!=null and completudeController.regionDistrict==true}"/>
+                         rendered="#{promptitudeController.selectedRegion!=null and promptitudeController.selectedRegion.idservice!=null and promptitudeController.regionDistrict==true}"/>
 
             <p:dataTable id="datalist_4" 
-                         value="#{completudeController.districts}" 
+                         value="#{promptitudeController.districts}" 
                          var="itemServiceD"                             
                          paginator="true"
                          rowKey="#{itemServiceD.idservice}"
-                         rows="#{completudeController.districts.size()}"
+                         rows="#{promptitudeController.districts.size()}"
                          rowsPerPageTemplate="10,20,30,40,50"
                          style="width: 98%;margin-left: 1%"
                          rowIndexVar="index"
                          emptyMessage="#{langue.tableau_vide}"
                          widgetVar="fonctionTable"
                          draggableColumns="true"
-                         resizableColumns="true"                     
-                         rendered="#{completudeController.selectedRegion!=null and completudeController.selectedRegion.idservice!=null and completudeController.regionDistrict==true}" >
+                         resizableColumns="true"
+                         rendered="#{promptitudeController.selectedRegion!=null and promptitudeController.selectedRegion.idservice!=null and promptitudeController.regionDistrict==true}" >
 
                 <f:facet name="header"> 
-                    <h:outputText value="#{langue.detail_par_district} / #{completudeController.selectedRegion.nom} / #{completudeController.selectedEtape.nom}"/>
-
-                    <p:commandButton value="Graphique" actionListener="#{completudeController.completudeByDistrict()}" 
-                                     update=":ModelDataCompletudeForm" style="float: right" 
+                    <h:outputText value="#{langue.detail_par_district} / #{promptitudeController.selectedRegion.nom} / #{promptitudeController.selectedEtape.nom}"/>
+                    <p:commandButton value="Graphique" actionListener="#{promptitudeController.promptitudeByDistrict()}" 
+                                     update=":ModelDataPromptitudeByEtapeCreerForm" style="float: right" 
                                      onclick="PF('AjaxNotifyDialog').show()"/>
                 </f:facet>
 
                 <p:columnGroup type="header">
                     <p:row>
                         <p:column class="hardBreak" colspan="3" rowspan="2" headerText="#{langue.districts}"/>
-                        <p:column class="hardBreak" colspan="#{completudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
+                        <p:column class="hardBreak" colspan="#{promptitudeController.sousPeriodeFilters.size()}" headerText="#{langue.periodes}"/> 
                         <p:column class="hardBreak" rowspan="2" headerText="#{langue.total}"/>
                     </p:row>
                     <p:row>
-                        <ui:repeat value="#{completudeController.sousPeriodeFilters}" var="sp">
+                        <ui:repeat value="#{promptitudeController.sousPeriodeFilters}" var="sp">
                             <p:column class="hardBreak" headerText="#{sp.nom}"/>
                         </ui:repeat>
                     </p:row>                
                 </p:columnGroup>
 
                 <p:column colspan="3" >
-                    <h:outputText value="#{itemServiceD.nom}" />
+                    <h:outputText value="#{itemServiceD.nom}"/>
                 </p:column>
 
-                <p:columns style="text-align: center; background-color: #{completudeController.loadValueByDistrictStyle(itemServiceD.idservice, var.idperiode)}" value="#{completudeController.sousPeriodeFilters}" var="var">
-                    <h:outputText value="#{completudeController.loadValueByDistrict(itemServiceD.idservice, var.idperiode)}" />                   
+                <p:columns style="text-align: center; background-color: #{promptitudeController.loadValueDistrictStyle(itemServiceD.idservice, var.idperiode)}" value="#{promptitudeController.sousPeriodeFilters}" var="var">
+                    <h:outputText value="#{promptitudeController.loadValueDistrict(itemServiceD.idservice, var.idperiode)}">
+                        <f:convertNumber />
+                    </h:outputText>
                 </p:columns>
 
-                <p:column style="text-align: center; background-color: #{completudeController.agregateByEtapeNiveauDistrictStyle(itemServiceD)}">
-                    <h:outputText value="#{completudeController.agregateByEtapeNiveauDistrict(itemServiceD)}"/>
+                <p:column style="text-align: center; background-color: #{promptitudeController.agregateByEtapeDistrictStyle(itemServiceD)}">
+                    <h:outputText value="#{promptitudeController.agregateByEtapeDistrict(itemServiceD)}"/>
                 </p:column>
 
                 <p:columnGroup type="footer">
                     <p:row>
                         <p:column colspan="3" style="text-align:right" footerText="#{langue.totaux}" />                                       
-                        <p:columns style="text-align: center" value="#{completudeController.sousPeriodeFilters}" var="s" footerText="#{completudeController.agregateRetardByEtapeNiveauDistrict(s)}">                        
+                        <p:columns style="text-align: center" value="#{promptitudeController.sousPeriodeFilters}" var="s" footerText="#{promptitudeController.agregateRetardByEtapeDistrict(s)}">                        
                         </p:columns> 
-                        <p:column style="text-align:center" footerText="#{completudeController.agregatePeriodParentNiveauDistrict()}" />
+                        <p:column style="text-align:center" footerText="#{promptitudeController.agregatePeriodParentDistrict()}" />
                     </p:row>
                 </p:columnGroup>
 
@@ -359,14 +359,14 @@
 
         <p:dialog id="notify1" widgetVar="NotifyDialog1" height="220" width="600" resizable="true" responsive="true" modal="true" style="text-align: center; font-size: 14px; font-family: Cambria;">
             <f:facet name="header">
-                <h:outputText style="font-family: Cambria; font-size: 14px;" value="#{completudeController.routine.titleNotify}" />
+                <h:outputText style="font-family: Cambria; font-size: 14px;" value="#{promptitudeController.routine.titleNotify}" />
             </f:facet>
             <h:form id="NotifyForm1">
-                <h:graphicImage id="nt_img" url="#{completudeController.routine.iconMessage}" style="cursor:pointer" />
+                <h:graphicImage id="nt_img" url="#{promptitudeController.routine.iconMessage}" style="cursor:pointer" />
 
                 <hr size="3" style="background-color: cornflowerblue;"/>
 
-                <h:outputText id="nt_msg" value="#{completudeController.routine.message}"/>
+                <h:outputText id="nt_msg" value="#{promptitudeController.routine.message}"/>
 
                 <hr size="3" style="background-color: cornflowerblue; margin-top: 5%;"/>
 
