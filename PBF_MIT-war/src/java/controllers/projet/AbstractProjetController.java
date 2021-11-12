@@ -16,6 +16,8 @@ import sessions.MouchardFacadeLocal;
 import sessions.ActeurFacadeLocal;
 import sessions.EtapeFacadeLocal;
 import sessions.EtapeprojetFacadeLocal;
+import sessions.NotificationActeurFacadeLocal;
+import sessions.NotificationFacadeLocal;
 import sessions.PeriodeFacadeLocal;
 import sessions.PiecejointesFacadeLocal;
 import sessions.ProgrammationFacadeLocal;
@@ -33,6 +35,12 @@ public class AbstractProjetController {
     protected ProjetFacadeLocal projetFacadeLocal;
     protected Projet projet = new Projet();
     protected List<Projet> projets = new ArrayList<>();
+
+    @EJB
+    protected NotificationFacadeLocal notificationFacadeLocal;
+
+    @EJB
+    protected NotificationActeurFacadeLocal notificationActeurFacadeLocal;
 
     @EJB
     protected EtapeFacadeLocal etapeFacadeLocal;

@@ -48,6 +48,18 @@ public class Parametrage implements Serializable {
     @Column(name = "orange_auth_header")
     private String orangeAuthHeader;
 
+    @Column(length = 50)
+    private String apiuser;
+
+    @Column(length = 50)
+    private String apikey;
+
+    @Column(length = 60)
+    private String apiauthkey;
+
+    @Column(name = "idsms_api")
+    private Integer idSmsApi;
+
     public Parametrage() {
     }
 
@@ -101,6 +113,38 @@ public class Parametrage implements Serializable {
 
     public void setOrangeAuthHeader(String orangeAuthHeader) {
         this.orangeAuthHeader = orangeAuthHeader;
+    }
+
+    public String getApiuser() {
+        return apiuser;
+    }
+
+    public void setApiuser(String apiuser) {
+        this.apiuser = apiuser;
+    }
+
+    public String getApikey() {
+        return apikey;
+    }
+
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
+    }
+
+    public String getApiauthkey() {
+        return apiauthkey;
+    }
+
+    public void setApiauthkey(String apiauthkey) {
+        this.apiauthkey = apiauthkey;
+    }
+
+    public Integer getIdSmsApi() {
+        return idSmsApi;
+    }
+
+    public void setIdSmsApi(Integer idSmsApi) {
+        this.idSmsApi = idSmsApi;
     }
 
     @Override

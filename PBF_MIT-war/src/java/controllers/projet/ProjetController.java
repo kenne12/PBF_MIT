@@ -4,6 +4,8 @@ import com.google.common.base.Objects;
 import entities.Acteur;
 import entities.Etape;
 import entities.Etapeprojet;
+import entities.Notification;
+import entities.NotificationActeur;
 import entities.Programmation;
 import entities.Projet;
 import entities.Projetservice;
@@ -23,6 +25,10 @@ import utils.AllmySms;
 import utils.EmailRequest;
 import utils.JsfUtil;
 import utils.MailThread;
+import utils.ObjectContactActeur;
+import utils.ObmSms;
+import utils.ObmSmsSendRequest;
+import utils.OrangeSmsSender;
 import utils.Receipient;
 import utils.ReceipientSms;
 import utils.SessionMBean;
@@ -83,7 +89,6 @@ public class ProjetController extends AbstractProjetController implements Serial
         } catch (Exception e) {
             signalException(e);
         }
-
     }
 
     public void prepareEdit() {
@@ -120,11 +125,11 @@ public class ProjetController extends AbstractProjetController implements Serial
     }
 
     private List<Service> filterService(List<Projetservice> projetservices) {
-        List<Service> services = new ArrayList<>();
+        List<Service> listServices = new ArrayList<>();
         projetservices.stream().forEach((p) -> {
-            services.add(p.getIdservice());
+            listServices.add(p.getIdservice());
         });
-        return services;
+        return listServices;
     }
 
     public void selectServices() {
@@ -204,7 +209,6 @@ public class ProjetController extends AbstractProjetController implements Serial
                     selectedServices = filterService(this.projetservices);
                     services.removeAll(selectedEtapes);
                 }
-                return;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -347,14 +351,14 @@ public class ProjetController extends AbstractProjetController implements Serial
                 signalError("notification.aucun_element_selectionne");
                 return;
             }
-            for (Service s : selectedServices) {
-                if (!findService(s)) {
-                    Projetservice ps = new Projetservice();
-                    ps.setIdprojetservice(0L);
-                    ps.setIdservice(s);
-                    projetservices.add(ps);
-                }
-            }
+            selectedServices.stream().filter((s) -> (!findService(s))).map((s) -> {
+                Projetservice ps = new Projetservice();
+                ps.setIdprojetservice(0L);
+                ps.setIdservice(s);
+                return ps;
+            }).forEach((ps) -> {
+                projetservices.add(ps);
+            });
             RequestContext.getCurrentInstance().execute("PF('AjaxNotifyDialog').hide()");
             RequestContext.getCurrentInstance().execute("PF('AddserviceDialog').hide()");
         } catch (Exception e) {
@@ -422,11 +426,15 @@ public class ProjetController extends AbstractProjetController implements Serial
                 projet.setLienRepertoire(lienRepertoire);
                 projetFacadeLocal.create(projet);
 
-                for (Projetservice ps : projetservices) {
+                projetservices.stream().map((ps) -> {
                     ps.setIdprojetservice(projetserviceFacadeLocal.nextVal());
+                    return ps;
+                }).map((ps) -> {
                     ps.setIdprojet(projet);
+                    return ps;
+                }).forEach((ps) -> {
                     projetserviceFacadeLocal.create(ps);
-                }
+                });
 
                 for (Etapeprojet etp : etapeprojets) {
                     etp.setIdetapeprojet(etapeprojetFacadeLocal.nextVal());
@@ -463,27 +471,31 @@ public class ProjetController extends AbstractProjetController implements Serial
                 projet.setIdperiode(periode);
                 projetFacadeLocal.edit(projet);
 
-                for (Projetservice ps : projetservices) {
-                    if (ps.getIdprojetservice() == 0L) {
-                        ps.setIdprojetservice(projetserviceFacadeLocal.nextVal());
-                        ps.setIdprojet(projet);
-                        projetserviceFacadeLocal.create(ps);
-                    }
-                }
+                projetservices.stream().filter((ps) -> (ps.getIdprojetservice() == 0L)).map((ps) -> {
+                    ps.setIdprojetservice(projetserviceFacadeLocal.nextVal());
+                    return ps;
+                }).map((ps) -> {
+                    ps.setIdprojet(projet);
+                    return ps;
+                }).forEach((ps) -> {
+                    projetserviceFacadeLocal.create(ps);
+                });
 
-                for (Etapeprojet etp : etapeprojets) {
+                etapeprojets.stream().map((etp) -> {
                     if (etp.getNumero() == 1) {
                         etp.setDelai(0);
                     } else {
                         etp.setDateetatinitial(null);
                     }
+                    return etp;
+                }).forEach((etp) -> {
                     etapeprojetFacadeLocal.edit(etp);
-                }
+                });
 
                 Utilitaires.saveOperation(this.mouchardFacadeLocal, "Modification du projet : " + projet.getNom(), SessionMBean.getUserAccount());
                 ut.commit();
 
-                this.projet = new Projet();
+                projet = new Projet();
 
                 detail = modifier = supprimer = true;
                 projet = new Projet();
@@ -604,9 +616,9 @@ public class ProjetController extends AbstractProjetController implements Serial
         try {
             boolean sendMail = projet.isNotifMail();
             boolean sendSms = projet.isNotifSms();
-            List<Acteur> acteurMails = new ArrayList<>();
-            for (Projetservice p : projetservices) {
-                for (Programmation pr : p.getProgrammationList()) {
+            final List<Acteur> acteurMails = new ArrayList<>();
+            projetservices.stream().forEach((p) -> {
+                p.getProgrammationList().stream().forEach((pr) -> {
                     if (pr.getIdprogrammation() == 0L) {
                         pr.setIdprogrammation(programmationFacadeLocal.nextVal());
                         pr.setActive(false);
@@ -652,8 +664,8 @@ public class ProjetController extends AbstractProjetController implements Serial
                     } else {
                         programmationFacadeLocal.edit(pr);
                     }
-                }
-            }
+                });
+            });
             signalSuccess();
             if (sendMail) {
                 if (!acteurMails.isEmpty()) {
@@ -681,6 +693,20 @@ public class ProjetController extends AbstractProjetController implements Serial
         emailRequest.setReceipients(receipients);
         MailThread mailThread = new MailThread(emailRequest);
         mailThread.start();
+
+        if (!acteurs.isEmpty()) {
+            Notification notification = new Notification();
+            notification.setIdnotification(notificationFacadeLocal.nextVal());
+            notification.setMessage("-");
+            notification.setMessageMail(emailRequest.getText());
+            notification.setMail(true);
+            notification.setSms(false);
+            notification.setObjet(emailRequest.getSubject());
+            notification.setDateEnvoi(Date.from(Instant.now()));
+            //notification.getActeurs().addAll((Collection<Acteur>) acteurs);
+            notification.setIdperiode(periode);
+            notificationFacadeLocal.create(notification);
+        }
     }
 
     private void sendSms(List<Acteur> acteurs) {
@@ -689,28 +715,99 @@ public class ProjetController extends AbstractProjetController implements Serial
         smsRequest.setText("Bonjour, La CTN Vous informe que vous etes concernés par le projet mensionné en object;"
                 + " Veuillez vous connecter sur le portail pour fournir les documents exigés aux étapes vous concernant."
                 + " Cordialement.");
-        List<ReceipientSms> receipients = Utilitaires.extracPhoneNumber(acteurs);
-        smsRequest.setReceipients(receipients);
-        SmsThread smsThread = new SmsThread(smsRequest);
 
+        List<Acteur> listSuccess = new ArrayList<>();
+        Integer api = SessionMBean.getParametrage().getIdSmsApi();
         int nbpage = Utilitaires.countSms(smsRequest.getText()).get("nombre_pages");
-        smsRequest.getReceipients().forEach(s -> {
-            SmsRequest sr = smsRequest;
-            sr.setReceipientSms(s);
-            String report = smsThread.runSingle(sr);
+        if (api.equals(1)) {
 
-            Map m = AllmySms.treatResponse(report, 1);
-            if ((boolean) m.get("etat")) {
-                Service service = null;
-                if (sr.getReceipientSms().getActeur().getIdservice().getCentral()) {
-                    service = serviceFacadeLocal.find(sr.getReceipientSms().getActeur().getIdservice().getIdservice());
-                } else {
-                    service = serviceFacadeLocal.find(sr.getReceipientSms().getActeur().getIdservice().getIdparent());
+            List<ReceipientSms> receipients = Utilitaires.extracPhoneNumber(acteurs);
+            smsRequest.setReceipients(receipients);
+            SmsThread smsThread = new SmsThread(smsRequest);
+
+            smsRequest.getReceipients().forEach(s -> {
+                SmsRequest sr = smsRequest;
+                sr.setReceipientSms(s);
+                String report = smsThread.runSingle(sr);
+
+                Map m = AllmySms.treatResponse(report, api);
+                if ((boolean) m.get("etat")) {
+                    this.updateSoldeOrgUnit(sr.getReceipientSms().getActeur().getIdservice(), nbpage);
+                    listSuccess.add(s.getActeur());
                 }
-                service.setSoldeSms(service.getSoldeSms() - nbpage);
-                serviceFacadeLocal.edit(service);
+            });
+        }
+
+        List<ObjectContactActeur> list = new ArrayList<>();
+
+        if (api.equals(3) || api.equals(2)) {
+            Map<String, List<ObjectContactActeur>> result = Utilitaires.filterContact(smsRequest.getReceipients());
+            List<ObjectContactActeur> obms = result.get("obm_mtn_nexttel");
+            if (!obms.isEmpty()) {
+                String access_token = (String) Utilitaires.getDetailObmApi(3).get("access_token");
+                obms.stream().filter((c) -> (!list.contains(c))).map((c) -> {
+                    list.add(c);
+                    return c;
+                }).forEach((c) -> {
+                    ObmSmsSendRequest request = new ObmSmsSendRequest("CTN", smsRequest.getText(), "237" + c.getContact());
+                    String response = ObmSms.sendSms(access_token, request);
+                    Map m = AllmySms.treatResponse(response, api);
+                    if ((boolean) m.get("etat")) {
+                        this.updateSoldeOrgUnit(c.getActeur().getIdservice(), nbpage);
+                        listSuccess.add(c.getActeur());
+                    }
+                });
             }
-        });
+
+            List<ObjectContactActeur> oranges = result.get("orange_cm");
+            if (!oranges.isEmpty()) {
+                String access_token = (String) Utilitaires.getDetailOrangeApi(2).get("access_token");
+                oranges.stream().filter((c) -> (!list.contains(c))).map((c) -> {
+                    list.add(c);
+                    return c;
+                }).forEach((c) -> {
+                    String response = OrangeSmsSender.send2(access_token, c.getContact(), smsRequest.getText());
+                    Map m = AllmySms.treatResponse(response, api);
+                    if ((boolean) m.get("etat")) {
+                        this.updateSoldeOrgUnit(c.getActeur().getIdservice(), nbpage);
+                        listSuccess.add(c.getActeur());
+                    }
+                });
+            }
+        }
+
+        if (!listSuccess.isEmpty()) {
+            Notification notification = new Notification();
+            notification.setIdnotification(notificationFacadeLocal.nextVal());
+            notification.setMessage(smsRequest.getText());
+            notification.setMessageMail("-");
+            notification.setMail(false);
+            notification.setSms(true);
+            notification.setObjet(smsRequest.getSubject());
+            notification.setDateEnvoi(Date.from(Instant.now()));
+            //notification.getActeurs().addAll((Collection<Acteur>) listSuccess);
+            notification.setIdperiode(periode);
+            notificationFacadeLocal.create(notification);
+
+            listSuccess.stream().map(a -> {
+                NotificationActeur nTemp = new NotificationActeur(notification.getIdnotification(), a.getIdacteur());
+                return nTemp;
+            }).forEach(object -> {
+                notificationActeurFacadeLocal.create(object);
+            });
+        }
+    }
+
+    private void updateSoldeOrgUnit(Service service, int nbPage) {
+        if (service.getCentral()) {
+            service = serviceFacadeLocal.find(service.getIdservice());
+        } else {
+            service = serviceFacadeLocal.find(service.getIdparent());
+        }
+        if (service != null) {
+            service.setSoldeSms(service.getSoldeSms() - nbPage);
+            serviceFacadeLocal.edit(service);
+        }
     }
 
     public void prepareAddService() {
@@ -727,18 +824,12 @@ public class ProjetController extends AbstractProjetController implements Serial
 
     public boolean renderReplicationBtn(Projetservice p) {
         int i = projetservices.indexOf(p);
-        if (i == 0) {
-            return true;
-        }
-        return false;
+        return i == 0;
     }
 
     public boolean renderLastUnderLined(Projetservice p) {
         int i = projetservices.indexOf(p);
-        if ((i + 1) == projetservices.size()) {
-            return false;
-        }
-        return true;
+        return (i + 1) != projetservices.size();
     }
 
     public void prepareReplication() {

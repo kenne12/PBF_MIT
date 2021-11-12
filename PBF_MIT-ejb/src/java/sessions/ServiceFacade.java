@@ -74,7 +74,7 @@ public class ServiceFacade extends AbstractFacade<Service> implements ServiceFac
                 .setParameter("idparent", idparent)
                 .getResultList();
     }
-    
+
     @Override
     public List<Service> findByServiceWithoutAcv(int idparent) {
         return this.em.createQuery("SELECT s FROM Service s WHERE s.idparent!=0 AND s.idparent=:idparent AND s.regional=false ORDER BY s.nom")
@@ -101,7 +101,7 @@ public class ServiceFacade extends AbstractFacade<Service> implements ServiceFac
         return this.em.createQuery("SELECT s FROM Service s WHERE s.idparent=0 OR s.central=true ORDER BY s.nom")
                 .getResultList();
     }
-    
+
     @Override
     public List<Service> findAllRangeParentWithoutAllCentral() {
         return this.em.createQuery("SELECT s FROM Service s WHERE s.idparent=0 AND s.central=false ORDER BY s.nom")
@@ -118,6 +118,17 @@ public class ServiceFacade extends AbstractFacade<Service> implements ServiceFac
             return (Service) list.get(0);
         }
         return null;
+    }
+
+    @Override
+    public Service findAcvByRegion(int idService) {
+        Query query = em.createQuery("SELECT s FROM Service s WHERE s.idparent=:idService AND s.regional = true")
+                .setParameter("idService", idService);
+        try {
+            return (Service) query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

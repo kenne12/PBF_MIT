@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
@@ -202,7 +203,7 @@ public class Utilitaires {
 
     public static Double arrondiNDecimales(double x, int n) {
         double pow = Math.pow(10.0D, n);
-        return Double.valueOf(Math.floor(x * pow) / pow);
+        return (Math.floor(x * pow) / pow);
     }
 
     public static String formatPrenomMaj(String prenom) {
@@ -327,24 +328,42 @@ public class Utilitaires {
     }
 
     public static List<ReceipientSms> extracPhoneNumber(List<Acteur> acteurs) {
-        List<ReceipientSms> list = new ArrayList<>();
-        acteurs.forEach(a -> {
-            try {
-                if (a.getIdaddresse().getEmail() != null) {
-                    String contact = a.getIdaddresse().getTelephone1().replaceAll(" ", "");
+
+        return acteurs.stream()
+                .filter((a) -> (a.getIdaddresse().getTelephone1() != null))
+                .map(aa -> {
+                    String contact = aa.getIdaddresse().getTelephone1().replaceAll(" ", "");
                     ReceipientSms rs = new ReceipientSms(contact);
-                    rs.setActeur(a);
-                    list.add(rs);
-                }
-            } catch (Exception e) {
-            }
-        });
-        return list;
+                    rs.setActeur(aa);
+                    return rs;
+                }).collect(Collectors.toList());
+
+        /* List<ReceipientSms> list = new ArrayList<>();
+         acteurs.forEach((Acteur a) -> {
+         try {
+         if (a.getIdaddresse().getTelephone1() != null) {
+         String contact = a.getIdaddresse().getTelephone1().replaceAll(" ", "");
+         ReceipientSms rs = new ReceipientSms(contact);
+         rs.setActeur(a);
+         list.add(rs);
+         }
+         } catch (Exception e) {
+         }
+         });
+         return list;*/
     }
 
     public static String removeFirstJsonChar(String jsonString, String regex) {
         jsonString = jsonString.replace("{\"" + regex + "\":", "");
         jsonString = jsonString.substring(0, (jsonString.length() - 1));
+        return jsonString;
+    }
+
+    public static String removeCharInJson(String jsonString, String regex) {
+        if (jsonString.contains(regex)) {
+            jsonString = jsonString.replace(regex, "");
+            jsonString = jsonString.substring(0, (jsonString.length() - 1));
+        }
         return jsonString;
     }
 
@@ -359,6 +378,123 @@ public class Utilitaires {
         }
         result.put("nombre_mots", nombreMots);
         result.put("nombre_pages", nombrePages);
+        return result;
+    }
+
+    public static Map checkServeurSms(Integer api) {
+        Map map = new HashMap();
+        try {
+
+            if (api.equals(1)) {
+                String s = CheckAccount.returnDetailCompteJson(SessionMBean.getParametrage().getApiauthkey());
+                try {
+                    AllMySmsAccountCheck a = CheckAccount.getAccountDetail(s);
+                    if (a != null) {
+                        map = setSmsData(a.getNbSms(), "En marche");
+                        map.put("all_data", a);
+                    } else {
+                        map = setSmsData(0, "Non disponible");
+                    }
+                } catch (Exception e) {
+                    map = setSmsData(0, "Non disponible");
+                }
+            } else if (api.equals(2)) {
+                map = getDetailOrangeApi(2);
+                map.put("solde", ((int) map.get("solde")) + ((int) getDetailObmApi(3).get("solde")));
+            } else if (api.equals(3)) {
+                map = getDetailObmApi(3);
+                map.put("solde", ((int) map.get("solde")) + ((int) getDetailOrangeApi(3).get("solde")));
+            }
+        } catch (Exception e) {
+            map = setSmsData(0, "Non disponible");
+        }
+        return map;
+    }
+
+    public static Map getDetailOrangeApi(Integer api) {
+        Map map = new HashMap();
+        String access_token_json = OrangeSmsSender.auth();
+        if (!access_token_json.equals("00001")) {
+            try {
+                OrangeAuthResponse authResponse = (OrangeAuthResponse) CheckAccount.fromJsonToObject(access_token_json, new OrangeAuthResponse());
+
+                String balanceResponseJson = OrangeSmsSender.getBalance(authResponse.getAccess_token());
+                balanceResponseJson = removeFirstJsonChar(balanceResponseJson, "partnerContracts");
+
+                PartnerContract partnerContracts = (PartnerContract) CheckAccount.fromJsonToObject(balanceResponseJson, new PartnerContract());
+                int nbre = 0;
+                for (int i = 0; i < partnerContracts.getContracts().size(); i++) {
+                    for (int j = 0; j < partnerContracts.getContracts().get(i).getServiceContracts().size(); j++) {
+                        nbre += partnerContracts.getContracts().get(i).getServiceContracts().get(j).getAvailableUnits();
+                    }
+                }
+                System.err.println("solde orange " + nbre);
+
+                map = setSmsData(nbre, "En marche");
+                map.put("access_token", authResponse.getAccess_token());
+                map.put("all_data", partnerContracts);
+            } catch (Exception e) {
+                map = setSmsData(0, "Non disponible");
+            }
+        } else {
+            map = setSmsData(0, "Non disponible");
+        }
+        return map;
+    }
+
+    public static Map getDetailObmApi(Integer api) {
+        Map map = new HashMap();
+        String access_token_json = ObmSms.auth();
+        if (!access_token_json.contains("00001")) {
+            try {
+                ObmSmsAuthResponse authResponse = (ObmSmsAuthResponse) CheckAccount.fromJsonToObject(access_token_json, new ObmSmsAuthResponse());
+
+                if (authResponse != null) {
+                    String balance_json = ObmSms.getBalance(authResponse.getAccess_token());
+                    if (!balance_json.contains("00001")) {
+                        ObmsmsBalanceResponse balanceResponse = (ObmsmsBalanceResponse) CheckAccount.fromJsonToObject(balance_json, new ObmsmsBalanceResponse());
+                        if (balanceResponse != null) {
+                            map = setSmsData(Integer.valueOf(balanceResponse.getNumbersms()), "En marche");
+                            map.put("access_token", authResponse.getAccess_token());
+                            map.put("all_data", balance_json);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                map = setSmsData(0, "Non disponible");
+            }
+        } else {
+            map = setSmsData(0, "Non disponible");
+        }
+        return map;
+    }
+
+    private static Map setSmsData(int nb, String message) {
+        Map map = new HashMap();
+        map.put("solde", nb);
+        map.put("etat", message);
+        return map;
+    }
+
+    public static Map<String, List<ObjectContactActeur>> filterContact(List<ReceipientSms> list) {
+        Map<String, List<ObjectContactActeur>> result = new HashMap<>();
+        List<ObjectContactActeur> obms = new ArrayList<>();
+        List<ObjectContactActeur> oranges = new ArrayList<>();
+
+        for (ReceipientSms l : list) {
+            String c = l.getActeur().getIdaddresse().getTelephone1().replaceAll(" ", "");
+
+            if (c.startsWith("69") || c.startsWith("655") || c.startsWith("656") || c.startsWith("657") || c.startsWith("658") || c.startsWith("659")) {
+                ObjectContactActeur o = new ObjectContactActeur(c, l.getActeur());
+                oranges.add(o);
+            } else {
+                ObjectContactActeur o = new ObjectContactActeur(c, l.getActeur());
+                obms.add(o);
+            }
+        }
+
+        result.put("obm_mtn_nexttel", obms);
+        result.put("orange_cm", oranges);
         return result;
     }
 

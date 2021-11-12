@@ -10,6 +10,8 @@ import javax.ejb.EJB;
 import javax.transaction.UserTransaction;
 import sessions.MouchardFacadeLocal;
 import sessions.EtapeprojetFacadeLocal;
+import sessions.NotificationActeurFacadeLocal;
+import sessions.NotificationFacadeLocal;
 import sessions.PeriodeFacadeLocal;
 import sessions.ProgrammationFacadeLocal;
 import sessions.ProjetFacadeLocal;
@@ -44,6 +46,12 @@ public class AbstractDupliqerProjetController {
 
     @EJB
     protected ProgrammationFacadeLocal programmationFacadeLocal;
+
+    @EJB
+    protected NotificationFacadeLocal notificationFacadeLocal;
+
+    @EJB
+    protected NotificationActeurFacadeLocal notificationActeurFacadeLocal;
 
     @EJB
     protected MouchardFacadeLocal mouchardFacadeLocal;

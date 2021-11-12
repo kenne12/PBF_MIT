@@ -5,6 +5,7 @@ import entities.Acteur;
 import entities.Etape;
 import entities.Etapeprojet;
 import entities.Notification;
+import entities.NotificationActeur;
 import entities.Piecejointes;
 import entities.Programmation;
 import entities.Projet;
@@ -16,7 +17,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +29,10 @@ import org.primefaces.event.FileUploadEvent;
 import utils.AllmySms;
 import utils.EmailRequest;
 import utils.MailThread;
+import utils.ObjectContactActeur;
+import utils.ObmSms;
+import utils.ObmSmsSendRequest;
+import utils.OrangeSmsSender;
 import utils.Receipient;
 import utils.ReceipientSms;
 import utils.SessionMBean;
@@ -59,13 +63,13 @@ public class SuiviController extends AbstractSuiviController implements Serializ
     }
 
     private List<Projet> exTractProject(List<Projetservice> list) {
-        List<Projet> projets = new ArrayList<>();
+        List<Projet> listProjets = new ArrayList<>();
         if (!list.isEmpty()) {
-            for (Projetservice ps : list) {
-                projets.add(ps.getIdprojet());
-            }
+            list.stream().forEach((ps) -> {
+                listProjets.add(ps.getIdprojet());
+            });
         }
-        return projets;
+        return listProjets;
     }
 
     public void updateServiceData() {
@@ -107,14 +111,14 @@ public class SuiviController extends AbstractSuiviController implements Serializ
 
     public void addEtape() {
         try {
-            for (Etape e : selectedEtapes) {
-                if (!findEtape(e)) {
-                    Etapeprojet et = new Etapeprojet();
-                    et.setIdetapeprojet(0L);
-                    et.setIdetape(e);
-                    etapeprojets.add(et);
-                }
-            }
+            selectedEtapes.stream().filter((e) -> (!findEtape(e))).map((e) -> {
+                Etapeprojet et = new Etapeprojet();
+                et.setIdetapeprojet(0L);
+                et.setIdetape(e);
+                return et;
+            }).forEach((et) -> {
+                etapeprojets.add(et);
+            });
             RequestContext.getCurrentInstance().execute("PF('AddetapeDialog').hide()");
         } catch (Exception e) {
             signalException(e);
@@ -123,14 +127,14 @@ public class SuiviController extends AbstractSuiviController implements Serializ
 
     public void addServices() {
         try {
-            for (Service s : selectedServices) {
-                if (!findService(s)) {
-                    Projetservice ps = new Projetservice();
-                    ps.setIdprojetservice(0L);
-                    ps.setIdservice(s);
-                    projetservices.add(ps);
-                }
-            }
+            selectedServices.stream().filter((s) -> (!findService(s))).map((s) -> {
+                Projetservice ps = new Projetservice();
+                ps.setIdprojetservice(0L);
+                ps.setIdservice(s);
+                return ps;
+            }).forEach((ps) -> {
+                projetservices.add(ps);
+            });
             RequestContext.getCurrentInstance().execute("PF('AddserviceDialog').hide()");
         } catch (Exception e) {
             signalException(e);
@@ -151,7 +155,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
     private boolean findEtape(Etape e) {
         boolean result = false;
         for (Etapeprojet et : etapeprojets) {
-            if (et.getIdetape().equals(et)) {
+            if (et.getIdetape().equals(e)) {
                 result = true;
                 break;
             }
@@ -182,20 +186,14 @@ public class SuiviController extends AbstractSuiviController implements Serializ
 
     public boolean renderedDownload(boolean active, boolean valide, Acteur acteur) {
         try {
-            if (acteur.equals(SessionMBean.getUserAccount().getIdacteur())) {
-                return false;
-            }
-            return true;
+            return !acteur.equals(SessionMBean.getUserAccount().getIdacteur());
         } catch (Exception e) {
             return true;
         }
     }
 
     public boolean renderedView(boolean active, boolean envoye) {
-        if (envoye) {
-            return false;
-        }
-        return true;
+        return !envoye;
     }
 
     public boolean renderedPiece(boolean active) {
@@ -220,10 +218,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
             return true;
         }
 
-        if (valide && observee && !observation_validee) {
-            return true;
-        }
-        return false;
+        return valide && observee && !observation_validee;
     }
 
     public boolean renderedActivate(Programmation programmation, boolean envoye, boolean active) {
@@ -232,10 +227,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                 if (envoye) {
                     return false;
                 }
-                if (programmation.getIdetapeprojet().getNumero() == 1) {
-                    return false;
-                }
-                return true;
+                return programmation.getIdetapeprojet().getNumero() != 1;
             }
             return true;
         }
@@ -253,10 +245,7 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                     return false;
                 }
 
-                if (p.getIdacteur().equals(SessionMBean.getUserAccount().getIdacteur())) {
-                    return false;
-                }
-                return true;
+                return !p.getIdacteur().equals(SessionMBean.getUserAccount().getIdacteur());
             }
             return true;
         } catch (Exception e) {
@@ -288,16 +277,6 @@ public class SuiviController extends AbstractSuiviController implements Serializ
         if (valide == true && observee == true && observation_validee == true && valide == true) {
             return "green";
         }
-
-        /*if (!valide) {
-         return "red";
-         } else if (observee) {
-         if (observation_validee) {
-         return "Green";
-         }
-         return "yellow";
-         }
-         return "green";*/
         return "";
     }
 
@@ -382,7 +361,6 @@ public class SuiviController extends AbstractSuiviController implements Serializ
 
             if (p.getIdacteur().equals(SessionMBean.getUserAccount().getIdacteur())) {
                 disabledDownPiece = false;
-                return;
             }
         } catch (Exception e) {
             disabledDownPiece = true;
@@ -426,9 +404,9 @@ public class SuiviController extends AbstractSuiviController implements Serializ
                 }
             }
 
-            List<Programmation> programmations = programmationFacadeLocal.findByIdprojetIdservice(p.getIdprojetservice().getIdprojetservice());
-            if (programmations != null) {
-                programmations.forEach(obj -> {
+            List<Programmation> listProgrammations = programmationFacadeLocal.findByIdprojetIdservice(p.getIdprojetservice().getIdprojetservice());
+            if (listProgrammations != null) {
+                listProgrammations.forEach(obj -> {
                     if (!acteurNotifiables.contains(obj.getIdacteur())) {
                         acteurNotifiables.add(obj.getIdacteur());
                     }
@@ -671,36 +649,26 @@ public class SuiviController extends AbstractSuiviController implements Serializ
             }
 
             List<Receipient> receipients = Utilitaires.extracEmail(selectedActeurNotifiables);
-            if (notification.isMail()) {
-                if (!receipients.isEmpty()) {
-                    EmailRequest emailRequest = new EmailRequest();
-                    emailRequest.setSender("CTNPBF");
-                    emailRequest.setSubject(notification.getObjet());
-                    emailRequest.setText(notification.getMessageMail());
-                    emailRequest.setReceipients(receipients);
-                    if (!emailRequest.getReceipients().isEmpty()) {
-                        sendMail(emailRequest);
-                    }
-                }
+            boolean flagSms = notification.isSms();
+
+            this.messageSms = notification.getMessage();
+
+            if (notification.isMail() && !receipients.isEmpty()) {
+                EmailRequest emailRequest = new EmailRequest();
+                emailRequest.setSender("CTNPBF");
+                emailRequest.setSubject(notification.getObjet());
+                emailRequest.setText(notification.getMessageMail());
+                emailRequest.setReceipients(receipients);
+                sendMail(emailRequest);
             }
 
             List<ReceipientSms> receipientSmses = Utilitaires.extracPhoneNumber(selectedActeurNotifiables);
-            if (notification.isSms()) {
-                if (!receipientSmses.isEmpty()) {
-                    SmsRequest smsRequest = new SmsRequest();
-                    smsRequest.setText(notification.getMessage());
-                    smsRequest.setReceipients(receipientSmses);
-                    if (!smsRequest.getReceipients().isEmpty()) {
-                        sendSms(smsRequest);
-                    }
-                }
-            }
-
-            if ((!receipients.isEmpty() || !receipientSmses.isEmpty()) == true) {
-                notification.setIdnotification(notificationFacadeLocal.nextVal());
-                notification.setDateEnvoi(Date.from(Instant.now()));
-                notificationFacadeLocal.create(notification);
-                notification.getActeurs().addAll((Collection<Acteur>) selectedActeurNotifiables);
+            notification.setSms(flagSms);
+            if (!receipientSmses.isEmpty() && notification.isSms()) {
+                SmsRequest smsRequest = new SmsRequest();
+                smsRequest.setText(notification.getMessage());
+                smsRequest.setReceipients(receipientSmses);
+                sendSms(smsRequest);
             }
         } catch (Exception e) {
             signalException(e);
@@ -710,31 +678,126 @@ public class SuiviController extends AbstractSuiviController implements Serializ
     private void sendMail(EmailRequest emailRequest) {
         MailThread mailThread = new MailThread(emailRequest);
         mailThread.start();
+
+        if (!selectedActeurNotifiables.isEmpty()) {
+
+            Notification n = new Notification();
+            n.setDateEnvoi(Date.from(Instant.now()));
+            n.setMessageMail(notification.getMessageMail());
+            n.setObjet(notification.getObjet());
+            n.setMail(true);
+            n.setSms(false);
+            n.setMessage("-");
+            //n.getActeurs().addAll((Collection<Acteur>) selectedActeurNotifiables);
+            n.setIdnotification(notificationFacadeLocal.nextVal());
+            n.setIdperiode(programmation.getIdetapeprojet().getIdprojet().getIdperiode());
+            notificationFacadeLocal.create(n);
+
+            selectedActeurNotifiables.stream().map(a -> {
+                NotificationActeur nTemp = new NotificationActeur(n.getIdnotification(), a.getIdacteur());
+                return nTemp;
+            }).forEach(object -> {
+                notificationActeurFacadeLocal.create(object);
+            });
+        }
     }
 
     private void sendSms(SmsRequest smsRequest) {
+
+        Integer api = SessionMBean.getParametrage().getIdSmsApi();
+
         SmsThread smsThread = new SmsThread(smsRequest);
 
         int nbpage = Utilitaires.countSms(smsRequest.getText()).get("nombre_pages");
-        smsRequest.getReceipients().forEach(s -> {
-            SmsRequest sr = smsRequest;
-            sr.setReceipientSms(s);
-            String report = smsThread.runSingle(sr);
+        List<Acteur> listSuccess = new ArrayList<>();
 
-            Map m = AllmySms.treatResponse(report, 1);
-            if (((boolean) m.get("etat"))) {
-                Service service = null;
-                if (sr.getReceipientSms().getActeur().getIdservice().getCentral()) {
-                    service = serviceFacadeLocal.find(sr.getReceipientSms().getActeur().getIdservice().getIdservice());
-                } else {
-                    service = serviceFacadeLocal.find(sr.getReceipientSms().getActeur().getIdservice().getIdparent());
+        if (api.equals(1)) {
+            smsRequest.getReceipients().forEach(s -> {
+                SmsRequest sr = smsRequest;
+                sr.setReceipientSms(s);
+
+                String report = smsThread.runSingle(sr);
+
+                Map m = AllmySms.treatResponse(report, api);
+                if (((boolean) m.get("etat"))) {
+                    this.updateSoldeOrgUnit(sr.getReceipientSms().getActeur().getIdservice(), nbpage);
+                    listSuccess.add(sr.getReceipientSms().getActeur());
                 }
-                if (service != null) {
-                    service.setSoldeSms(service.getSoldeSms() - nbpage);
-                    serviceFacadeLocal.edit(service);
+            });
+        }
+
+        List<ObjectContactActeur> list = new ArrayList<>();
+
+        if (api.equals(3) || api.equals(2)) {
+            Map<String, List<ObjectContactActeur>> result = Utilitaires.filterContact(smsRequest.getReceipients());
+            List<ObjectContactActeur> obms = result.get("obm_mtn_nexttel");
+            if (!obms.isEmpty()) {
+                String access_token = (String) Utilitaires.getDetailObmApi(3).get("access_token");
+                for (ObjectContactActeur c : obms) {
+                    if (!list.contains(c)) {
+                        list.add(c);
+
+                        ObmSmsSendRequest request = new ObmSmsSendRequest("CTN", notification.getMessage(), "237" + c.getContact());
+                        String response = ObmSms.sendSms(access_token, request);
+
+                        Map m = AllmySms.treatResponse(response, api);
+                        if (((boolean) m.get("etat"))) {
+                            this.updateSoldeOrgUnit(c.getActeur().getIdservice(), nbpage);
+                            listSuccess.add(c.getActeur());
+                        }
+                    }
                 }
             }
-        });
+
+            List<ObjectContactActeur> oranges = result.get("orange_cm");
+            if (!oranges.isEmpty()) {
+                String access_token = (String) Utilitaires.getDetailOrangeApi(2).get("access_token");
+                oranges.stream().filter((c) -> (!list.contains(c))).map((c) -> {
+                    list.add(c);
+                    return c;
+                }).forEach((c) -> {
+                    String response = OrangeSmsSender.send2(access_token, c.getContact(), notification.getMessage());
+                    Map m = AllmySms.treatResponse(response, api);
+                    if ((boolean) m.get("etat")) {
+                        this.updateSoldeOrgUnit(c.getActeur().getIdservice(), nbpage);
+                        listSuccess.add(c.getActeur());
+                    }
+                });
+            }
+        }
+
+        if (!listSuccess.isEmpty()) {
+            Notification n = new Notification();
+            n.setMail(false);
+            n.setSms(true);
+            n.setDateEnvoi(Date.from(Instant.now()));
+            n.setMessage(smsRequest.getText());
+            n.setObjet(notification.getObjet());
+            n.setMessageMail("-");
+            //n.getActeurs().addAll((Collection<Acteur>) listSuccess);
+            n.setIdnotification(notificationFacadeLocal.nextVal());
+            n.setIdperiode(programmation.getIdetapeprojet().getIdprojet().getIdperiode());
+            notificationFacadeLocal.create(n);
+
+            listSuccess.stream().map(a -> {
+                NotificationActeur nTemp = new NotificationActeur(n.getIdnotification(), a.getIdacteur());
+                return nTemp;
+            }).forEach(object -> {
+                notificationActeurFacadeLocal.create(object);
+            });
+        }
+    }
+
+    private void updateSoldeOrgUnit(Service service, int nbPage) {
+        if (service.getCentral()) {
+            service = serviceFacadeLocal.find(service.getIdservice());
+        } else {
+            service = serviceFacadeLocal.find(service.getIdparent());
+        }
+        if (service != null) {
+            service.setSoldeSms(service.getSoldeSms() - nbPage);
+            serviceFacadeLocal.edit(service);
+        }
     }
 
     public void validateUser() {
@@ -808,13 +871,17 @@ public class SuiviController extends AbstractSuiviController implements Serializ
     }
 
     private String treatCharacter(String chaine, String[] regex) {
-        for (int i = 0; i < regex.length; i++) {
-            if (regex[i].equals("é")) {
-                chaine = chaine.replaceAll(regex[i], "e");
-            } else if (regex[i].equals("à")) {
-                chaine = chaine.replaceAll(regex[i], "a");
-            } else {
-                chaine = chaine.replaceAll(regex[i], "_");
+        for (String regex1 : regex) {
+            switch (regex1) {
+                case "é":
+                    chaine = chaine.replaceAll(regex1, "e");
+                    break;
+                case "à":
+                    chaine = chaine.replaceAll(regex1, "a");
+                    break;
+                default:
+                    chaine = chaine.replaceAll(regex1, "_");
+                    break;
             }
         }
         return chaine;

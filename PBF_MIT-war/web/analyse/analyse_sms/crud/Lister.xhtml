@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:form id="RechargeListerForm">
+
+        <p:messages id="growl" closable="true">
+            <p:effect type="pulsate" event="load" delay="50" />
+        </p:messages>
+
+        <h:panelGrid columns="7">
+
+            <p:selectOneMenu filter="true" filterMatchMode="contains" id="periode_parent" value="#{utilisationSmsController.periode.idperiode}"
+                             required="true" requiredMessage="#{langue.valeur_obligatoire}">
+                <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
+                <f:selectItems value="#{utilisationSmsController.listPeriodeParent}" var="period" itemLabel="#{period.nom}" itemValue="#{period.idperiode}"/>
+                <p:ajax />
+            </p:selectOneMenu>
+
+            <p:selectOneMenu filter="true" filterMatchMode="contains" id="service_search" value="#{utilisationSmsController.service.idservice}"
+                             required="true" requiredMessage="#{langue.valeur_obligatoire}">
+                <f:selectItem itemLabel="#{langue.choisir}" itemValue="0"/>
+                <f:selectItems value="#{utilisationSmsController.services}" var="svc" itemLabel="#{svc.nom}" itemValue="#{svc.idservice}"/>
+                <p:ajax />
+            </p:selectOneMenu>
+
+            <p:selectOneMenu filter="true" filterMatchMode="contains" id="search_mode" value="#{utilisationSmsController.modeSearch}"
+                             required="true" requiredMessage="#{langue.valeur_obligatoire}">
+                <f:selectItem itemLabel="#{langue.choisir}"/>
+                <f:selectItem itemLabel="TOUT" itemValue="1"/>
+                <f:selectItem itemLabel="SMS" itemValue="2"/>
+                <f:selectItem itemLabel="MAIL" itemValue="3"/>
+                <p:ajax />
+            </p:selectOneMenu>
+
+            <p:commandButton value="#{langue.chercher}" actionListener="#{utilisationSmsController.search()}"
+                             update="datalist,growl,chart" />
+        </h:panelGrid>
+
+        <p:panel header="#{langue['Conv.ListeDes']} : Notifications">
+
+            <p:dataTable id="datalist"
+                         value="#{utilisationSmsController.notifications}"
+                         var="item"
+                         rowKey="#{item.idnotification}"
+                         paginator="true"
+                         rows="5"
+                         style="text-align: center;"
+                         rowsPerPageTemplate="5,10,15,20,25" >
+
+                <p:column filterBy="#{item.message}" filterMatchMode="contains" style="text-align: left; width: 40%">
+                    <f:facet name="header">
+                        <h:outputText value="Sms"/>
+                    </f:facet>
+                    <h:outputText value="#{item.message}"/>
+                </p:column>
+
+                <p:column filterBy="#{item.messageMail}" filterMatchMode="contains" style="text-align: left; width: 40%">
+                    <f:facet name="header">
+                        <h:outputText value="Mail"/>
+                    </f:facet>
+                    <h:outputText value="#{item.messageMail}"/>
+                </p:column>
+                
+                <p:column style="text-align: left;width: 15%">
+                    <f:facet name="header">
+                        <h:outputText value="#{langue.objet}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.objet}" />                        
+                </p:column>
+
+                <p:column style="text-align: left;width: 5%">
+                    <f:facet name="header">
+                        <h:outputText value="#{langue.date}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.dateEnvoi}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+
+        </p:panel>
+
+        <p:separator/>
+
+        <p:chart id="chart" type="line" model="#{utilisationSmsController.lineModel}" style="height:800px;"/>
+
+    </h:form>
+
+    <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+    <p:dialog id="notify1" widgetVar="NotifyDialog1" height="220" width="600" resizable="true" responsive="true" modal="true" style="text-align: center; font-size: 14px; font-family: Cambria;">
+        <f:facet name="header">
+            <h:outputText style="font-family: Cambria; font-size: 14px;" value="#{utilisationSmsController.routine.titleNotify}" />
+        </f:facet>
+        <h:form id="NotifyForm1">
+            <h:graphicImage id="nt_img" url="#{utilisationSmsController.routine.iconMessage}" style="cursor:pointer" />
+
+            <hr size="3" style="background-color: cornflowerblue;"/>
+
+            <h:outputText id="nt_msg" value="#{utilisationSmsController.routine.message}"/>
+
+            <hr size="3" style="background-color: cornflowerblue; margin-top: 5%;"/>
+
+            <p:commandButton style="font-family: Cambria; font-size: 14px;" value="#{langue.fermer}" onclick="PF('NotifyDialog1').hide()" type="button" immediate="true"/>
+
+            <hr size="3" style="background-color: cornflowerblue;"/>
+        </h:form>
+    </p:dialog>
+
+    <!-- ****************************************Information************************************************************************************************************************************************************************************************************** -->
+
+</ui:composition>

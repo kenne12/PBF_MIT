@@ -2,6 +2,19 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/web/operation/projet/crud/Programmation.xhtml</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/src/java/controllers/projet/ProjetController.java</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/src/java/controllers/analyse/utilisation_sms/UtilisationSmsController.java</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/src/java/controllers/analyse/utilisation_sms/AbstractUtilisationSmsController.java</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/src/java/controllers/analyse/promptitude/PromptitudeController.java</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/web/analyse/analyse_sms/crud/Lister.xhtml</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/web/analyse/analyse_sms/crud/Action.xhtml</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/web/operation/suivi/crud/Lister.xhtml</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/web/operation/projet/crud/Creer.xhtml</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/web/operation/projet/crud/Duplication.xhtml</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/src/java/controllers/analyse/promptitude/AbstractPromptitudeController.java</file>
+            <file>file:/D:/batrapi%20projet%20jee/PBF_MIT/PBF_MIT-war/src/java/controllers/duplication_projet/DupliqerProjetController.java</file>
+        </group>
     </open-files>
 </project-private>

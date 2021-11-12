@@ -35,8 +35,7 @@ public class PeriodeFacade extends AbstractFacade<Periode> implements PeriodeFac
     public Integer nextVal() {
         Query query = this.em.createQuery("SELECT MAX(p.idperiode) FROM Periode p");
         try {
-            Integer result = (Integer) query.getSingleResult();
-            return result == null ? 1 : result + 1;
+            return ((Integer) query.getSingleResult() + 1);
         } catch (Exception e) {
             return 1;
         }

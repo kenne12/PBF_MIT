@@ -54,4 +54,6 @@ public interface ServiceFacadeLocal {
 
     Service findByServiceParentAndRegion(int idparent, boolean regional);
 
+    Service findAcvByRegion(int idService);
+
 }

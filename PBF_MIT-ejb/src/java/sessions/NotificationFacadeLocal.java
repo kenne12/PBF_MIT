@@ -6,6 +6,7 @@
 package sessions;
 
 import entities.Notification;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -31,5 +32,11 @@ public interface NotificationFacadeLocal {
     int count();
 
     Integer nextVal();
+
+    List<Notification> findAllByIdperiodeParentCentralOrgUnit(int idService, Date dateDebut, Date dateFin);
+
+    List<Notification> findAllSmsByIdperiodeParentCentralOrgUnit(int idService, Date dateDebut, Date dateFin);
+
+    List<Notification> findAllMailByIdperiodeParentCentralOrgUnit(int idService, Date dateDebut, Date dateFin);
 
 }

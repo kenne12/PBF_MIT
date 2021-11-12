@@ -21,6 +21,7 @@ import sessions.ActeurFacadeLocal;
 import sessions.DocumentFacadeLocal;
 import sessions.EtapeFacadeLocal;
 import sessions.EtapeprojetFacadeLocal;
+import sessions.NotificationActeurFacadeLocal;
 import sessions.NotificationFacadeLocal;
 import sessions.PiecejointesFacadeLocal;
 import sessions.ProgrammationFacadeLocal;
@@ -96,6 +97,11 @@ public class AbstractSuiviController {
     @EJB
     protected NotificationFacadeLocal notificationFacadeLocal;
     protected Notification notification = new Notification();
+    
+    @EJB
+    protected NotificationActeurFacadeLocal notificationActeurFacadeLocal;
+
+    protected String messageSms;
 
     protected String templateMessage;
     protected Integer modeSearchActeur = 0;

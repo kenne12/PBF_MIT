@@ -3,6 +3,8 @@ package controllers.duplication_projet;
 import entities.Acteur;
 import entities.Etape;
 import entities.Etapeprojet;
+import entities.Notification;
+import entities.NotificationActeur;
 import entities.Programmation;
 import entities.Projet;
 import entities.Projetservice;
@@ -11,6 +13,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +25,13 @@ import org.primefaces.context.RequestContext;
 import utils.AllmySms;
 import utils.EmailRequest;
 import utils.MailThread;
+import utils.ObjectContactActeur;
+import utils.ObmSms;
+import utils.ObmSmsSendRequest;
+import utils.OrangeSmsSender;
 import utils.Receipient;
 import utils.ReceipientSms;
+import utils.SessionMBean;
 import utils.SmsRequest;
 import utils.SmsThread;
 import utils.Utilitaires;
@@ -207,7 +215,7 @@ public class DupliqerProjetController extends AbstractDupliqerProjetController i
 
             if (sendSms) {
                 if (!acteurMails.isEmpty()) {
-                    //this.sendSms(acteurMails);
+                    this.sendSms(acteurMails);
                 }
             }
 
@@ -223,27 +231,50 @@ public class DupliqerProjetController extends AbstractDupliqerProjetController i
                 + "\nVeuillez vous connecter sur le portail pour fournir les documents exigés aux étapes vous concernant."
                 + "\nCordialement.");
         List<Receipient> receipients = new ArrayList<>();
-        for (Acteur a : acteurs) {
+        final List<Acteur> listSuccess = new ArrayList<>();
+        acteurs.stream().forEach((a) -> {
             try {
                 if (a.getIdaddresse().getEmail() != null) {
                     receipients.add(new Receipient(a.getIdaddresse().getEmail(), a.getTitre()));
+                    listSuccess.add(a);
                 }
             } catch (Exception e) {
             }
-        }
+        });
         emailRequest.setReceipients(receipients);
         MailThread mailThread = new MailThread(emailRequest);
         mailThread.start();
+
+        Notification n = new Notification();
+        n.setDateEnvoi(Date.from(Instant.now()));
+        n.setMessageMail(emailRequest.getText());
+        n.setMessage("-");
+        n.setObjet(emailRequest.getSubject());
+        n.setMail(true);
+        n.setSms(false);
+        n.setMessage("-");
+        //n.getActeurs().addAll((Collection<Acteur>) listSuccess);
+        n.setIdnotification(notificationFacadeLocal.nextVal());
+        n.setIdperiode(projet.getIdperiode());
+        notificationFacadeLocal.create(n);
+
+        listSuccess.stream().map(a -> {
+            NotificationActeur nTemp = new NotificationActeur(n.getIdnotification(), a.getIdacteur());
+            return nTemp;
+        }).forEach(object -> {
+            notificationActeurFacadeLocal.create(object);
+        });
     }
 
     private void sendSms(List<Acteur> acteurs) {
+
         SmsRequest smsRequest = new SmsRequest();
         smsRequest.setSubject("Information : " + projet.getNom());
         smsRequest.setText("Bonjour, La CTN Vous informe que vous etes concernés par le projet mensionnée en object;"
                 + " Veuillez vous connecter sur le portail pour fournir les documents exigés aux étapes vous concernant."
                 + " Cordialement.");
         List<ReceipientSms> receipients = new ArrayList<>();
-        for (Acteur a : acteurs) {
+        acteurs.stream().forEach((a) -> {
             try {
                 if (a.getIdaddresse().getTelephone1() != null) {
                     ReceipientSms r = new ReceipientSms(a.getIdaddresse().getTelephone1());
@@ -252,37 +283,109 @@ public class DupliqerProjetController extends AbstractDupliqerProjetController i
                 }
             } catch (Exception e) {
             }
-        }
+        });
         smsRequest.setReceipients(receipients);
         SmsThread smsThread = new SmsThread(smsRequest);
+        Integer api = SessionMBean.getParametrage().getIdSmsApi();
 
         int nbpage = Utilitaires.countSms(smsRequest.getText()).get("nombre_pages");
-        smsRequest.getReceipients().forEach(s -> {
-            SmsRequest sr = smsRequest;
-            sr.setReceipientSms(s);
-            String report = smsThread.runSingle(sr);
+        List<Acteur> listSuccess = new ArrayList<>();
+        if (api.equals(1)) {
+            smsRequest.getReceipients().forEach(s -> {
+                SmsRequest sr = smsRequest;
+                sr.setReceipientSms(s);
 
-            Map m = AllmySms.treatResponse(report, 1);
-            if ((boolean) m.get("etat")) {
-                Service service = null;
-                if (sr.getReceipientSms().getActeur().getIdservice().getCentral()) {
-                    service = serviceFacadeLocal.find(sr.getReceipientSms().getActeur().getIdservice().getIdservice());
-                } else {
-                    service = serviceFacadeLocal.find(sr.getReceipientSms().getActeur().getIdservice().getIdparent());
+                String report = smsThread.runSingle(sr);
+
+                Map m = AllmySms.treatResponse(report, api);
+                if (((boolean) m.get("etat"))) {
+                    this.updateSoldeOrgUnit(sr.getReceipientSms().getActeur().getIdservice(), nbpage);
+                    listSuccess.add(sr.getReceipientSms().getActeur());
                 }
-                service.setSoldeSms(service.getSoldeSms() - nbpage);
-                serviceFacadeLocal.edit(service);
+            });
+        }
+
+        List<ObjectContactActeur> list = new ArrayList<>();
+
+        if (api.equals(3) || api.equals(2)) {
+            Map<String, List<ObjectContactActeur>> result = Utilitaires.filterContact(smsRequest.getReceipients());
+            List<ObjectContactActeur> obms = result.get("obm_mtn_nexttel");
+            if (!obms.isEmpty()) {
+                String access_token = (String) Utilitaires.getDetailObmApi(3).get("access_token");
+                for (ObjectContactActeur c : obms) {
+                    if (!list.contains(c)) {
+                        list.add(c);
+
+                        ObmSmsSendRequest request = new ObmSmsSendRequest("CTN", smsRequest.getText(), "237" + c.getContact());
+                        String response = ObmSms.sendSms(access_token, request);
+
+                        Map m = AllmySms.treatResponse(response, api);
+                        if (((boolean) m.get("etat"))) {
+                            this.updateSoldeOrgUnit(c.getActeur().getIdservice(), nbpage);
+                            listSuccess.add(c.getActeur());
+                        }
+                    }
+                }
             }
-        });
+
+            List<ObjectContactActeur> oranges = result.get("orange_cm");
+            if (!oranges.isEmpty()) {
+                String access_token = (String) Utilitaires.getDetailOrangeApi(2).get("access_token");
+                oranges.stream().filter((c) -> (!list.contains(c))).map((c) -> {
+                    list.add(c);
+                    return c;
+                }).forEach((c) -> {
+                    String response = OrangeSmsSender.send2(access_token, c.getContact(), smsRequest.getText());
+                    Map m = AllmySms.treatResponse(response, api);
+                    if ((boolean) m.get("etat")) {
+                        this.updateSoldeOrgUnit(c.getActeur().getIdservice(), nbpage);
+                        listSuccess.add(c.getActeur());
+                    }
+                });
+            }
+        }
+
+        if (!listSuccess.isEmpty()) {
+            Notification n = new Notification();
+            n.setMail(false);
+            n.setSms(true);
+            n.setDateEnvoi(Date.from(Instant.now()));
+            n.setMessage(smsRequest.getText());
+            n.setMessageMail("-");
+            n.setObjet(smsRequest.getSubject());
+            n.setMessageMail("-");
+            //n.getActeurs().addAll((Collection<Acteur>) listSuccess);
+            n.setIdnotification(notificationFacadeLocal.nextVal());
+            n.setIdperiode(projet.getIdperiode());
+            notificationFacadeLocal.create(n);
+
+            listSuccess.stream().map(a -> {
+                NotificationActeur nTemp = new NotificationActeur(n.getIdnotification(), a.getIdacteur());
+                return nTemp;
+            }).forEach(object -> {
+                notificationActeurFacadeLocal.create(object);
+            });
+        }
+
+    }
+
+    private void updateSoldeOrgUnit(Service service, int nbPage) {
+        if (service.getCentral()) {
+            service = serviceFacadeLocal.find(service.getIdservice());
+        } else {
+            service = serviceFacadeLocal.find(service.getIdparent());
+        }
+        if (service != null) {
+            service.setSoldeSms(service.getSoldeSms() - nbPage);
+            serviceFacadeLocal.edit(service);
+        }
     }
 
     private List<Programmation> filterProgrammation(List<Programmation> programmations, Service s) {
         List<Programmation> results = new ArrayList<>();
-        for (Programmation p : programmations) {
-            if (p.getIdprojetservice().getIdservice().equals(s)) {
-                results.add(p);
-            }
-        }
+        programmations.stream().filter((p) -> (p.getIdprojetservice().getIdservice().equals(s))).forEach((p) -> {
+            results.add(p);
+        });
         return results;
     }
 

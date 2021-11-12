@@ -6,6 +6,7 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -15,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -52,6 +55,12 @@ public class Periode implements Serializable {
     private boolean defaultPeriod;
     @OneToMany(mappedBy = "idperiode", fetch = FetchType.LAZY)
     private List<Projet> projetList;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "date_debut")
+    private Date dateDebut;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "date_fin")
+    private Date dateFin;
 
     public Periode() {
     }
@@ -122,6 +131,22 @@ public class Periode implements Serializable {
 
     public void setDefaultPeriod(boolean defaultPeriod) {
         this.defaultPeriod = defaultPeriod;
+    }
+
+    public Date getDateDebut() {
+        return dateDebut;
+    }
+
+    public void setDateDebut(Date dateDebut) {
+        this.dateDebut = dateDebut;
+    }
+
+    public Date getDateFin() {
+        return dateFin;
+    }
+
+    public void setDateFin(Date dateFin) {
+        this.dateFin = dateFin;
     }
 
     @XmlTransient

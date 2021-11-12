@@ -6,15 +6,15 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -38,15 +38,19 @@ public class Notification implements Serializable {
     @Column(name = "date_envoi")
     private Date dateEnvoi;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Acteur> acteurs;
+    /*@ManyToMany(fetch = FetchType.EAGER, targetEntity = NotificationActeur.class)
+    private Collection<Acteur> acteurs;*/
+
+    @JoinColumn(name = "idperiode", referencedColumnName = "idperiode")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Periode idperiode;
 
     public Notification() {
-        acteurs = new ArrayList<>();
+        //acteurs = new ArrayList<>();
     }
 
     public Notification(Integer idnotification) {
-        acteurs = new ArrayList<>();
+        //acteurs = new ArrayList<>();
         this.idnotification = idnotification;
     }
 
@@ -82,13 +86,13 @@ public class Notification implements Serializable {
         this.message = message;
     }
 
-    public Collection<Acteur> getActeurs() {
+    /*public Collection<Acteur> getActeurs() {
         return acteurs;
     }
 
     public void setActeurs(Collection<Acteur> acteurs) {
         this.acteurs = acteurs;
-    }
+    }*/
 
     public Date getDateEnvoi() {
         return dateEnvoi;
@@ -112,6 +116,33 @@ public class Notification implements Serializable {
 
     public void setMessageMail(String messageMail) {
         this.messageMail = messageMail;
+    }
+
+    public Periode getIdperiode() {
+        return idperiode;
+    }
+
+    public void setIdperiode(Periode idperiode) {
+        this.idperiode = idperiode;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 71 * hash + Objects.hashCode(this.idnotification);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Notification other = (Notification) obj;
+        return Objects.equals(this.idnotification, other.idnotification);
     }
 
 }

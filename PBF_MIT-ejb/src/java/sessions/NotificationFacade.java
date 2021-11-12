@@ -6,6 +6,8 @@
 package sessions;
 
 import entities.Notification;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -39,6 +41,37 @@ public class NotificationFacade extends AbstractFacade<Notification> implements 
         } catch (Exception e) {
             return 1;
         }
+    }
+
+    @Override
+    public List<Notification> findAllByIdperiodeParentCentralOrgUnit(int idService, Date dateDebut, Date dateFin) {
+        
+        //em.createQuery("SELECT n FROM Notification n ", null)
+        
+        return em.createQuery("SELECT n FROM Notification n WHERE n.acteurs.idservice.idservice=:idService AND n.dateEnvoi BETWEEN :dateDebut AND :dateFin")
+                .setParameter("idService", idService)
+                .setParameter("dateDebut", dateDebut)
+                .setParameter("dateFin", dateFin)
+                .getResultList();
+    }
+    
+    
+    @Override
+    public List<Notification> findAllSmsByIdperiodeParentCentralOrgUnit(int idService, Date dateDebut, Date dateFin) {
+        return em.createQuery("SELECT n FROM Notification n WHERE n.acteurs.idservice.idservice=:idService AND n.dateEnvoi BETWEEN :dateDebut AND :dateFin AND n.sms = true")
+                .setParameter("idService", idService)
+                .setParameter("dateDebut", dateDebut)
+                .setParameter("dateFin", dateFin)
+                .getResultList();
+    }
+    
+    @Override
+    public List<Notification> findAllMailByIdperiodeParentCentralOrgUnit(int idService, Date dateDebut, Date dateFin) {
+        return em.createQuery("SELECT n FROM Notification n WHERE n.acteurs.idservice.idservice=:idService AND n.dateEnvoi BETWEEN :dateDebut AND :dateFin AND n.mail = true")
+                .setParameter("idService", idService)
+                .setParameter("dateDebut", dateDebut)
+                .setParameter("dateFin", dateFin)
+                .getResultList();
     }
 
 }
